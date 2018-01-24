@@ -13,9 +13,18 @@ public interface TasksContract {
 
     interface View extends BaseView<Presenter>{
 
+        void showNoTasks();
+
+        void showNoSortTasks();
+
+        void showFilteringPopUpMenu();
+
     }
 
     interface Presenter extends BasePresenter{
 
+        void setDisplay();
+
+        void loadTasks();
     }
 }

@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.evan.remindme"
         minSdkVersion 19
@@ -17,6 +18,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    /*针对greenDao的一些配置*/
+    greendao {
+        schemaVersion 1 //数据库版本号
+        daoPackage 'com.evan.remindme.data.source.local' //自动生成的工具类的包名
+        targetGenDir 'src/main/java' //路径
+    }
 }
 
 dependencies {
@@ -25,5 +32,21 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support:design:26.+'
+    compile 'com.android.support:cardview-v7:26.+'
+    compile 'com.android.support:recyclerview-v7:26.+'
+    compile 'com.android.support:support-v4:26.+'
+
     testCompile 'junit:junit:4.12'
+
+    // Resolve conflicts between main and test APK:
+    androidTestCompile "com.android.support:support-annotations:26.+"
+    androidTestCompile "com.android.support:support-v4:26.+"
+    androidTestCompile "com.android.support:recyclerview-v7:26.+"
+    androidTestCompile "com.android.support:appcompat-v7:26.+"
+    androidTestCompile "com.android.support:design:26.+"
+
+    //数据库greendao
+    compile 'org.greenrobot:greendao:3.2.0'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
 }

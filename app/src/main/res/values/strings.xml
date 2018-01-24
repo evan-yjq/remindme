@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">RemindMe</string>
+
+    <string name="menu_display">显示方式</string>
+
+    <string name="nav_sort">按分类显示</string>
+    <string name="nav_time">按时间显示</string>
+
+    <string name="refresh">刷新</string>
+
 </resources>

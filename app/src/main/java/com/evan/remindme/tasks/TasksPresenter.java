@@ -11,4 +11,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void start() {
 
     }
+
+    @Override
+    public void setDisplay() {
+
+    }
+
+    @Override
+    public void loadTasks() {
+
+    }
 }
