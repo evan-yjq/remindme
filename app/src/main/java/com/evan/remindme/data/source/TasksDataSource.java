@@ -26,9 +26,20 @@ public interface TasksDataSource {
         void onDataNotAvailable();
     }
 
+    interface LoadSortsCallback{
+
+        void onSortsLoaded(List<String>sorts);
+
+        void onDataNotAvailable();
+    }
+
+    void updateTask(@NonNull Task task);
+
+    void getSorts(@NonNull LoadSortsCallback callback);
+
     void getTasks(@NonNull LoadTasksCallback callback);
 
-    void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
+    void getTask(@NonNull Long taskId, @NonNull GetTaskCallback callback);
 
     void saveTask(@NonNull Task task);
 
