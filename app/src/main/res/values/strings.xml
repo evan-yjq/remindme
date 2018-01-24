@@ -6,6 +6,13 @@
     <string name="nav_sort">按分类显示</string>
     <string name="nav_time">按时间显示</string>
 
+    <string name="navigation_view_header_title">Remind-Me!</string>
+    <string name="list_title">提醒列表</string>
+    <string name="statistics_title">分类管理</string>
+
+    <string name="no_tasks_all">你还没有提醒!</string>
+    <string name="no_tasks_add">添加提醒+</string>
+
     <string name="refresh">刷新</string>
 
 </resources>

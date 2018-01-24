@@ -6,6 +6,7 @@ import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
+import java.util.Comparator;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -18,7 +19,7 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 
 @Entity
-public class Task {
+public class Task implements Comparable<Task>{
     @Id(autoincrement = true)
     private Long id;
 
@@ -52,21 +53,21 @@ public class Task {
     private Date nextTime;
 
     //分类
-    private String sort;
+    private Long sortId;
 
     //铃声所在地
     private String bell;
 
-    @Generated(hash = 1289156772)
+    @Generated(hash = 250884039)
     public Task(Long id, String title, int circle, int repeat, Date time,
-            Date nextTime, String sort, String bell) {
+            Date nextTime, Long sortId, String bell) {
         this.id = id;
         this.title = title;
         this.circle = circle;
         this.repeat = repeat;
         this.time = time;
         this.nextTime = nextTime;
-        this.sort = sort;
+        this.sortId = sortId;
         this.bell = bell;
     }
 
@@ -114,14 +115,6 @@ public class Task {
         this.repeat = repeat;
     }
 
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
     public String getBell() {
         return bell;
     }
@@ -136,6 +129,14 @@ public class Task {
 
     public void setCircle(int circle) {
         this.circle = circle;
+    }
+
+    public Long getSortId() {
+        return sortId;
+    }
+
+    public void setSortId(Long sortId) {
+        this.sortId = sortId;
     }
 
     public boolean isRepeat(){
@@ -166,7 +167,6 @@ public class Task {
         return TasksCircleType.CIRCLE_;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -176,18 +176,35 @@ public class Task {
                 Objects.equal(title, task.title) &&
                 Objects.equal(circle, task.circle) &&
                 Objects.equal(time, task.time) &&
-                Objects.equal(sort,task.sort)&&
+                Objects.equal(sortId,task.sortId)&&
                 Objects.equal(repeat, task.repeat)&&
                 Objects.equal(bell, task.bell);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id,title,circle,time,repeat,sort,bell);
+        return Objects.hashCode(id,title,circle,time,repeat,sortId,bell);
     }
 
     @Override
     public String toString() {
         return "Task with title "+title;
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        if(this.nextTime.equals(task.nextTime)) {
+            if (this.time.equals(task.time)) {
+                return 0;
+            }else if(this.time.before(task.time)){
+                return 1;
+            }else{
+                return -1;
+            }
+        }else if (this.nextTime.before(task.nextTime)) {
+            return 1;
+        }else {
+            return -1;
+        }
     }
 }
