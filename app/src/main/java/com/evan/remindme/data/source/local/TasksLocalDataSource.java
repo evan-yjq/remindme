@@ -45,6 +45,26 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
+    public void turnOnTask(@NonNull Task task) {
+        updateTask(task);
+    }
+
+    @Override
+    public void turnOnTask(@NonNull Long taskId) {
+
+    }
+
+    @Override
+    public void turnOffTask(@NonNull Task task) {
+        updateTask(task);
+    }
+
+    @Override
+    public void turnOffTask(@NonNull Long taskId) {
+
+    }
+
+    @Override
     public void updateTask(@NonNull final Task task) {
         Runnable runnable = new Runnable() {
             @Override
@@ -145,6 +165,11 @@ public class TasksLocalDataSource implements TasksDataSource {
             }
         };
         mAppExecutors.diskIO().execute(saveRunnable);
+    }
+
+    @Override
+    public void refreshTasks() {
+
     }
 
     @Override

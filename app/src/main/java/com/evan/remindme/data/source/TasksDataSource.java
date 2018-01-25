@@ -26,6 +26,14 @@ public interface TasksDataSource {
         void onDataNotAvailable();
     }
 
+    void turnOnTask(@NonNull Task task);
+
+    void turnOnTask(@NonNull Long taskId);
+
+    void turnOffTask(@NonNull Task task);
+
+    void turnOffTask(@NonNull Long taskId);
+
     void updateTask(@NonNull Task task);
 
     void getTasks(@NonNull LoadTasksCallback callback);
@@ -33,6 +41,8 @@ public interface TasksDataSource {
     void getTask(@NonNull Long taskId, @NonNull GetTaskCallback callback);
 
     void saveTask(@NonNull Task task);
+
+    void refreshTasks();
 
     void deleteTask(@NonNull Long taskId);
 

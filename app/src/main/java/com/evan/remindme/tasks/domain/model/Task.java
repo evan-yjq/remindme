@@ -58,21 +58,15 @@ public class Task implements Comparable<Task>{
     //铃声所在地
     private String bell;
 
-    @Generated(hash = 250884039)
-    public Task(Long id, String title, int circle, int repeat, Date time,
-            Date nextTime, Long sortId, String bell) {
-        this.id = id;
-        this.title = title;
-        this.circle = circle;
-        this.repeat = repeat;
-        this.time = time;
-        this.nextTime = nextTime;
-        this.sortId = sortId;
-        this.bell = bell;
+    //是否开启
+    private boolean turnOn;
+
+    public boolean isTurnOn() {
+        return turnOn;
     }
 
-    @Generated(hash = 733837707)
-    public Task() {
+    public void setTurnOn(boolean turnOn) {
+        this.turnOn = turnOn;
     }
 
     public Date getTime() {
@@ -181,6 +175,40 @@ public class Task implements Comparable<Task>{
                 Objects.equal(bell, task.bell);
     }
 
+    public Task(Task task){
+        this.time = task.time;
+        this.nextTime = task.nextTime;
+        this.repeat = task.repeat;
+        this.title = task.title;
+        this.bell = task.bell;
+        this.circle = task.circle;
+        this.id = task.id;
+        this.sortId = task.sortId;
+        this.turnOn = task.turnOn;
+    }
+
+    public Task(String title,Date time){
+        this(null,title,-1,-1,time,time,(long)1,"",true);
+    }
+
+    @Generated(hash = 185465704)
+    public Task(Long id, String title, int circle, int repeat, Date time,
+            Date nextTime, Long sortId, String bell, boolean turnOn) {
+        this.id = id;
+        this.title = title;
+        this.circle = circle;
+        this.repeat = repeat;
+        this.time = time;
+        this.nextTime = nextTime;
+        this.sortId = sortId;
+        this.bell = bell;
+        this.turnOn = turnOn;
+    }
+
+    @Generated(hash = 733837707)
+    public Task() {
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id,title,circle,time,repeat,sortId,bell);
@@ -206,5 +234,9 @@ public class Task implements Comparable<Task>{
         }else {
             return -1;
         }
+    }
+
+    public boolean getTurnOn() {
+        return this.turnOn;
     }
 }

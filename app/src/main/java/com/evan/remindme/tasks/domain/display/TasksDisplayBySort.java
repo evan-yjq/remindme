@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks.domain.display;
 
+import com.evan.remindme.tasks.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.*;
@@ -11,15 +12,16 @@ import java.util.*;
  * Time: 上午12:41
  */
 public class TasksDisplayBySort implements TaskDisplay {
+    private List<Task>mTasks;
     @Override
-    public Map<String, List<Task>> display(List<Task> tasks, String[] rules) {
-        Map<String, List<Task>> displayedTasks = new HashMap<>();
+    public List<Task> display(List<Sort>sorts) {
+        List<Task> displayedTasks = new ArrayList<>();
 
         int count = 0;
-        for (String rule : rules) {
+        for (Sort sort : sorts) {
             List<Task>list = new ArrayList<>();
-            for (Task task : tasks) {
-                if (task.getSortId().toString().equals(rule)){
+            for (Task task : mTasks) {
+                if (task.getSortId().equals(sort.getId())){
                     list.add(task);
                     count++;
                 }
@@ -27,12 +29,22 @@ public class TasksDisplayBySort implements TaskDisplay {
                  * 设置count，如果count==数据总长
                  * 就可以提前停止循环，避免浪费系统资源
                  */
-                if (count==tasks.size())break;
+                if (count==mTasks.size())break;
             }
             Collections.sort(list);
-            displayedTasks.put(rule,list);
+            Task s = new Task();
+            s.setId((long) -1);
+            s.setTitle(sort.getName());
+            s.setSortId(sort.getId());
+            displayedTasks.add(s);
+            displayedTasks.addAll(list);
         }
 
         return displayedTasks;
+    }
+
+    @Override
+    public void setList(List<Task> tasks) {
+        mTasks = tasks;
     }
 }

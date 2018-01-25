@@ -1,8 +1,11 @@
 package com.evan.remindme.tasks.domain.model;
 
+import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+
+import java.util.Comparator;
 
 /**
  * Created by IntelliJ IDEA
@@ -11,7 +14,7 @@ import org.greenrobot.greendao.annotation.Generated;
  * Time: 上午2:18
  */
 @Entity
-public class Sort {
+public class Sort implements Comparable<Sort>{
     @Id(autoincrement = true)
     private Long id;
 
@@ -25,6 +28,11 @@ public class Sort {
 
     @Generated(hash = 1984197757)
     public Sort() {
+    }
+
+    public Sort(Sort sort){
+        this.id = sort.id;
+        this.name = sort.name;
     }
 
     public Long getId() {
@@ -41,5 +49,30 @@ public class Sort {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sort sort = (Sort)o;
+        return Objects.equal(this.id,sort.id)&&
+                Objects.equal(this.name,sort.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id,name);
+    }
+
+    @Override
+    public String toString() {
+        return "Sort name is " + name;
+    }
+
+
+    @Override
+    public int compareTo(Sort sort) {
+        return this.id > sort.id ? 1 : -1;
     }
 }

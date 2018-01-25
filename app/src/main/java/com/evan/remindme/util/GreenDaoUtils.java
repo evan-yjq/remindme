@@ -24,7 +24,7 @@ public class GreenDaoUtils {
     }
 
     private void initGreenDao(Context context){
-        mHelper=new DaoMaster.DevOpenHelper(context,"an-db",null);
+        mHelper=new DaoMaster.DevOpenHelper(context,"remindDB",null);
         db=mHelper.getWritableDatabase();
         mDaoMaster=new DaoMaster(db);
         mDaoSession=mDaoMaster.newSession();

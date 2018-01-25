@@ -1,7 +1,12 @@
 package com.evan.remindme.tasks;
 
+import android.support.annotation.NonNull;
 import com.evan.remindme.BasePresenter;
 import com.evan.remindme.BaseView;
+import com.evan.remindme.tasks.domain.model.Task;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA
@@ -13,18 +18,54 @@ public interface TasksContract {
 
     interface View extends BaseView<Presenter>{
 
+        void setLoadingIndicator(boolean active);
+
+        void showTasks(List<Task> tasks);
+
+        void showAddTask();
+
+        void showTaskDetailsUi(Long taskId);
+
         void showNoTasks();
 
         void showNoSortTasks();
 
-        void showFilteringPopUpMenu();
+        void showTaskMarkedTurnOn();
+
+        void showTaskMarkedTurnOff();
+
+        void showSuccessfullySavedMessage();
+
+        void showLoadingTasksError();
+
+        void showDisplayBySortLabel();
+
+        void showDisplayByTimeLabel();
+
+        void showDisplayingPopUpMenu();
+
+        boolean isActive();
 
     }
 
     interface Presenter extends BasePresenter{
 
-        void setDisplay();
+        void result(int requestCode, int resultCode);
 
-        void loadTasks();
+        void setDisplay(TasksDisplayType requestType);
+
+        void loadTasks(boolean forceUpdate);
+
+        void addNewTask();
+
+        void openTaskDetails(@NonNull Task requestedTask);
+
+        void turnOnTask(@NonNull Task turnOnTask);
+
+        void turnOffTask(@NonNull Task turnOffTask);
+
+        List<Task> openCloseSort(List<Task>tasks,long sortId);
+
+        TasksDisplayType getDisplaying();
     }
 }

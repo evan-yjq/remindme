@@ -117,6 +117,11 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
+    public void refreshSorts() {
+
+    }
+
+    @Override
     public void updateSort(@NonNull final Sort sort) {
         Runnable runnable = new Runnable() {
             @Override

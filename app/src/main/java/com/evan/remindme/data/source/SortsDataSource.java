@@ -30,13 +30,15 @@ public interface SortsDataSource {
 
     void getSorts(@NonNull LoadSortsCallback callback);
 
-    void getSort(@NonNull Long SortId, @NonNull GetSortCallback callback);
+    void getSort(@NonNull Long sortId, @NonNull GetSortCallback callback);
 
     void saveSort(@NonNull Sort sort);
 
     void deleteSort(@NonNull Long sortId);
 
     void deleteAllSorts();
+
+    void refreshSorts();
 
     void updateSort(@NonNull Sort sort);
 }
