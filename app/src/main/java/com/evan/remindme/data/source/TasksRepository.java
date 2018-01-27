@@ -68,8 +68,8 @@ public class TasksRepository implements TasksDataSource {
         mTasksRemoteDataSource.turnOnTask(task);
         mTasksLocalDataSource.turnOnTask(task);
 
+        task.setTurnOn(true);
         Task turnOnTask = new Task(task);
-        turnOnTask.setTurnOn(true);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
@@ -90,8 +90,8 @@ public class TasksRepository implements TasksDataSource {
         mTasksRemoteDataSource.turnOffTask(task);
         mTasksLocalDataSource.turnOffTask(task);
 
+        task.setTurnOn(false);
         Task turnOffTask = new Task(task);
-        turnOffTask.setTurnOn(false);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();

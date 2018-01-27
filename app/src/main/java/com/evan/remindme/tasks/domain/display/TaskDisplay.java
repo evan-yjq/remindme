@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks.domain.display;
 
+import android.widget.ListView;
 import com.evan.remindme.tasks.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
@@ -13,6 +14,5 @@ import java.util.Map;
  * Time: 下午9:47
  */
 public interface TaskDisplay {
-    void setList(List<Task> tasks);
-    Map<String,List<Task>> display(List<Sort> sorts);
+    Map<String,List<Task>> display(List<Task>tasks,List<Sort> sorts);
 }

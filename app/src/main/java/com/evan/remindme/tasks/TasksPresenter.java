@@ -34,7 +34,8 @@ public class TasksPresenter implements TasksContract.Presenter {
     //默认显示方式
     private TasksDisplayType mCurrentDisplaying = TasksDisplayType.TASKS_BY_SORT;
 
-    private boolean mFirstLoad = true;
+    // 设定第一次是否从网络数据中启动
+    private boolean mFirstLoad = false;
 
     private final UseCaseHandler mUseCaseHandler;
 

@@ -49,8 +49,22 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
         mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
             @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                taskDisplay.setList(tasks);
+            public void onTasksLoaded(final List<Task> tasks) {
+                mSortsRepository.getSorts(new SortsDataSource.LoadSortsCallback() {
+                    @Override
+                    public void onSortsLoaded(
+                            List<Sort> sorts) {
+                        Map<String,List<Task>> tasksDisplay = taskDisplay.display(tasks,sorts);
+                        ResponseValue responseValue = new ResponseValue(tasksDisplay);
+                        getUseCaseCallback().onSuccess(responseValue);
+                    }
+                    @Override
+                    public void onDataNotAvailable() {
+                        Map<String,List<Task>> tasksDisplay = taskDisplay.display(tasks,null);
+                        ResponseValue responseValue = new ResponseValue(tasksDisplay);
+                        getUseCaseCallback().onSuccess(responseValue);
+                    }
+                });
             }
 
             @Override
@@ -59,20 +73,7 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
             }
         });
 
-        mSortsRepository.getSorts(new SortsDataSource.LoadSortsCallback() {
-            @Override
-            public void onSortsLoaded(final List<Sort> sorts) {
-                Map<String,List<Task>> tasksDisplay = taskDisplay.display(sorts);
-                ResponseValue responseValue = new ResponseValue(tasksDisplay);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-            @Override
-            public void onDataNotAvailable() {
-                Map<String,List<Task>> tasksDisplay = taskDisplay.display(null);
-                ResponseValue responseValue = new ResponseValue(tasksDisplay);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-        });
+
 
 
 

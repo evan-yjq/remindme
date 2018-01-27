@@ -14,21 +14,14 @@ import java.util.*;
  */
 public class TasksDisplayByTime implements TaskDisplay{
 
-    private List<Task>mTasks;
-
     @Override
-    public void setList(List<Task> tasks) {
-        mTasks = tasks;
-    }
-
-    @Override
-    public Map<String,List<Task>> display(List<Sort> sorts) {
+    public Map<String,List<Task>> display(List<Task>tasks,List<Sort> sorts) {
 
         Map<String,List<Task>> map = new HashMap<>();
 
-        Collections.sort(mTasks);
+        Collections.sort(tasks);
 
-        map.put("",mTasks);
+        map.put("",tasks);
 
         return map;
     }

@@ -12,15 +12,14 @@ import java.util.*;
  * Time: 上午12:41
  */
 public class TasksDisplayBySort implements TaskDisplay {
-    private List<Task>mTasks;
     @Override
-    public Map<String,List<Task>> display(List<Sort>sorts) {
+    public Map<String,List<Task>> display(List<Task>tasks,List<Sort>sorts) {
         Map<String,List<Task>> displayedTasks = new HashMap<>();
 
         int count = 0;
         for (Sort sort : sorts) {
             List<Task>list = new ArrayList<>();
-            for (Task task : mTasks) {
+            for (Task task : tasks) {
                 if (task.getSortId().equals(sort.getId())){
                     list.add(task);
                     count++;
@@ -29,14 +28,14 @@ public class TasksDisplayBySort implements TaskDisplay {
                  * 设置count，如果count==数据总长
                  * 就可以提前停止循环，避免浪费系统资源
                  */
-                if (count==mTasks.size())break;
+                if (count==tasks.size())break;
             }
             Collections.sort(list);
             displayedTasks.put(sort.getName(),list);
         }
         List<Task> tmp = new ArrayList<>();
-        if (count < mTasks.size()){
-            for (Task task : mTasks) {
+        if (count < tasks.size()){
+            for (Task task : tasks) {
                 int i = 0;
                 for (Sort sort : sorts) {
                     if (task.getSortId().equals(sort.getId()))
@@ -51,10 +50,5 @@ public class TasksDisplayBySort implements TaskDisplay {
         }
 
         return displayedTasks;
-    }
-
-    @Override
-    public void setList(List<Task> tasks) {
-        mTasks = tasks;
     }
 }

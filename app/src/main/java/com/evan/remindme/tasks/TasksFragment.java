@@ -300,7 +300,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     /**
-     * Listener for clicks on tasks in the ListView.
+     * 监听ListView中tasks的点击
      */
     TaskItemListener mItemListener = new TaskItemListener() {
 
@@ -476,6 +476,13 @@ public class TasksFragment extends Fragment implements TasksContract.View {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 rowView = inflater.inflate(R.layout.sort_item,viewGroup,false);
             }
+            int j = 0;
+            for (Task task : getGroup(i)) {
+                if (task.isTurnOn())j++;
+            }
+            TextView numTV = rowView.findViewById(R.id.num);
+            numTV.setText(j+"/"+getChildrenCount(i));
+
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(sortNames[i]);
             return rowView;
