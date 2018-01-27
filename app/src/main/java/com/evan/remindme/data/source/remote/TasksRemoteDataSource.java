@@ -21,18 +21,17 @@ public class TasksRemoteDataSource implements TasksDataSource{
 
     private static final int SERVICE_LATENCY_IN_MILLIS = 5000;
 
-    private static final Map<Long, Task> TASKS_SERVICE_DATA;
+    private static final Map<String, Task> TASKS_SERVICE_DATA;
 
     static {
         TASKS_SERVICE_DATA = new LinkedHashMap<>(2);
-        addTask("Build tower in Pisa",1);
-        addTask("Finish bridge in Tacoma",2);
+        addTask("Build tower in Pisa","默认");
+        addTask("Finish bridge in Tacoma","新建");
+        addTask("test","test");
     }
 
-    private static void addTask(String title,long id) {
-        Task newTask = new Task(title,new Date());
-        newTask.setId(id);
-        newTask.setSortId(id);
+    private static void addTask(String title,String sortName) {
+        Task newTask = new Task(title,sortName,new Date());
         TASKS_SERVICE_DATA.put(newTask.getId(), newTask);
     }
 
@@ -52,7 +51,7 @@ public class TasksRemoteDataSource implements TasksDataSource{
     }
 
     @Override
-    public void turnOnTask(@NonNull Long taskId) {
+    public void turnOnTask(@NonNull String taskId) {
 
     }
 
@@ -62,7 +61,7 @@ public class TasksRemoteDataSource implements TasksDataSource{
     }
 
     @Override
-    public void turnOffTask(@NonNull Long taskId) {
+    public void turnOffTask(@NonNull String taskId) {
 
     }
 
@@ -78,7 +77,7 @@ public class TasksRemoteDataSource implements TasksDataSource{
     }
 
     @Override
-    public void getTask(@NonNull Long taskId, @NonNull GetTaskCallback callback) {
+    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
         Task task = TASKS_SERVICE_DATA.get(taskId);
         callback.onTaskLoaded(task);
     }
@@ -94,7 +93,7 @@ public class TasksRemoteDataSource implements TasksDataSource{
     }
 
     @Override
-    public void deleteTask(@NonNull Long taskId) {
+    public void deleteTask(@NonNull String taskId) {
         TASKS_SERVICE_DATA.remove(taskId);
     }
 

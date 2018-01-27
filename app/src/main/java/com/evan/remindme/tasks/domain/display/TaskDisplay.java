@@ -14,5 +14,5 @@ import java.util.Map;
  */
 public interface TaskDisplay {
     void setList(List<Task> tasks);
-    List<Task> display(List<Sort> sorts);
+    Map<String,List<Task>> display(List<Sort> sorts);
 }

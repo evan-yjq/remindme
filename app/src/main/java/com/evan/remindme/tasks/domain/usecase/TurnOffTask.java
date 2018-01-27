@@ -22,19 +22,19 @@ public class TurnOffTask extends UseCase<TurnOffTask.RequestValues,TurnOffTask.R
 
     @Override
     protected void executeUseCase(TurnOffTask.RequestValues values) {
-        Long turnOffTask = values.getmTurnOffTask();
+        String turnOffTask = values.getmTurnOffTask();
         mTasksRepository.turnOffTask(turnOffTask);
         getUseCaseCallback().onSuccess(new TurnOffTask.ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final Long mTurnOffTask;
+        private final String mTurnOffTask;
 
-        public RequestValues(@NonNull Long turnOffTask){
+        public RequestValues(@NonNull String turnOffTask){
             mTurnOffTask = checkNotNull(turnOffTask,"turnOffTask cannot be null!");
         }
 
-        public Long getmTurnOffTask() {
+        public String getmTurnOffTask() {
             return mTurnOffTask;
         }
     }

@@ -62,13 +62,13 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
         mSortsRepository.getSorts(new SortsDataSource.LoadSortsCallback() {
             @Override
             public void onSortsLoaded(final List<Sort> sorts) {
-                List<Task> tasksDisplay = taskDisplay.display(sorts);
+                Map<String,List<Task>> tasksDisplay = taskDisplay.display(sorts);
                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                 getUseCaseCallback().onSuccess(responseValue);
             }
             @Override
             public void onDataNotAvailable() {
-                List<Task> tasksDisplay = taskDisplay.display(null);
+                Map<String,List<Task>> tasksDisplay = taskDisplay.display(null);
                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                 getUseCaseCallback().onSuccess(responseValue);
             }
@@ -100,13 +100,13 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
     }
     public static final class ResponseValue implements UseCase.ResponseValue {
-        private final List<Task> mTasks;
+        private final Map<String,List<Task>> mTasks;
 
-        public ResponseValue(@NonNull List<Task> tasks) {
+        public ResponseValue(@NonNull Map<String,List<Task>> tasks) {
             mTasks = checkNotNull(tasks, "tasks cannot be null!");
         }
 
-        public List<Task> getTasks() {
+        public Map<String,List<Task>> getTasks() {
             return mTasks;
         }
     }

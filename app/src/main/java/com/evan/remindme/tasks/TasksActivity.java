@@ -64,7 +64,8 @@ public class TasksActivity extends AppCompatActivity{
                 tasksFragment,
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideTurnOnTask(getApplicationContext()),
-                Injection.provideTurnOffTasks(getApplicationContext()));
+                Injection.provideTurnOffTasks(getApplicationContext()),
+                Injection.provideSaveTasks(getApplicationContext()));
 
         //加载之前保存的状态（如果可用）。
         if (savedInstanceState != null) {

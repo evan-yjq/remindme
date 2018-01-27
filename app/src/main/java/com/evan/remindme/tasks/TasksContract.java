@@ -20,11 +20,13 @@ public interface TasksContract {
 
         void setLoadingIndicator(boolean active);
 
-        void showTasks(List<Task> tasks);
+        void showSortTasks(Map<String,List<Task>> tasks);
+
+        void showTimeTasks(List<Task> tasks);
 
         void showAddTask();
 
-        void showTaskDetailsUi(Long taskId);
+        void showTaskDetailsUi(String taskId);
 
         void showNoTasks();
 
@@ -49,6 +51,8 @@ public interface TasksContract {
     }
 
     interface Presenter extends BasePresenter{
+
+        void save(@NonNull Task task);
 
         void result(int requestCode, int resultCode);
 

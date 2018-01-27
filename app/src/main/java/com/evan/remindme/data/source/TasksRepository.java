@@ -25,7 +25,7 @@ public class TasksRepository implements TasksDataSource {
     /**
      * 这个变量具有包本地可见性，所以可以从测试中访问它.
      */
-    Map<Long, Task> mCachedTasks;
+    Map<String, Task> mCachedTasks;
 
     /**
      * 将缓存标记为无效，在下一次请求数据时强制更新
@@ -79,7 +79,7 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void turnOnTask(@NonNull Long taskId) {
+    public void turnOnTask(@NonNull String taskId) {
         checkNotNull(taskId);
         turnOnTask(Objects.requireNonNull(getTaskWithId(taskId)));
     }
@@ -100,7 +100,7 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void turnOffTask(@NonNull Long taskId) {
+    public void turnOffTask(@NonNull String taskId) {
         checkNotNull(taskId);
         turnOffTask(Objects.requireNonNull(getTaskWithId(taskId)));
     }
@@ -154,7 +154,7 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void getTask(@NonNull final Long taskId, @NonNull final GetTaskCallback callback) {
+    public void getTask(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
         checkNotNull(taskId);
         checkNotNull(callback);
 
@@ -221,7 +221,7 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull Long taskId) {
+    public void deleteTask(@NonNull String taskId) {
         mTasksRemoteDataSource.deleteTask(checkNotNull(taskId));
         mTasksLocalDataSource.deleteTask(checkNotNull(taskId));
 
@@ -256,7 +256,7 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Nullable
-    private Task getTaskWithId(@NonNull Long id) {
+    private Task getTaskWithId(@NonNull String id) {
         checkNotNull(id);
         if (mCachedTasks == null || mCachedTasks.isEmpty()) {
             return null;

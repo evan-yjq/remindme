@@ -28,6 +28,7 @@ import com.evan.remindme.data.source.remote.SortsRemoteDataSource;
 import com.evan.remindme.data.source.remote.TasksRemoteDataSource;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
+import com.evan.remindme.tasks.domain.usecase.SaveTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOffTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOnTask;
 import com.evan.remindme.util.AppExecutors;
@@ -83,6 +84,9 @@ public class Injection {
 
     public static TurnOffTask provideTurnOffTasks(@NonNull Context context) {
         return new TurnOffTask(Injection.provideTasksRepository(context));
+    }
+    public static SaveTask provideSaveTasks(@NonNull Context context) {
+        return new SaveTask(Injection.provideTasksRepository(context));
     }
 
 //    public static DeleteTask provideDeleteTask(@NonNull Context context) {

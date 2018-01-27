@@ -62,7 +62,7 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void getSort(@NonNull final Long SortId, @NonNull final GetSortCallback callback) {
+    public void getSort(@NonNull final String SortId, @NonNull final GetSortCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -95,7 +95,7 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void deleteSort(@NonNull final Long sortId) {
+    public void deleteSort(@NonNull final String sortId) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

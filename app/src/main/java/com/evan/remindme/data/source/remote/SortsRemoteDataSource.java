@@ -21,18 +21,16 @@ public class SortsRemoteDataSource implements SortsDataSource {
 
     private static final int SERVICE_LATENCY_IN_MILLIS = 5000;
 
-    private static final Map<Long, Sort> SORTS_SERVICE_DATA;
+    private static final Map<String, Sort> SORTS_SERVICE_DATA;
 
     static {
         SORTS_SERVICE_DATA = new LinkedHashMap<>(1);
-        addSort("默认",1);
-        addSort("新建",2);
+        addSort("默认");
+        addSort("新建");
     }
 
-    private static void addSort(String title,long id) {
-        Sort newSort = new Sort();
-        newSort.setName(title);
-        newSort.setId(id);
+    private static void addSort(String title) {
+        Sort newSort = new Sort("",title);
         SORTS_SERVICE_DATA.put(newSort.getId(), newSort);
     }
 
@@ -52,7 +50,7 @@ public class SortsRemoteDataSource implements SortsDataSource {
     }
 
     @Override
-    public void getSort(@NonNull Long sortId, @NonNull GetSortCallback callback) {
+    public void getSort(@NonNull String sortId, @NonNull GetSortCallback callback) {
         Sort sort = SORTS_SERVICE_DATA.get(sortId);
         callback.onSortLoaded(sort);
     }
@@ -63,7 +61,7 @@ public class SortsRemoteDataSource implements SortsDataSource {
     }
 
     @Override
-    public void deleteSort(@NonNull Long sortId) {
+    public void deleteSort(@NonNull String sortId) {
         SORTS_SERVICE_DATA.remove(sortId);
     }
 

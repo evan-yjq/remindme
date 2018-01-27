@@ -6,6 +6,7 @@ import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
+import com.evan.remindme.tasks.domain.usecase.SaveTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOffTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOnTask;
 import com.evan.remindme.util.Objects;
@@ -28,6 +29,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetTasks mGetTasks;
     private final TurnOnTask mTurnOnTask;
     private final TurnOffTask mTurnOffTask;
+    private final SaveTask mSaveTask;
 
     //默认显示方式
     private TasksDisplayType mCurrentDisplaying = TasksDisplayType.TASKS_BY_SORT;
@@ -39,12 +41,14 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull TasksContract.View tasksView, @NonNull GetTasks getTasks,
-                          @NonNull TurnOnTask turnOnTask, @NonNull TurnOffTask turnOffTask) {
+                          @NonNull TurnOnTask turnOnTask, @NonNull TurnOffTask turnOffTask,
+                          @NonNull SaveTask saveTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTasks = checkNotNull(getTasks, "getTask cannot be null!");
         mTurnOnTask = checkNotNull(turnOnTask, "turnOnTask cannot be null!");
         mTurnOffTask = checkNotNull(turnOffTask, "turnOffTask cannot be null!");
+        mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
 
         mTasksView.setPresenter(this);
     }
@@ -63,6 +67,23 @@ public class TasksPresenter implements TasksContract.Presenter {
 //                && Activity.RESULT_OK == resultCode) {
 //            mTasksView.showSuccessfullySavedMessage();
 //        }
+    }
+
+    @Override
+    public void save(@NonNull Task task) {
+        checkNotNull(task,"saveTask cannot be null!");
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {
+                        loadTasks(false,false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showLoadingTasksError();
+                    }
+                });
     }
 
     @Override
@@ -93,7 +114,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
             @Override
             public void onSuccess(GetTasks.ResponseValue response) {
-                List<Task> tasks = response.getTasks();
+                Map<String,List<Task>> tasks = response.getTasks();
                 //该视图可能无法处理UI更新
                 if (!mTasksView.isActive()){
                     return;
@@ -119,13 +140,20 @@ public class TasksPresenter implements TasksContract.Presenter {
         });
     }
 
-    private void processTasks(List<Task> tasks) {
+    private void processTasks(Map<String,List<Task>> tasks) {
         if (tasks.isEmpty()){
             //显示一条消息，指出该过滤器类型没有Task
             processEmptyTasks();
         }else{
             //显示Task列表
-            mTasksView.showTasks(tasks);
+            switch (mCurrentDisplaying){
+                case TASKS_BY_SORT:
+                    mTasksView.showSortTasks(tasks);
+                    break;
+                case TASKS_BY_TIME:
+                    mTasksView.showTimeTasks(tasks.get(""));
+                    break;
+            }
             //设置显示label标题
             showDisplayLabel();
         }

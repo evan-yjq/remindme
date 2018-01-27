@@ -3,39 +3,40 @@ package com.evan.remindme.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.data.source.TasksRepository;
+import com.evan.remindme.tasks.domain.model.Task;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
  * Created by IntelliJ IDEA
  * User: Evan
- * Date: 2018/1/25
- * Time: 下午11:48
+ * Date: 2018/1/27
+ * Time: 下午8:26
  */
-public class TurnOnTask extends UseCase<TurnOnTask.RequestValues,TurnOnTask.ResponseValue>{
+public class SaveTask extends UseCase<SaveTask.RequestValues,SaveTask.ResponseValue>{
 
     private final TasksRepository mTasksRepository;
 
-    public TurnOnTask(@NonNull TasksRepository tasksRepository){
+    public SaveTask(@NonNull TasksRepository tasksRepository){
         mTasksRepository = checkNotNull(tasksRepository,"tasksRepository cannot be null!");
     }
 
     @Override
-    protected void executeUseCase(RequestValues values) {
-        String turnOnTask = values.getmTurnOnTask();
-        mTasksRepository.turnOnTask(turnOnTask);
+    protected void executeUseCase(SaveTask.RequestValues values) {
+        Task saveTask = values.getmSaveTask();
+        mTasksRepository.saveTask(saveTask);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final String mTurnOnTask;
+        private final Task mSaveTask;
 
-        public RequestValues(@NonNull String turnOnTask){
-            mTurnOnTask = checkNotNull(turnOnTask,"turnOnTask cannot be null!");
+        public RequestValues(@NonNull Task saveTask){
+            mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
         }
 
-        public String getmTurnOnTask() {
-            return mTurnOnTask;
+        public Task getmSaveTask() {
+            return mSaveTask;
         }
     }
 

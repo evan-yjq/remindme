@@ -29,7 +29,7 @@ public class SortsRepository implements SortsDataSource{
     /**
      * 这个变量具有包本地可见性，所以可以从测试中访问它.
      */
-    Map<Long, Sort> mCachedSorts;
+    Map<String, Sort> mCachedSorts;
 
     /**
      * 将缓存标记为无效，在下一次请求数据时强制更新
@@ -96,7 +96,7 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
-    public void getSort(@NonNull final Long sortId, @NonNull final GetSortCallback callback) {
+    public void getSort(@NonNull final String sortId, @NonNull final GetSortCallback callback) {
         checkNotNull(sortId);
         checkNotNull(callback);
 
@@ -158,7 +158,7 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
-    public void deleteSort(@NonNull Long sortId) {
+    public void deleteSort(@NonNull String sortId) {
         mSortsRemoteDataSource.deleteSort(checkNotNull(sortId));
         mSortsLocalDataSource.deleteSort(checkNotNull(sortId));
 
@@ -230,7 +230,7 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Nullable
-    private Sort getSortWithId(@NonNull Long id) {
+    private Sort getSortWithId(@NonNull String id) {
         checkNotNull(id);
         if (mCachedSorts == null || mCachedSorts.isEmpty()) {
             return null;

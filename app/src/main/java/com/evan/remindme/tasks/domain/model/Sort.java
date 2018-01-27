@@ -4,6 +4,7 @@ import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 
 import java.util.Comparator;
 
@@ -15,31 +16,32 @@ import java.util.Comparator;
  */
 @Entity
 public class Sort implements Comparable<Sort>{
-    @Id(autoincrement = true)
-    private Long id;
+    @Id
+    private String id;
 
     private String name;
-
-    @Generated(hash = 492124304)
-    public Sort(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    @Generated(hash = 1984197757)
-    public Sort() {
-    }
 
     public Sort(Sort sort){
         this.id = sort.id;
         this.name = sort.name;
     }
 
-    public Long getId() {
+    @Keep
+    @Generated(hash = 504468038)
+    public Sort(String id, String name) {
+        this.name = name;
+        this.id = this.hashCode()+"";
+    }
+
+    @Generated(hash = 1984197757)
+    public Sort() {
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -62,7 +64,7 @@ public class Sort implements Comparable<Sort>{
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id,name);
+        return name.hashCode();
     }
 
     @Override
@@ -73,6 +75,6 @@ public class Sort implements Comparable<Sort>{
 
     @Override
     public int compareTo(Sort sort) {
-        return this.id > sort.id ? 1 : -1;
+        return this.id.compareTo(sort.id);
     }
 }

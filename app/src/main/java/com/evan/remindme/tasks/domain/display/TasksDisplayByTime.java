@@ -22,10 +22,14 @@ public class TasksDisplayByTime implements TaskDisplay{
     }
 
     @Override
-    public List<Task> display(List<Sort> sorts) {
+    public Map<String,List<Task>> display(List<Sort> sorts) {
+
+        Map<String,List<Task>> map = new HashMap<>();
 
         Collections.sort(mTasks);
 
-        return mTasks;
+        map.put("",mTasks);
+
+        return map;
     }
 }

@@ -14,8 +14,8 @@ import java.util.*;
 public class TasksDisplayBySort implements TaskDisplay {
     private List<Task>mTasks;
     @Override
-    public List<Task> display(List<Sort>sorts) {
-        List<Task> displayedTasks = new ArrayList<>();
+    public Map<String,List<Task>> display(List<Sort>sorts) {
+        Map<String,List<Task>> displayedTasks = new HashMap<>();
 
         int count = 0;
         for (Sort sort : sorts) {
@@ -32,12 +32,22 @@ public class TasksDisplayBySort implements TaskDisplay {
                 if (count==mTasks.size())break;
             }
             Collections.sort(list);
-            Task s = new Task();
-            s.setId((long) -1);
-            s.setTitle(sort.getName());
-            s.setSortId(sort.getId());
-            displayedTasks.add(s);
-            displayedTasks.addAll(list);
+            displayedTasks.put(sort.getName(),list);
+        }
+        List<Task> tmp = new ArrayList<>();
+        if (count < mTasks.size()){
+            for (Task task : mTasks) {
+                int i = 0;
+                for (Sort sort : sorts) {
+                    if (task.getSortId().equals(sort.getId()))
+                        break;
+                    i++;
+                }
+                if (i == sorts.size())
+                    tmp.add(task);
+            }
+            displayedTasks.get("默认").addAll(tmp);
+            Collections.sort(displayedTasks.get("默认"));
         }
 
         return displayedTasks;

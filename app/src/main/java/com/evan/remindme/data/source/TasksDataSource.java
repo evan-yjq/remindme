@@ -28,23 +28,23 @@ public interface TasksDataSource {
 
     void turnOnTask(@NonNull Task task);
 
-    void turnOnTask(@NonNull Long taskId);
+    void turnOnTask(@NonNull String taskId);
 
     void turnOffTask(@NonNull Task task);
 
-    void turnOffTask(@NonNull Long taskId);
+    void turnOffTask(@NonNull String taskId);
 
     void updateTask(@NonNull Task task);
 
     void getTasks(@NonNull LoadTasksCallback callback);
 
-    void getTask(@NonNull Long taskId, @NonNull GetTaskCallback callback);
+    void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
 
     void saveTask(@NonNull Task task);
 
     void refreshTasks();
 
-    void deleteTask(@NonNull Long taskId);
+    void deleteTask(@NonNull String taskId);
 
     void deleteAllTasks();
 }

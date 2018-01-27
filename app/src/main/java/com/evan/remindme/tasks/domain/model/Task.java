@@ -9,6 +9,7 @@ import org.greenrobot.greendao.annotation.Id;
 import java.util.Comparator;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 
 
 /**
@@ -20,8 +21,8 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class Task implements Comparable<Task>{
-    @Id(autoincrement = true)
-    private Long id;
+    @Id
+    private String id;
 
     //标题
     private String title;
@@ -53,7 +54,7 @@ public class Task implements Comparable<Task>{
     private Date nextTime;
 
     //分类
-    private Long sortId;
+    private String sortId;
 
     //铃声所在地
     private String bell;
@@ -85,11 +86,11 @@ public class Task implements Comparable<Task>{
         this.nextTime = nextTime;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -125,11 +126,11 @@ public class Task implements Comparable<Task>{
         this.circle = circle;
     }
 
-    public Long getSortId() {
+    public String getSortId() {
         return sortId;
     }
 
-    public void setSortId(Long sortId) {
+    public void setSortId(String sortId) {
         this.sortId = sortId;
     }
 
@@ -187,14 +188,18 @@ public class Task implements Comparable<Task>{
         this.turnOn = task.turnOn;
     }
 
-    public Task(String title,Date time){
-        this(null,title,-1,-1,time,time,(long)1,"",true);
+    public Task(String title,String sortName,Date time){
+        this("",title,-1,-1,time,time,new Sort("",sortName).hashCode()+"","",true);
     }
 
-    @Generated(hash = 185465704)
-    public Task(Long id, String title, int circle, int repeat, Date time,
-            Date nextTime, Long sortId, String bell, boolean turnOn) {
-        this.id = id;
+    public Task(String title,Date time){
+        this("",title,-1,-1,time,time,new Sort("","默认").hashCode()+"","",true);
+    }
+
+    @Keep
+    @Generated(hash = 869892191)
+    public Task(String id, String title, int circle, int repeat, Date time,
+            Date nextTime, String sortId, String bell, boolean turnOn) {
         this.title = title;
         this.circle = circle;
         this.repeat = repeat;
@@ -203,15 +208,17 @@ public class Task implements Comparable<Task>{
         this.sortId = sortId;
         this.bell = bell;
         this.turnOn = turnOn;
+        this.id = this.hashCode()+"";
     }
 
     @Generated(hash = 733837707)
     public Task() {
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(id,title,circle,time,repeat,sortId,bell);
+        return Objects.hashCode(title,time);
     }
 
     @Override

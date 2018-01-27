@@ -50,7 +50,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void turnOnTask(@NonNull Long taskId) {
+    public void turnOnTask(@NonNull String taskId) {
 
     }
 
@@ -60,7 +60,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void turnOffTask(@NonNull Long taskId) {
+    public void turnOffTask(@NonNull String taskId) {
 
     }
 
@@ -134,7 +134,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void getTask(@NonNull final Long taskId, @NonNull final GetTaskCallback callback) {
+    public void getTask(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -173,7 +173,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull final Long taskId) {
+    public void deleteTask(@NonNull final String taskId) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
