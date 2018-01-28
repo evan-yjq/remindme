@@ -3,6 +3,7 @@ package com.evan.remindme.tasks;
 import android.support.annotation.NonNull;
 import com.evan.remindme.BasePresenter;
 import com.evan.remindme.BaseView;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.List;
@@ -20,11 +21,11 @@ public interface TasksContract {
 
         void setLoadingIndicator(boolean active);
 
-        void showSortTasks(Map<String,List<Task>> tasks);
+        void showSortTasks(Map<Sort,List<Task>> tasks);
 
         void showTimeTasks(List<Task> tasks);
 
-        void showAddTask();
+        void showAddTask(String name,Long id);
 
         void showTaskDetailsUi(String taskId);
 
@@ -40,9 +41,11 @@ public interface TasksContract {
 
         void showLoadingTasksError();
 
-        void showDisplayBySortLabel();
+//        void showDisplayBySortLabel();
 
-        void showDisplayByTimeLabel();
+//        void showDisplayByTimeLabel();
+
+        void showMessage(String message);
 
         void showDisplayingPopUpMenu();
 
@@ -60,7 +63,7 @@ public interface TasksContract {
 
         void loadTasks(boolean forceUpdate);
 
-        void addNewTask();
+        void addNewTask(String name);
 
         void openTaskDetails(@NonNull Task requestedTask);
 
@@ -68,7 +71,9 @@ public interface TasksContract {
 
         void turnOffTask(@NonNull Task turnOffTask);
 
-        List<Task> openCloseSort(List<Task>tasks,long sortId);
+        void openSort(@NonNull Sort openSort);
+
+        void closeSort(@NonNull Sort closeSort);
 
         TasksDisplayType getDisplaying();
     }

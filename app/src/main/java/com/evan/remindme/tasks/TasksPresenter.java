@@ -1,9 +1,14 @@
 package com.evan.remindme.tasks;
 
+import android.graphics.Path;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.data.source.TasksDataSource;
+import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.sorts.domain.usecase.CloseSort;
+import com.evan.remindme.sorts.domain.usecase.GetSortByName;
+import com.evan.remindme.sorts.domain.usecase.OpenSort;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
 import com.evan.remindme.tasks.domain.usecase.SaveTask;
@@ -30,6 +35,9 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final TurnOnTask mTurnOnTask;
     private final TurnOffTask mTurnOffTask;
     private final SaveTask mSaveTask;
+    private final OpenSort mOpenSort;
+    private final CloseSort mCloseSort;
+    private final GetSortByName mGetSortByName;
 
     //默认显示方式
     private TasksDisplayType mCurrentDisplaying = TasksDisplayType.TASKS_BY_SORT;
@@ -40,16 +48,20 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final UseCaseHandler mUseCaseHandler;
 
 
-    public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
-                          @NonNull TasksContract.View tasksView, @NonNull GetTasks getTasks,
-                          @NonNull TurnOnTask turnOnTask, @NonNull TurnOffTask turnOffTask,
-                          @NonNull SaveTask saveTask) {
-        mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
+    public TasksPresenter(@NonNull UseCaseHandler useCaseHandler, @NonNull TasksContract.View tasksView,
+                          @NonNull GetTasks getTasks, @NonNull TurnOnTask turnOnTask,
+                          @NonNull TurnOffTask turnOffTask, @NonNull SaveTask saveTask,
+                          @NonNull OpenSort openSort, @NonNull CloseSort closeSort,
+                          @NonNull GetSortByName getSortByName) {
+        mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTasks = checkNotNull(getTasks, "getTask cannot be null!");
         mTurnOnTask = checkNotNull(turnOnTask, "turnOnTask cannot be null!");
         mTurnOffTask = checkNotNull(turnOffTask, "turnOffTask cannot be null!");
         mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
+        mOpenSort = checkNotNull(openSort,"openSort cannot be null!");
+        mCloseSort = checkNotNull(closeSort,"closeSort cannot be null!");
+        mGetSortByName = checkNotNull(getSortByName,"getSortByName cannot be null!");
 
         mTasksView.setPresenter(this);
     }
@@ -77,6 +89,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
+                        mTasksView.showSuccessfullySavedMessage();
                         loadTasks(false,false);
                     }
 
@@ -108,14 +121,13 @@ public class TasksPresenter implements TasksContract.Presenter {
             mTasksView.setLoadingIndicator(true);
         }
 
-        GetTasks.RequestValues requestValues = new GetTasks.RequestValues(forceUpdate,
-                mCurrentDisplaying);
+        GetTasks.RequestValues requestValues = new GetTasks.RequestValues(forceUpdate, mCurrentDisplaying);
 
         mUseCaseHandler.execute(mGetTasks, requestValues,
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
             @Override
             public void onSuccess(GetTasks.ResponseValue response) {
-                Map<String,List<Task>> tasks = response.getTasks();
+                Map<Sort,List<Task>> tasks = response.getTasks();
                 //该视图可能无法处理UI更新
                 if (!mTasksView.isActive()){
                     return;
@@ -141,7 +153,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         });
     }
 
-    private void processTasks(Map<String,List<Task>> tasks) {
+    private void processTasks(Map<Sort,List<Task>> tasks) {
         if (tasks.isEmpty()){
             //显示一条消息，指出该过滤器类型没有Task
             processEmptyTasks();
@@ -152,27 +164,27 @@ public class TasksPresenter implements TasksContract.Presenter {
                     mTasksView.showSortTasks(tasks);
                     break;
                 case TASKS_BY_TIME:
-                    mTasksView.showTimeTasks(tasks.get(""));
+                    mTasksView.showTimeTasks(tasks.get(new Sort("")));
                     break;
             }
             //设置显示label标题
-            showDisplayLabel();
+//            showDisplayLabel();
         }
     }
 
-    private void showDisplayLabel() {
-        switch (mCurrentDisplaying) {
-            case TASKS_BY_SORT:
-                mTasksView.showDisplayBySortLabel();
-                break;
-            case TASKS_BY_TIME:
-                mTasksView.showDisplayByTimeLabel();
-                break;
-            default:
-                mTasksView.showDisplayBySortLabel();
-                break;
-        }
-    }
+//    private void showDisplayLabel() {
+//        switch (mCurrentDisplaying) {
+//            case TASKS_BY_SORT:
+//                mTasksView.showDisplayBySortLabel();
+//                break;
+//            case TASKS_BY_TIME:
+//                mTasksView.showDisplayByTimeLabel();
+//                break;
+//            default:
+//                mTasksView.showDisplayBySortLabel();
+//                break;
+//        }
+//    }
 
     private void processEmptyTasks() {
         switch (mCurrentDisplaying) {
@@ -189,8 +201,20 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void addNewTask() {
-        mTasksView.showAddTask();
+    public void addNewTask(final String name) {
+        checkNotNull(name,"name cannot be null!");
+        mUseCaseHandler.execute(mGetSortByName, new GetSortByName.RequestValues(name),
+                new UseCase.UseCaseCallback<GetSortByName.ResponseValue>() {
+                    @Override
+                    public void onSuccess(GetSortByName.ResponseValue response) {
+                        mTasksView.showAddTask(name,response.getSort().getId());
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showAddTask(name,(long)1);
+                    }
+                });
     }
 
     @Override
@@ -235,14 +259,40 @@ public class TasksPresenter implements TasksContract.Presenter {
                 });
     }
 
-    public List<Task> openCloseSort(List<Task>tasks,long sortId){
-        for (int i = 0; i < tasks.size(); i++) {
-            if (!Objects.equal(tasks.get(i).getId(),(long)-1)&&Objects.equal(tasks.get(i).getSortId(),sortId)){
-                tasks.remove(i);
-                i--;
-            }
-        }
-        return tasks;
+    @Override
+    public void openSort(@NonNull Sort openSort) {
+        checkNotNull(openSort,"openSort cannot be null!");
+        mUseCaseHandler.execute(mOpenSort, new OpenSort.RequestValues(openSort.getId()),
+                new UseCase.UseCaseCallback<OpenSort.ResponseValue>() {
+                    @Override
+                    public void onSuccess(OpenSort.ResponseValue response) {
+//                        mTasksView.showMessage("打开Sort写入");
+//                        loadTasks(false,false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        //do nothing
+                    }
+                });
+    }
+
+    @Override
+    public void closeSort(@NonNull Sort closeSort) {
+        checkNotNull(closeSort,"closeSort cannot be null!");
+        mUseCaseHandler.execute(mCloseSort, new CloseSort.RequestValues(closeSort.getId()),
+                new UseCase.UseCaseCallback<CloseSort.ResponseValue>() {
+                    @Override
+                    public void onSuccess(CloseSort.ResponseValue response) {
+//                        mTasksView.showMessage("关闭Sort写入");
+//                        loadTasks(false,false);
+                    }
+
+                    @Override
+                    public void onError() {
+                        //do nothing
+                    }
+                });
     }
 
     @Override

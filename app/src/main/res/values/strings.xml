@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">RemindMe</string>
+    <string name="app_name">提醒我</string>
 
     <string name="menu_display">显示方式</string>
 
     <string name="nav_sort">按分类显示</string>
     <string name="nav_time">按时间显示</string>
 
-    <string name="navigation_view_header_title">Remind-Me!</string>
+    <string name="navigation_view_header_title">提醒我!</string>
     <string name="list_title">提醒列表</string>
     <string name="statistics_title">分类管理</string>
 
-    <string name="label_time">根据时间显示</string>
-    <string name="label_sort">根据分类显示</string>\
+    <string name="label_time">按时间显示</string>
+    <string name="label_sort">按分类显示</string>\
 
     <string name="task_marked_turn_on">提醒已开启</string>
     <string name="task_marked_turn_off">提醒已关闭</string>

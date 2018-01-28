@@ -1,12 +1,12 @@
 package com.evan.remindme.tasks.domain.model;
 
-import com.evan.remindme.tasks.domain.TasksCircleType;
-import com.evan.remindme.tasks.domain.TasksRepeatType;
+import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.addedittasks.TasksCircleType;
+import com.evan.remindme.addedittasks.TasksRepeatType;
 import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
-import java.util.Comparator;
 import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Keep;
@@ -54,7 +54,7 @@ public class Task implements Comparable<Task>{
     private Date nextTime;
 
     //分类
-    private String sortId;
+    private Long sortId;
 
     //铃声所在地
     private String bell;
@@ -126,11 +126,11 @@ public class Task implements Comparable<Task>{
         this.circle = circle;
     }
 
-    public String getSortId() {
+    public Long getSortId() {
         return sortId;
     }
 
-    public void setSortId(String sortId) {
+    public void setSortId(Long sortId) {
         this.sortId = sortId;
     }
 
@@ -188,18 +188,18 @@ public class Task implements Comparable<Task>{
         this.turnOn = task.turnOn;
     }
 
-    public Task(String title,String sortName,Date time){
-        this("",title,-1,-1,time,time,new Sort("",sortName).hashCode()+"","",true);
+    public Task(String title,Long id,Date time){
+        this("",title,-1,-1,time,time,id,"",true);
     }
 
     public Task(String title,Date time){
-        this("",title,-1,-1,time,time,new Sort("","默认").hashCode()+"","",true);
+        this("",title,-1,-1,time,time,(long)1,"",true);
     }
 
     @Keep
     @Generated(hash = 869892191)
     public Task(String id, String title, int circle, int repeat, Date time,
-            Date nextTime, String sortId, String bell, boolean turnOn) {
+            Date nextTime, Long sortId, String bell, boolean turnOn) {
         this.title = title;
         this.circle = circle;
         this.repeat = repeat;

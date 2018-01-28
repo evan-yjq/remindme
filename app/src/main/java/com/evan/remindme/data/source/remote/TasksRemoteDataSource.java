@@ -25,13 +25,14 @@ public class TasksRemoteDataSource implements TasksDataSource{
 
     static {
         TASKS_SERVICE_DATA = new LinkedHashMap<>(2);
-        addTask("Build tower in Pisa","默认");
-        addTask("Finish bridge in Tacoma","新建");
-        addTask("test","test");
+        addTask("Build tower in Pisa",(long)1);
+        addTask("Finish bridge in Tacoma",(long)2);
+        addTask("test",(long)3);
     }
 
-    private static void addTask(String title,String sortName) {
-        Task newTask = new Task(title,sortName,new Date());
+    private static void addTask(String title,Long sortId) {
+        Task newTask = new Task(title,sortId
+                ,new Date());
         TASKS_SERVICE_DATA.put(newTask.getId(), newTask);
     }
 

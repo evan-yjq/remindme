@@ -1,12 +1,10 @@
-package com.evan.remindme.tasks.domain.model;
+package com.evan.remindme.sorts.domain.model;
 
 import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Keep;
-
-import java.util.Comparator;
 
 /**
  * Created by IntelliJ IDEA
@@ -16,32 +14,52 @@ import java.util.Comparator;
  */
 @Entity
 public class Sort implements Comparable<Sort>{
-    @Id
-    private String id;
+    @Id(autoincrement = true)
+    private Long id;
 
     private String name;
+
+    private boolean isOpen;
 
     public Sort(Sort sort){
         this.id = sort.id;
         this.name = sort.name;
+        this.isOpen = sort.isOpen;
     }
 
     @Keep
-    @Generated(hash = 504468038)
-    public Sort(String id, String name) {
+    @Generated(hash = 75960416)
+    public Sort(Long id, String name, boolean isOpen) {
+        this.id = id;
         this.name = name;
-        this.id = this.hashCode()+"";
+        this.isOpen = isOpen;
     }
 
     @Generated(hash = 1984197757)
     public Sort() {
     }
 
-    public String getId() {
+    public Sort(String name){
+        this(null, name);
+    }
+
+    public Sort(Long id,String name){
+        this(id,name,false);
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -72,9 +90,16 @@ public class Sort implements Comparable<Sort>{
         return "Sort name is " + name;
     }
 
-
     @Override
     public int compareTo(Sort sort) {
-        return this.id.compareTo(sort.id);
+        return this.name.compareTo(sort.name);
+    }
+
+    public boolean getIsOpen() {
+        return this.isOpen;
+    }
+
+    public void setIsOpen(boolean isOpen) {
+        this.isOpen = isOpen;
     }
 }

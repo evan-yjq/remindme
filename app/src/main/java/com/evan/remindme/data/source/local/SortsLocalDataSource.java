@@ -2,8 +2,9 @@ package com.evan.remindme.data.source.local;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.tasks.domain.model.Sort;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.util.AppExecutors;
+import org.greenrobot.greendao.query.WhereCondition;
 
 import java.util.List;
 
@@ -40,6 +41,26 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
+    public void openSort(@NonNull Sort sort) {
+        updateSort(sort);
+    }
+
+    @Override
+    public void openSort(@NonNull Long sortId) {
+
+    }
+
+    @Override
+    public void closeSort(@NonNull Sort sort) {
+        updateSort(sort);
+    }
+
+    @Override
+    public void closeSort(@NonNull Long sortId) {
+
+    }
+
+    @Override
     public void getSorts(@NonNull final LoadSortsCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
@@ -62,7 +83,7 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void getSort(@NonNull final String SortId, @NonNull final GetSortCallback callback) {
+    public void getSort(@NonNull final Long SortId, @NonNull final GetSortCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -95,7 +116,7 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void deleteSort(@NonNull final String sortId) {
+    public void deleteSort(@NonNull final Long sortId) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -127,6 +148,22 @@ public class SortsLocalDataSource implements SortsDataSource{
             @Override
             public void run() {
                 mSortDao.update(sort);
+            }
+        };
+        mAppExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
+    public void getSortWithName(@NonNull final String name, @NonNull final GetSortCallback callback) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final Sort sort = mSortDao.queryBuilder().where(SortDao.Properties.Name.eq(name)).unique();
+                if (sort != null){
+                    callback.onSortLoaded(sort);
+                }else{
+                    callback.onDataNotAvailable();
+                }
             }
         };
         mAppExecutors.diskIO().execute(runnable);

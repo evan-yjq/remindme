@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.*;
 import android.widget.*;
 import com.evan.remindme.R;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.*;
@@ -44,7 +45,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private LinearLayout mTasksView;
 
-    private TextView mDisplayingLabelView;
+//    private TextView mDisplayingLabelView;
 
     private ScrollChildSwipeRefreshLayout swipeRefreshLayout;
 
@@ -64,7 +65,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mListAdapter = new TasksAdapter(new ArrayList<Task>(0),mItemListener);
-        mExpandableListAdapter = new TasksExpandableListAdapter(new HashMap<String,List<Task>>(0),mItemListener);
+        mExpandableListAdapter = new TasksExpandableListAdapter(new HashMap<Sort,List<Task>>(0),mItemListener);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         listView.setAdapter(mListAdapter);
         expandableListView = root.findViewById(R.id.expandable_tasks_list);
         expandableListView.setAdapter(mExpandableListAdapter);
-        mDisplayingLabelView = root.findViewById(R.id.displayingLabel);
+//        mDisplayingLabelView = root.findViewById(R.id.displayingLabel);
         mTasksView = root.findViewById(R.id.tasksLL);
 
         //设置没有提醒时的界面
@@ -99,7 +100,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mNoTaskAddView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAddTask();
+                mPresenter.addNewTask(getRandomSortName());
             }
         });
 
@@ -110,7 +111,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.addNewTask();
+                mPresenter.addNewTask(getRandomSortName());
             }
         });
 
@@ -167,7 +168,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showSortTasks(Map<String,List<Task>> tasks) {
+    public void showSortTasks(Map<Sort,List<Task>> tasks) {
         mExpandableListAdapter.replaceData(tasks);
         //在自定义的SwipeRefreshLayout中设置滚动视图
         swipeRefreshLayout.setScrollUpChild(expandableListView);
@@ -192,12 +193,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showAddTask() {
+    public void showAddTask(String name,Long id) {
         // TODO 等有了添加页面来解除注释
 //        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
 //        startActivityForResult(intent, AddEditTaskActivity.REQUEST_ADD_TASK);
-        String sortName = getRandomSortName();
-        Task task = new Task(sortName+getRandomEnglishName(),sortName,new Date());
+        Task task = new Task(name+getRandomEnglishName(),id,new Date());
         mPresenter.save(task);
     }
 
@@ -228,7 +228,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         );
     }
 
-    private void showMessage(String message){
+    @Override
+    public void showMessage(String message){
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
     }
 
@@ -252,15 +253,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         showMessage(getString(R.string.loading_tasks_error));
     }
 
-    @Override
-    public void showDisplayBySortLabel() {
-        mDisplayingLabelView.setText(getResources().getString(R.string.label_sort));
-    }
+//    @Override
+//    public void showDisplayBySortLabel() {
+//        mDisplayingLabelView.setText(getResources().getString(R.string.label_sort));
+//    }
 
-    @Override
-    public void showDisplayByTimeLabel() {
-        mDisplayingLabelView.setText(getResources().getString(R.string.label_time));
-    }
+//    @Override
+//    public void showDisplayByTimeLabel() {
+//        mDisplayingLabelView.setText(getResources().getString(R.string.label_time));
+//    }
 
     private void showNoTasksViews(String mainText,int iconRes,boolean showAddView){
         mTasksView.setVisibility(View.GONE);
@@ -302,7 +303,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     /**
      * 监听ListView中tasks的点击
      */
-    TaskItemListener mItemListener = new TaskItemListener() {
+    ListItemListener mItemListener = new ListItemListener() {
+
+        @Override
+        public void openSort(int groupId) {
+            expandableListView.expandGroup(groupId);
+        }
+
+        @Override
+        public void onSortClick(boolean isOpen, Sort clickSort, int groupId) {
+            if (isOpen){
+                mPresenter.closeSort(clickSort);
+                expandableListView.collapseGroup(groupId);
+            }else{
+                mPresenter.openSort(clickSort);
+                expandableListView.expandGroup(groupId,true);
+            }
+        }
 
         @Override
         public void onTaskClick(Task clickedTask) {
@@ -328,9 +345,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private static class TasksAdapter extends BaseAdapter{
 
         private List<Task>mTasks;
-        private TaskItemListener mItemListener;
+        private ListItemListener mItemListener;
 
-        public TasksAdapter(List<Task>tasks, TaskItemListener itemListener){
+        public TasksAdapter(List<Task>tasks, ListItemListener itemListener){
             setList(tasks);
             mItemListener = itemListener;
         }
@@ -372,17 +389,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitle());
 
-            CheckBox turnOnCB = rowView.findViewById(R.id.turn_on);
+            Switch turnOnCB = rowView.findViewById(R.id.turn_on);
 
             //打开/关闭提醒UI
             turnOnCB.setChecked(task.isTurnOn());
-            if (task.isTurnOn()) {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.list_turn_on_touch_feedback));
-            } else {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.touch_feedback));
-            }
+//            if (task.isTurnOn()) {
+//                rowView.setBackgroundDrawable(viewGroup.getContext()
+//                        .getResources().getDrawable(R.drawable.list_turn_on_touch_feedback));
+//            } else {
+//                rowView.setBackgroundDrawable(viewGroup.getContext()
+//                        .getResources().getDrawable(R.drawable.touch_feedback));
+//            }
 
             turnOnCB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -407,23 +424,28 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private static class TasksExpandableListAdapter extends BaseExpandableListAdapter{
 
-        private Map<String,List<Task>> mTasks;
-        private TaskItemListener mItemListener;
-        private String[]sortNames;
+        private Map<Sort,List<Task>> mTasks;
+        private ListItemListener mItemListener;
+        private Sort[]mSorts;
 
-        public TasksExpandableListAdapter(Map<String,List<Task>>mTasks,TaskItemListener itemListener){
+        public TasksExpandableListAdapter(Map<Sort,List<Task>>mTasks,ListItemListener itemListener){
             setMap(mTasks);
             mItemListener = itemListener;
         }
 
-        public void replaceData(Map<String,List<Task>>tasks){
+        public void replaceData(Map<Sort,List<Task>>tasks){
             setMap(tasks);
             notifyDataSetChanged();
         }
 
-        private void setMap(Map<String,List<Task>> tasks){
+        private void setMap(Map<Sort,List<Task>> tasks){
             mTasks = checkNotNull(tasks);
-            sortNames = mTasks.keySet().toArray(new String[0]);
+            mSorts = mTasks.keySet().toArray(new Sort[0]);
+            for (int i = 0; i < mSorts.length; i++) {
+                if (mSorts[i].isOpen()){
+                    mItemListener.openSort(i);
+                }
+            }
         }
 
         //  获得父项的数量
@@ -435,19 +457,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         //  获得某个父项的子项数目
         @Override
         public int getChildrenCount(int i) {
-            return mTasks.get(sortNames[i]).size();
+            return mTasks.get(mSorts[i]).size();
         }
 
         //  获得某个父项
         @Override
         public List<Task> getGroup(int i) {
-            return mTasks.get(sortNames[i]);
+            return mTasks.get(mSorts[i]);
         }
 
         //  获得某个父项的某个子项
         @Override
         public Task getChild(int i, int i1) {
-            return mTasks.get(sortNames[i]).get(i1);
+            return mTasks.get(mSorts[i]).get(i1);
         }
 
         //  获得某个父项的id
@@ -470,7 +492,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         //  获得父项显示的view
         @Override
-        public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+        public View getGroupView(final int i, final boolean b, View view, ViewGroup viewGroup) {
             View rowView = view;
             if (rowView == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
@@ -480,11 +502,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             for (Task task : getGroup(i)) {
                 if (task.isTurnOn())j++;
             }
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItemListener.onSortClick(b,mSorts[i],i);
+                }
+            });
             TextView numTV = rowView.findViewById(R.id.num);
             numTV.setText(j+"/"+getChildrenCount(i));
 
             TextView titleTV = rowView.findViewById(R.id.title);
-            titleTV.setText(sortNames[i]);
+            titleTV.setText(mSorts[i].getName());
             return rowView;
         }
 
@@ -502,17 +530,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitle());
 
-            CheckBox turnOnCB = rowView.findViewById(R.id.turn_on);
+            Switch turnOnCB = rowView.findViewById(R.id.turn_on);
 
             //打开/关闭提醒UI
             turnOnCB.setChecked(task.isTurnOn());
-            if (task.isTurnOn()) {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.list_turn_on_touch_feedback));
-            } else {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.touch_feedback));
-            }
+//            if (task.isTurnOn()) {
+//                rowView.setBackgroundDrawable(viewGroup.getContext()
+//                        .getResources().getDrawable(R.drawable.list_turn_on_touch_feedback));
+//            } else {
+//                rowView.setBackgroundDrawable(viewGroup.getContext()
+//                        .getResources().getDrawable(R.drawable.touch_feedback));
+//            }
 
             turnOnCB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -541,7 +569,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
     }
 
-    public interface TaskItemListener{
+    public interface ListItemListener{
+
+        void openSort(int groupId);
+
+        void onSortClick(boolean isOpen,Sort clickSort,int groupId);
 
         void onTaskClick(Task clickTask);
 

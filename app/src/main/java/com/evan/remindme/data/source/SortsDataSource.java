@@ -2,8 +2,7 @@ package com.evan.remindme.data.source;
 
 
 import android.support.annotation.NonNull;
-import com.evan.remindme.tasks.domain.model.Sort;
-import com.evan.remindme.tasks.domain.model.Task;
+import com.evan.remindme.sorts.domain.model.Sort;
 
 import java.util.List;
 
@@ -28,17 +27,27 @@ public interface SortsDataSource {
         void onDataNotAvailable();
     }
 
+    void openSort(@NonNull Sort sort);
+
+    void openSort(@NonNull Long sortId);
+
+    void closeSort(@NonNull Sort sort);
+
+    void closeSort(@NonNull Long sortId);
+
     void getSorts(@NonNull LoadSortsCallback callback);
 
-    void getSort(@NonNull String sortId, @NonNull GetSortCallback callback);
+    void getSort(@NonNull Long sortId, @NonNull GetSortCallback callback);
 
     void saveSort(@NonNull Sort sort);
 
-    void deleteSort(@NonNull String sortId);
+    void deleteSort(@NonNull Long sortId);
 
     void deleteAllSorts();
 
     void refreshSorts();
 
     void updateSort(@NonNull Sort sort);
+
+    void getSortWithName(@NonNull String name,@NonNull GetSortCallback callback);
 }

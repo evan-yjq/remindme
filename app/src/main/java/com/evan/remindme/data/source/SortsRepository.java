@@ -2,13 +2,9 @@ package com.evan.remindme.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.evan.remindme.tasks.domain.model.Sort;
-import com.evan.remindme.tasks.domain.model.Task;
+import com.evan.remindme.sorts.domain.model.Sort;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
@@ -29,7 +25,7 @@ public class SortsRepository implements SortsDataSource{
     /**
      * 这个变量具有包本地可见性，所以可以从测试中访问它.
      */
-    Map<String, Sort> mCachedSorts;
+    Map<Long, Sort> mCachedSorts;
 
     /**
      * 将缓存标记为无效，在下一次请求数据时强制更新
@@ -66,6 +62,48 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
+    public void openSort(@NonNull Sort sort) {
+        checkNotNull(sort);
+        mSortsRemoteDataSource.openSort(sort);
+        mSortsLocalDataSource.openSort(sort);
+
+        sort.setIsOpen(true);
+        Sort openTask = new Sort(sort);
+        //在内存缓存更新，以保持应用程序界面最新
+        if (mCachedSorts== null) {
+            mCachedSorts = new LinkedHashMap<>();
+        }
+        mCachedSorts.put(sort.getId(), openTask);
+    }
+
+    @Override
+    public void openSort(@NonNull Long sortId) {
+        checkNotNull(sortId);
+        openSort(Objects.requireNonNull(getSortWithId(sortId)));
+    }
+
+    @Override
+    public void closeSort(@NonNull Sort sort) {
+        checkNotNull(sort);
+        mSortsRemoteDataSource.closeSort(sort);
+        mSortsLocalDataSource.closeSort(sort);
+
+        sort.setIsOpen(false);
+        Sort closeTask = new Sort(sort);
+        //在内存缓存更新，以保持应用程序界面最新
+        if (mCachedSorts== null) {
+            mCachedSorts = new LinkedHashMap<>();
+        }
+        mCachedSorts.put(sort.getId(), closeTask);
+    }
+
+    @Override
+    public void closeSort(@NonNull Long sortId) {
+        checkNotNull(sortId);
+        closeSort(Objects.requireNonNull(getSortWithId(sortId)));
+    }
+
+    @Override
     public void getSorts(@NonNull final LoadSortsCallback callback) {
         checkNotNull(callback);
 
@@ -96,7 +134,7 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
-    public void getSort(@NonNull final String sortId, @NonNull final GetSortCallback callback) {
+    public void getSort(@NonNull final Long sortId, @NonNull final GetSortCallback callback) {
         checkNotNull(sortId);
         checkNotNull(callback);
 
@@ -158,7 +196,7 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
-    public void deleteSort(@NonNull String sortId) {
+    public void deleteSort(@NonNull Long sortId) {
         mSortsRemoteDataSource.deleteSort(checkNotNull(sortId));
         mSortsLocalDataSource.deleteSort(checkNotNull(sortId));
 
@@ -193,6 +231,52 @@ public class SortsRepository implements SortsDataSource{
             mCachedSorts = new LinkedHashMap<>();
         }
         mCachedSorts.put(sort.getId(), updateSort);
+    }
+
+    @Override
+    public void getSortWithName(@NonNull final String name, @NonNull final GetSortCallback callback) {
+        checkNotNull(callback);
+
+        final Sort sort = getSortWithName(name);
+
+        //如果可用，立即响应缓存
+        if (sort != null) {
+            callback.onSortLoaded(sort);
+            return;
+        }
+        //从服务器加载/保持如果需要。
+        //本地存储其中是否有ID，如果没有，从网上加载
+        mSortsLocalDataSource.getSortWithName(name, new GetSortCallback() {
+            @Override
+            public void onSortLoaded(Sort sort) {
+                // 在内存缓存更新，以保持应用程序界面最新
+                if (mCachedSorts == null) {
+                    mCachedSorts = new LinkedHashMap<>();
+                }
+                mCachedSorts.put(sort.getId(), sort);
+                callback.onSortLoaded(sort);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                mSortsRemoteDataSource.getSortWithName(name, new GetSortCallback() {
+                    @Override
+                    public void onSortLoaded(Sort sort) {
+                        // 在内存缓存更新，以保持应用程序界面最新
+                        if (mCachedSorts == null) {
+                            mCachedSorts = new LinkedHashMap<>();
+                        }
+                        mCachedSorts.put(sort.getId(), sort);
+                        callback.onSortLoaded(sort);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
+            }
+        });
     }
 
     private void getSortsFromRemoteDataSource(@NonNull final LoadSortsCallback callback) {
@@ -230,7 +314,20 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Nullable
-    private Sort getSortWithId(@NonNull String id) {
+    private Sort getSortWithName(@NonNull String name){
+        checkNotNull(name);
+        if (mCachedSorts != null && !mCachedSorts.isEmpty()) {
+            for (Sort sort : mCachedSorts.values()) {
+                if (com.evan.remindme.util.Objects.equal(sort.getName(),name)) {
+                    return sort;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Sort getSortWithId(@NonNull Long id) {
         checkNotNull(id);
         if (mCachedSorts == null || mCachedSorts.isEmpty()) {
             return null;
@@ -238,4 +335,6 @@ public class SortsRepository implements SortsDataSource{
             return mCachedSorts.get(id);
         }
     }
+
+
 }

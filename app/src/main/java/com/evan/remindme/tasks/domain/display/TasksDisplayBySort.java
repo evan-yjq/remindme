@@ -1,6 +1,6 @@
 package com.evan.remindme.tasks.domain.display;
 
-import com.evan.remindme.tasks.domain.model.Sort;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.*;
@@ -13,8 +13,13 @@ import java.util.*;
  */
 public class TasksDisplayBySort implements TaskDisplay {
     @Override
-    public Map<String,List<Task>> display(List<Task>tasks,List<Sort>sorts) {
-        Map<String,List<Task>> displayedTasks = new HashMap<>();
+    public Map<Sort,List<Task>> display(List<Task>tasks,List<Sort>sorts) {
+        Map<Sort,List<Task>> displayedTasks = new HashMap<>();
+
+        if (sorts==null||tasks==null){
+            displayedTasks.put(new Sort("默认"),tasks);
+            return displayedTasks;
+        }
 
         int count = 0;
         for (Sort sort : sorts) {
@@ -31,22 +36,25 @@ public class TasksDisplayBySort implements TaskDisplay {
                 if (count==tasks.size())break;
             }
             Collections.sort(list);
-            displayedTasks.put(sort.getName(),list);
+            displayedTasks.put(sort,list);
         }
         List<Task> tmp = new ArrayList<>();
         if (count < tasks.size()){
+            Sort s = new Sort();
             for (Task task : tasks) {
                 int i = 0;
                 for (Sort sort : sorts) {
-                    if (task.getSortId().equals(sort.getId()))
+                    if (Objects.equals(sort.getName(),"默认"))
+                        s = sort;
+                    if (Objects.equals(task.getSortId(),(sort.getId())))
                         break;
                     i++;
                 }
                 if (i == sorts.size())
                     tmp.add(task);
             }
-            displayedTasks.get("默认").addAll(tmp);
-            Collections.sort(displayedTasks.get("默认"));
+            displayedTasks.get(s).addAll(tmp);
+            Collections.sort(displayedTasks.get(s));
         }
 
         return displayedTasks;

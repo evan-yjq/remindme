@@ -32,16 +32,16 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/displayingLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:gravity="center_vertical"
-                android:layout_marginLeft="@dimen/list_item_padding"
-                android:layout_marginRight="@dimen/list_item_padding"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin" />
+            <!--<TextView-->
+                <!--android:id="@+id/displayingLabel"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAppearance="@style/TextAppearance.AppCompat.Title"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:layout_marginLeft="@dimen/list_item_padding"-->
+                <!--android:layout_marginRight="@dimen/list_item_padding"-->
+                <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+                <!--android:layout_marginBottom="@dimen/activity_vertical_margin" />-->
 
             <ExpandableListView
                     android:id="@+id/expandable_tasks_list"

@@ -1,4 +1,4 @@
-package com.evan.remindme.tasks.domain;
+package com.evan.remindme.addedittasks;
 
 /**
  * Created by IntelliJ IDEA

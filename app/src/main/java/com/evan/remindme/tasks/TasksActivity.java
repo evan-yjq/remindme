@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -36,12 +37,18 @@ public class TasksActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tasks_act);
 
+        //设置虚拟按键颜色
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
         //设置toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle(R.string.list_title);
 
         //设置侧边栏
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -65,14 +72,21 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideTurnOnTask(getApplicationContext()),
                 Injection.provideTurnOffTasks(getApplicationContext()),
-                Injection.provideSaveTasks(getApplicationContext()));
+                Injection.provideSaveTasks(getApplicationContext()),
+                Injection.provideOpenSort(getApplicationContext()),
+                Injection.provideCloseSort(getApplicationContext()),
+                Injection.provideGetSortByName(getApplicationContext()));
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         //加载之前保存的状态（如果可用）。
         if (savedInstanceState != null) {
             TasksDisplayType currentDisplaying =
                     (TasksDisplayType) savedInstanceState.getSerializable(CURRENT_DISPLAY_KEY);
             mTasksPresenter.setDisplay(currentDisplaying);
         }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -113,5 +127,14 @@ public class TasksActivity extends AppCompatActivity{
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
     }
 }

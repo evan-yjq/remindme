@@ -30,7 +30,7 @@ public class TaskDao extends AbstractDao<Task, String> {
         public final static Property Repeat = new Property(3, int.class, "repeat", false, "REPEAT");
         public final static Property Time = new Property(4, java.util.Date.class, "time", false, "TIME");
         public final static Property NextTime = new Property(5, java.util.Date.class, "nextTime", false, "NEXT_TIME");
-        public final static Property SortId = new Property(6, String.class, "sortId", false, "SORT_ID");
+        public final static Property SortId = new Property(6, Long.class, "sortId", false, "SORT_ID");
         public final static Property Bell = new Property(7, String.class, "bell", false, "BELL");
         public final static Property TurnOn = new Property(8, boolean.class, "turnOn", false, "TURN_ON");
     }
@@ -54,7 +54,7 @@ public class TaskDao extends AbstractDao<Task, String> {
                 "\"REPEAT\" INTEGER NOT NULL ," + // 3: repeat
                 "\"TIME\" INTEGER," + // 4: time
                 "\"NEXT_TIME\" INTEGER," + // 5: nextTime
-                "\"SORT_ID\" TEXT," + // 6: sortId
+                "\"SORT_ID\" INTEGER," + // 6: sortId
                 "\"BELL\" TEXT," + // 7: bell
                 "\"TURN_ON\" INTEGER NOT NULL );"); // 8: turnOn
     }
@@ -91,9 +91,9 @@ public class TaskDao extends AbstractDao<Task, String> {
             stmt.bindLong(6, nextTime.getTime());
         }
  
-        String sortId = entity.getSortId();
+        Long sortId = entity.getSortId();
         if (sortId != null) {
-            stmt.bindString(7, sortId);
+            stmt.bindLong(7, sortId);
         }
  
         String bell = entity.getBell();
@@ -129,9 +129,9 @@ public class TaskDao extends AbstractDao<Task, String> {
             stmt.bindLong(6, nextTime.getTime());
         }
  
-        String sortId = entity.getSortId();
+        Long sortId = entity.getSortId();
         if (sortId != null) {
-            stmt.bindString(7, sortId);
+            stmt.bindLong(7, sortId);
         }
  
         String bell = entity.getBell();
@@ -155,7 +155,7 @@ public class TaskDao extends AbstractDao<Task, String> {
             cursor.getInt(offset + 3), // repeat
             cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // time
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // nextTime
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // sortId
+            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // sortId
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // bell
             cursor.getShort(offset + 8) != 0 // turnOn
         );
@@ -170,7 +170,7 @@ public class TaskDao extends AbstractDao<Task, String> {
         entity.setRepeat(cursor.getInt(offset + 3));
         entity.setTime(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setNextTime(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
-        entity.setSortId(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSortId(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
         entity.setBell(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setTurnOn(cursor.getShort(offset + 8) != 0);
      }

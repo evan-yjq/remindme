@@ -2,14 +2,16 @@ package com.evan.remindme.tasks.domain.usecase;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
+import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.data.source.SortsDataSource;
 import com.evan.remindme.data.source.SortsRepository;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.data.source.TasksRepository;
+import com.evan.remindme.sorts.domain.usecase.GetSorts;
 import com.evan.remindme.tasks.TasksDisplayType;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.tasks.domain.display.TaskDisplay;
-import com.evan.remindme.tasks.domain.model.Sort;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.List;
@@ -27,14 +29,17 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
     private final TasksRepository mTasksRepository;
 
-    private final SortsRepository mSortsRepository;
-
     private final DisplayFactory mDisplayFactory;
 
-    public GetTasks(@NonNull TasksRepository tasksRepository, @NonNull SortsRepository sortsRepository,
-                    @NonNull DisplayFactory displayFactory) {
+    private final UseCaseHandler mUseCaseHandler;
+
+    private final GetSorts mGetSorts;
+
+    public GetTasks(@NonNull TasksRepository tasksRepository, @NonNull DisplayFactory displayFactory,
+                    @NonNull UseCaseHandler useCaseHandler,@NonNull GetSorts getSorts) {
+        mGetSorts = checkNotNull(getSorts,"getSorts cannot be null!");
+        mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
-        mSortsRepository = checkNotNull(sortsRepository,"sortsRepository cannot be null!");
         mDisplayFactory = checkNotNull(displayFactory, "filterFactory cannot be null!");
     }
 
@@ -42,7 +47,6 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
     protected void executeUseCase(final RequestValues values) {
         if (values.isForceUpdate()) {
             mTasksRepository.refreshTasks();
-            mSortsRepository.refreshSorts();
         }
         TasksDisplayType currentDisplaying = values.getCurrentDisplaying();
         final TaskDisplay taskDisplay = mDisplayFactory.create(currentDisplaying);
@@ -50,21 +54,22 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
         mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(final List<Task> tasks) {
-                mSortsRepository.getSorts(new SortsDataSource.LoadSortsCallback() {
-                    @Override
-                    public void onSortsLoaded(
-                            List<Sort> sorts) {
-                        Map<String,List<Task>> tasksDisplay = taskDisplay.display(tasks,sorts);
-                        ResponseValue responseValue = new ResponseValue(tasksDisplay);
-                        getUseCaseCallback().onSuccess(responseValue);
-                    }
-                    @Override
-                    public void onDataNotAvailable() {
-                        Map<String,List<Task>> tasksDisplay = taskDisplay.display(tasks,null);
-                        ResponseValue responseValue = new ResponseValue(tasksDisplay);
-                        getUseCaseCallback().onSuccess(responseValue);
-                    }
-                });
+                mUseCaseHandler.execute(mGetSorts, new GetSorts.RequestValues(values.isForceUpdate()),
+                        new UseCaseCallback<GetSorts.ResponseValue>() {
+                            @Override
+                            public void onSuccess(GetSorts.ResponseValue response) {
+                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,response.getSorts());
+                                ResponseValue responseValue = new ResponseValue(tasksDisplay);
+                                getUseCaseCallback().onSuccess(responseValue);
+                            }
+
+                            @Override
+                            public void onError() {
+                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,null);
+                                ResponseValue responseValue = new ResponseValue(tasksDisplay);
+                                getUseCaseCallback().onSuccess(responseValue);
+                            }
+                        });
             }
 
             @Override
@@ -72,12 +77,6 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
                 getUseCaseCallback().onError();
             }
         });
-
-
-
-
-
-
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
@@ -101,13 +100,13 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
     }
     public static final class ResponseValue implements UseCase.ResponseValue {
-        private final Map<String,List<Task>> mTasks;
+        private final Map<Sort,List<Task>> mTasks;
 
-        public ResponseValue(@NonNull Map<String,List<Task>> tasks) {
+        public ResponseValue(@NonNull Map<Sort,List<Task>> tasks) {
             mTasks = checkNotNull(tasks, "tasks cannot be null!");
         }
 
-        public Map<String,List<Task>> getTasks() {
+        public Map<Sort,List<Task>> getTasks() {
             return mTasks;
         }
     }

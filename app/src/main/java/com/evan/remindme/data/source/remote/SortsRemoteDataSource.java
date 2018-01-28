@@ -1,13 +1,15 @@
 package com.evan.remindme.data.source.remote;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.tasks.domain.model.Sort;
-import com.evan.remindme.tasks.domain.model.Task;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.util.Objects;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
  * Created by IntelliJ IDEA
@@ -21,16 +23,16 @@ public class SortsRemoteDataSource implements SortsDataSource {
 
     private static final int SERVICE_LATENCY_IN_MILLIS = 5000;
 
-    private static final Map<String, Sort> SORTS_SERVICE_DATA;
+    private static final Map<Long, Sort> SORTS_SERVICE_DATA;
 
     static {
         SORTS_SERVICE_DATA = new LinkedHashMap<>(1);
-        addSort("默认");
-        addSort("新建");
+        addSort((long)1,"默认");
+        addSort((long)2,"新建");
     }
 
-    private static void addSort(String title) {
-        Sort newSort = new Sort("",title);
+    private static void addSort(Long id,String title) {
+        Sort newSort = new Sort(id,title);
         SORTS_SERVICE_DATA.put(newSort.getId(), newSort);
     }
 
@@ -45,12 +47,32 @@ public class SortsRemoteDataSource implements SortsDataSource {
     private SortsRemoteDataSource(){}
 
     @Override
+    public void openSort(@NonNull Sort sort) {
+        updateSort(sort);
+    }
+
+    @Override
+    public void openSort(@NonNull Long sortId) {
+
+    }
+
+    @Override
+    public void closeSort(@NonNull Sort sort) {
+        updateSort(sort);
+    }
+
+    @Override
+    public void closeSort(@NonNull Long sortId) {
+
+    }
+
+    @Override
     public void getSorts(@NonNull LoadSortsCallback callback) {
         callback.onSortsLoaded(Objects.Lists.newArrayList(SORTS_SERVICE_DATA.values()));
     }
 
     @Override
-    public void getSort(@NonNull String sortId, @NonNull GetSortCallback callback) {
+    public void getSort(@NonNull Long sortId, @NonNull GetSortCallback callback) {
         Sort sort = SORTS_SERVICE_DATA.get(sortId);
         callback.onSortLoaded(sort);
     }
@@ -61,7 +83,7 @@ public class SortsRemoteDataSource implements SortsDataSource {
     }
 
     @Override
-    public void deleteSort(@NonNull String sortId) {
+    public void deleteSort(@NonNull Long sortId) {
         SORTS_SERVICE_DATA.remove(sortId);
     }
 
@@ -79,5 +101,16 @@ public class SortsRemoteDataSource implements SortsDataSource {
     public void updateSort(@NonNull Sort sort) {
         Sort updateSort = new Sort(sort);
         SORTS_SERVICE_DATA.put(sort.getId(), updateSort);
+    }
+
+    @Override
+    public void getSortWithName(@NonNull String name, @NonNull GetSortCallback callback) {
+        for (Sort sort : SORTS_SERVICE_DATA.values()) {
+            if (Objects.equal(sort.getName(),name)) {
+                callback.onSortLoaded(sort);
+                break;
+            }
+        }
+        callback.onDataNotAvailable();
     }
 }

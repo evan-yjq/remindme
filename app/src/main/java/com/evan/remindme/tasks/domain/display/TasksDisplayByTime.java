@@ -1,7 +1,6 @@
 package com.evan.remindme.tasks.domain.display;
 
-import android.support.annotation.NonNull;
-import com.evan.remindme.tasks.domain.model.Sort;
+import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.*;
@@ -15,13 +14,13 @@ import java.util.*;
 public class TasksDisplayByTime implements TaskDisplay{
 
     @Override
-    public Map<String,List<Task>> display(List<Task>tasks,List<Sort> sorts) {
+    public Map<Sort,List<Task>> display(List<Task>tasks,List<Sort> sorts) {
 
-        Map<String,List<Task>> map = new HashMap<>();
+        Map<Sort,List<Task>> map = new HashMap<>();
 
         Collections.sort(tasks);
 
-        map.put("",tasks);
+        map.put(new Sort(""),tasks);
 
         return map;
     }
