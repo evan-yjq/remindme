@@ -1,22 +1,19 @@
 package com.evan.remindme.tasks;
 
-import android.graphics.Path;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.sorts.domain.model.Sort;
-import com.evan.remindme.sorts.domain.usecase.CloseSort;
-import com.evan.remindme.sorts.domain.usecase.GetSortByName;
-import com.evan.remindme.sorts.domain.usecase.OpenSort;
+import com.evan.remindme.tasks.domain.usecase.CloseSort;
+import com.evan.remindme.tasks.domain.usecase.GetSortByName;
+import com.evan.remindme.tasks.domain.usecase.OpenSort;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
 import com.evan.remindme.tasks.domain.usecase.SaveTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOffTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOnTask;
-import com.evan.remindme.util.Objects;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

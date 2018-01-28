@@ -7,21 +7,31 @@
     <string name="nav_time">按时间显示</string>
 
     <string name="navigation_view_header_title">提醒我!</string>
-    <string name="list_title">提醒列表</string>
-    <string name="statistics_title">分类管理</string>
+    <string name="tasks_list_title">提醒列表</string>
 
     <string name="label_time">按时间显示</string>
-    <string name="label_sort">按分类显示</string>\
+    <string name="label_sort">按分类显示</string>
 
     <string name="task_marked_turn_on">提醒已开启</string>
     <string name="task_marked_turn_off">提醒已关闭</string>
 
     <string name="loading_tasks_error">加载提醒时出错</string>
+    <string name="loading_sorts_error">加载分类时出错</string>
+
+    <string name="save_sort_error">分类名已存在</string>
 
     <string name="successfully_saved_task_message">提醒已保存</string>
+    <string name="successfully_saved_sort_message">分类已保存</string>
+
+    <string name="delete_sort_error">删除分类失败</string>
+    <string name="rename_sort_error">修改分类名失败</string>
 
     <string name="no_tasks_all">你还没有提醒!</string>
     <string name="no_tasks_add">添加提醒+</string>
+
+    <string name="sorts_list_title">分类管理</string>
+    <string name="no_sorts_all">你还没有分类!</string>
+    <string name="no_sorts_add">添加分类+</string>
 
     <string name="refresh">刷新</string>
 

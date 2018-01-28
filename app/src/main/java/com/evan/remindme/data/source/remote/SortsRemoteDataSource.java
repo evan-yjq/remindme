@@ -47,6 +47,15 @@ public class SortsRemoteDataSource implements SortsDataSource {
     private SortsRemoteDataSource(){}
 
     @Override
+    public void check(@NonNull Sort sort, @NonNull CheckCallback callback) {
+        for (Sort s : SORTS_SERVICE_DATA.values()) {
+            if (Objects.equal(sort.getName(),s.getName()))
+                callback.onCheck(true);
+        }
+        callback.onCheck(false);
+    }
+
+    @Override
     public void openSort(@NonNull Sort sort) {
         updateSort(sort);
     }
@@ -78,7 +87,7 @@ public class SortsRemoteDataSource implements SortsDataSource {
     }
 
     @Override
-    public void saveSort(@NonNull Sort sort) {
+    public void saveSort(@NonNull Sort sort,@NonNull SaveCallback callback) {
         SORTS_SERVICE_DATA.put(sort.getId(),sort);
     }
 

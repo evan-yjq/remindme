@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
 
           package="com.evan.remindme"
 >
@@ -9,11 +9,19 @@
                  android:roundIcon="@mipmap/ic_launcher_round"
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme">
-        <activity android:name=".tasks.TasksActivity">
+        <activity android:name=".tasks.TasksActivity"
+                  android:theme="@style/AppTheme.OverlapSystemBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".sorts.SortsActivity"
+                  android:parentActivityName=".tasks.TasksActivity"
+                  tools:ignore="UnusedAttribute">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".tasks.TasksActivity" />
         </activity>
 
     </application>

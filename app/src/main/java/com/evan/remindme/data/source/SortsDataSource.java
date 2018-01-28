@@ -27,6 +27,16 @@ public interface SortsDataSource {
         void onDataNotAvailable();
     }
 
+    interface SaveCallback{
+        void onSave(Long id);
+    }
+
+    interface CheckCallback{
+        void onCheck(boolean b);
+    }
+
+    void check(@NonNull Sort sort,@NonNull CheckCallback callback);
+
     void openSort(@NonNull Sort sort);
 
     void openSort(@NonNull Long sortId);
@@ -39,7 +49,7 @@ public interface SortsDataSource {
 
     void getSort(@NonNull Long sortId, @NonNull GetSortCallback callback);
 
-    void saveSort(@NonNull Sort sort);
+    void saveSort(@NonNull Sort sort,@NonNull SaveCallback callback);
 
     void deleteSort(@NonNull Long sortId);
 

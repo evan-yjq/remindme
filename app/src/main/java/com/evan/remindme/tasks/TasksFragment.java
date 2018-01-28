@@ -35,7 +35,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private TasksExpandableListAdapter mExpandableListAdapter;
 
-    private View mNoTaskView;
+    private LinearLayout mNoTaskView;
 
     private ImageView mNoTaskIcon;
 
@@ -105,7 +105,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         });
 
         //设置浮动按钮
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add_task);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add);
 
         fab.setImageResource(R.drawable.ic_add);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -157,12 +157,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         //显示加载动画
 
         if (getView() == null)return;
-        final SwipeRefreshLayout srl = getView().findViewById(R.id.refresh_layout);
         //确保setRefreshing（）在布局完成后再调用。
-        srl.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                srl.setRefreshing(active);
+                swipeRefreshLayout.setRefreshing(active);
             }
         });
     }

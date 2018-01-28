@@ -41,6 +41,22 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
+    public void check(@NonNull final Sort sort, @NonNull final CheckCallback callback) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Sort s = mSortDao.queryBuilder().where(SortDao.Properties.Name.eq(sort.getName())).unique();
+                if (s!=null){
+                    callback.onCheck(true);
+                }else{
+                    callback.onCheck(false);
+                }
+            }
+        };
+        mAppExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
     public void openSort(@NonNull Sort sort) {
         updateSort(sort);
     }
@@ -105,11 +121,17 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void saveSort(@NonNull final Sort sort) {
+    public void saveSort(@NonNull final Sort sort,@NonNull final SaveCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mSortDao.insert(sort);
+                final Long id = mSortDao.insert(sort);
+                mAppExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSave(id);
+                    }
+                });
             }
         };
         mAppExecutors.diskIO().execute(runnable);

@@ -1,4 +1,4 @@
-package com.evan.remindme.sorts.domain.usecase;
+package com.evan.remindme.tasks.domain.usecase;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;

@@ -5,6 +5,8 @@ import com.evan.remindme.BasePresenter;
 import com.evan.remindme.BaseView;
 import com.evan.remindme.sorts.domain.model.Sort;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA
  * User: Evan
@@ -12,7 +14,7 @@ import com.evan.remindme.sorts.domain.model.Sort;
  * Time: 下午5:22
  */
 public interface SortsContract {
-    interface View extends BaseView{
+    interface View extends BaseView<Presenter>{
 
         void setLoadingIndicator(boolean active);
 
@@ -20,11 +22,23 @@ public interface SortsContract {
 
         boolean isActive();
 
+        void showSorts(List<Sort>sorts);
+
+        void showMessage(String message);
+
+        void showNoSort();
+
         void showSuccessfullySavedMessage();
 
-        void showSortDelete();
+        void showSortDeleteError();
 
-        void showSortRename();
+        void showSortSaveError();
+
+        void showSortRename(Sort sort);
+
+        void showSortRenameError();
+
+        void showLoadingSortsError();
 
 
     }

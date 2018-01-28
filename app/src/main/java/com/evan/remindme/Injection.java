@@ -26,10 +26,12 @@ import com.evan.remindme.data.source.local.SortsLocalDataSource;
 import com.evan.remindme.data.source.local.TasksLocalDataSource;
 import com.evan.remindme.data.source.remote.SortsRemoteDataSource;
 import com.evan.remindme.data.source.remote.TasksRemoteDataSource;
-import com.evan.remindme.sorts.domain.usecase.CloseSort;
-import com.evan.remindme.sorts.domain.usecase.GetSortByName;
+import com.evan.remindme.sorts.domain.usecase.DeleteSort;
+import com.evan.remindme.sorts.domain.usecase.SaveSort;
+import com.evan.remindme.tasks.domain.usecase.CloseSort;
+import com.evan.remindme.tasks.domain.usecase.GetSortByName;
 import com.evan.remindme.sorts.domain.usecase.GetSorts;
-import com.evan.remindme.sorts.domain.usecase.OpenSort;
+import com.evan.remindme.tasks.domain.usecase.OpenSort;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
 import com.evan.remindme.tasks.domain.usecase.SaveTask;
@@ -68,20 +70,23 @@ public class Injection {
         return new GetTasks(provideTasksRepository(context), new DisplayFactory(),
                 provideUseCaseHandler(),provideGetSorts(context));
     }
+
     public static GetSortByName provideGetSortByName(@NonNull Context context){
         return new GetSortByName(Injection.provideSortsRepository(context));
     }
+
+    public static SaveSort provideSaveSort(@NonNull Context context){
+        return new SaveSort(Injection.provideSortsRepository(context));
+    }
+
+    public static DeleteSort provideDeleteSort(@NonNull Context context){
+        return new DeleteSort(Injection.provideSortsRepository(context));
+    }
+
     public static UseCaseHandler provideUseCaseHandler() {
         return UseCaseHandler.getInstance();
     }
 
-//    public static GetTask provideGetTask(@NonNull Context context) {
-//        return new GetTask(Injection.provideTasksRepository(context));
-//    }
-
-//    public static SaveTask provideSaveTask(@NonNull Context context) {
-//        return new SaveTask(Injection.provideTasksRepository(context));
-//    }
     public static GetSorts provideGetSorts(@NonNull Context context){
         return new GetSorts(Injection.provideSortsRepository(context));
     }
@@ -89,15 +94,19 @@ public class Injection {
     public static TurnOnTask provideTurnOnTask(@NonNull Context context) {
         return new TurnOnTask(Injection.provideTasksRepository(context));
     }
+
     public static TurnOffTask provideTurnOffTasks(@NonNull Context context) {
         return new TurnOffTask(Injection.provideTasksRepository(context));
     }
+
     public static SaveTask provideSaveTasks(@NonNull Context context) {
         return new SaveTask(Injection.provideTasksRepository(context));
     }
+
     public static OpenSort provideOpenSort(@NonNull Context context){
         return new OpenSort(Injection.provideSortsRepository(context));
     }
+
     public static CloseSort provideCloseSort(@NonNull Context context){
         return new CloseSort(Injection.provideSortsRepository(context));
     }

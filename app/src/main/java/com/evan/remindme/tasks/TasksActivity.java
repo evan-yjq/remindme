@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -15,6 +16,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
+import com.evan.remindme.sorts.SortsActivity;
 import com.evan.remindme.util.ActivityUtils;
 
 /**
@@ -48,7 +50,7 @@ public class TasksActivity extends AppCompatActivity{
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(R.string.list_title);
+        ab.setTitle(R.string.tasks_list_title);
 
         //设置侧边栏
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -112,17 +114,18 @@ public class TasksActivity extends AppCompatActivity{
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.list_navigation_menu_item:
+                    case R.id.tasks_navigation_menu_item:
                         //已经再次界面，什么都不用做
                         break;
-                    case R.id.statistics_navigation_menu_item:
-                        //TODO 等页面做完再来跳转
+                    case R.id.sorts_navigation_menu_item:
+                        Intent intent = new Intent(TasksActivity.this, SortsActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;
                 }
                 //当选择一个项目时，关闭导航抽屉。
-                item.setChecked(true);
+//                item.setChecked(true);
                 mDrawerLayout.closeDrawers();
                 return true;
             }

@@ -22,15 +22,9 @@ public class SortsRepository implements SortsDataSource{
 
     private final SortsDataSource mSortsLocalDataSource;
 
-    /**
-     * 这个变量具有包本地可见性，所以可以从测试中访问它.
-     */
-    Map<Long, Sort> mCachedSorts;
+    private Map<Long, Sort> mCachedSorts;
 
-    /**
-     * 将缓存标记为无效，在下一次请求数据时强制更新
-     */
-    boolean mCacheIsDirty = false;
+    private boolean mCacheIsDirty = false;
 
     //防止直接实例化。
     private SortsRepository(@NonNull SortsDataSource sortsRemoteDataSource,
@@ -183,16 +177,47 @@ public class SortsRepository implements SortsDataSource{
     }
 
     @Override
-    public void saveSort(@NonNull Sort sort) {
+    public void saveSort(@NonNull final Sort sort,@NonNull final SaveCallback callback){
         checkNotNull(sort);
-        mSortsRemoteDataSource.saveSort(sort);
-        mSortsLocalDataSource.saveSort(sort);
 
-        //在内存缓存更新，以保持应用程序界面最新
-        if (mCachedSorts == null) {
-            mCachedSorts = new LinkedHashMap<>();
-        }
-        mCachedSorts.put(sort.getId(), sort);
+        mSortsLocalDataSource.saveSort(sort, new SaveCallback() {
+            @Override
+            public void onSave(Long id) {
+                sort.setId(id);
+                mSortsRemoteDataSource.saveSort(sort,callback);
+                //在内存缓存更新，以保持应用程序界面最新
+                if (mCachedSorts == null) {
+                    mCachedSorts = new LinkedHashMap<>();
+                }
+
+                mCachedSorts.put(sort.getId(), sort);
+                callback.onSave(id);
+            }
+        });
+    }
+
+    @Override
+    public void check(@NonNull final Sort sort, @NonNull final CheckCallback callback){
+        checkNotNull(sort);
+        mSortsLocalDataSource.check(sort, new CheckCallback() {
+            @Override
+            public void onCheck(boolean b) {
+                if (b){
+                    callback.onCheck(true);
+                }else{
+                    mSortsRemoteDataSource.check(sort, new CheckCallback() {
+                        @Override
+                        public void onCheck(boolean b) {
+                            if (b){
+                                callback.onCheck(true);
+                            }else{
+                                callback.onCheck(false);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -308,8 +333,13 @@ public class SortsRepository implements SortsDataSource{
 
     private void refreshLocalDataSource(List<Sort> sorts) {
         mSortsLocalDataSource.deleteAllSorts();
-        for (Sort sort : sorts) {
-            mSortsLocalDataSource.saveSort(sort);
+        for (final Sort sort : sorts) {
+            mSortsLocalDataSource.saveSort(sort, new SaveCallback() {
+                @Override
+                public void onSave(Long id) {
+                    sort.setId(id);
+                }
+            });
         }
     }
 
@@ -335,6 +365,4 @@ public class SortsRepository implements SortsDataSource{
             return mCachedSorts.get(id);
         }
     }
-
-
 }
