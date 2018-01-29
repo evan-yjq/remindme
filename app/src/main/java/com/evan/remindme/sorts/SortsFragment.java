@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -131,20 +132,29 @@ public class SortsFragment extends Fragment implements SortsContract.View {
 
     @Override
     public void showAddSort() {
+        showDialog("新建分类",new DialogListener() {
+            @Override
+            public void onPositiveClick(EditText text) {
+                String input = text.getText().toString();
+                if (input.equals("")) {
+                    showMessage("分类名不能为空");
+                }else{
+                    Sort sort = new Sort(input);
+                    mPresenter.save(sort);
+                }
+            }
+        },"");
+    }
+
+    private void showDialog(String title,DialogListener listener,String hint){
+        TextInputLayout layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
         EditText et = new EditText(getActivity());
-        MyDialogFragment dialog = new MyDialogFragment("新建分类",et,
-                new DialogListener() {
-                    @Override
-                    public void onPositiveClick(EditText text) {
-                        String input = text.getText().toString();
-                        if (input.equals("")) {
-                            showMessage("分类名不能为空");
-                        }else{
-                            Sort sort = new Sort(input);
-                            mPresenter.save(sort);
-                        }
-                    }
-                });
+        et.setSingleLine();
+        et.setHint(hint);
+        layout.addView(et);
+
+        MyDialogFragment dialog = new MyDialogFragment(title,layout,listener);
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         dialog.show(ft,"Dialog");
@@ -196,24 +206,18 @@ public class SortsFragment extends Fragment implements SortsContract.View {
 
     @Override
     public void showSortRename(final Sort sort) {
-        EditText et = new EditText(getContext());
-        et.setHint(sort.getName());
-        MyDialogFragment dialog = new MyDialogFragment("修改分类名",et,
-                new DialogListener() {
-                    @Override
-                    public void onPositiveClick(EditText text) {
-                        String input = text.getText().toString();
-                        if (input.equals("")) {
-                            showMessage("分类名不能为空");
-                        }else if(!Objects.equal(input,sort.getName())){
-                            sort.setName(input);
-                            mPresenter.rename(sort);
-                        }
-                    }
-                });
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        dialog.show(ft,"Dialog");
+        showDialog("修改分类名", new DialogListener() {
+            @Override
+            public void onPositiveClick(EditText text) {
+                String input = text.getText().toString();
+                if (input.equals("")) {
+                    showMessage("分类名不能为空");
+                }else if(!Objects.equal(input,sort.getName())){
+                    sort.setName(input);
+                    mPresenter.rename(sort);
+                }
+            }
+        },sort.getName());
     }
 
     @Override
@@ -299,25 +303,34 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         }
     }
 
+    @NonNull
+    private View setPadding(View v){
+        v.setPaddingRelative((int)(getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin)*1.3),
+                getResources().getDimensionPixelOffset(R.dimen.activity_vertical_margin),
+                (int)(getResources().getDimensionPixelOffset(R.dimen.activity_horizontal_margin)*1.3),
+                getResources().getDimensionPixelOffset(R.dimen.activity_vertical_margin));
+        return v;
+    }
+
     public static class MyDialogFragment extends DialogFragment {
         private String mTitle;
         private DialogListener mListener;
-        private EditText mEditText;
-        public MyDialogFragment(String title,EditText editText, DialogListener listener){
+        private TextInputLayout mLayout;
+        public MyDialogFragment(String title,TextInputLayout layout, DialogListener listener){
             mTitle = title;
             mListener = listener;
-            mEditText = editText;
+            mLayout = layout;
         }
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(mTitle)
-                    .setView(mEditText)
+                    .setView(mLayout)
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mListener.onPositiveClick(mEditText);
+                            mListener.onPositiveClick((EditText) mLayout.getChildAt(0));
                         }
                     })
                     .setNegativeButton("取消",null);
