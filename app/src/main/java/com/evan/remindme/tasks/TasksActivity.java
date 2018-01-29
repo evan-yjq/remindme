@@ -78,17 +78,12 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideOpenSort(getApplicationContext()),
                 Injection.provideCloseSort(getApplicationContext()),
                 Injection.provideGetSortByName(getApplicationContext()));
-    }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         //加载之前保存的状态（如果可用）。
         if (savedInstanceState != null) {
-            TasksDisplayType currentDisplaying =
-                    (TasksDisplayType) savedInstanceState.getSerializable(CURRENT_DISPLAY_KEY);
+            TasksDisplayType currentDisplaying = (TasksDisplayType) savedInstanceState.getSerializable(CURRENT_DISPLAY_KEY);
             mTasksPresenter.setDisplay(currentDisplaying);
         }
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
