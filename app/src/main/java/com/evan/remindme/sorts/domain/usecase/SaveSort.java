@@ -6,6 +6,8 @@ import com.evan.remindme.data.source.SortsDataSource;
 import com.evan.remindme.data.source.SortsRepository;
 import com.evan.remindme.sorts.domain.model.Sort;
 
+import java.util.Objects;
+
 import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
@@ -32,7 +34,7 @@ public class SaveSort extends UseCase<SaveSort.RequestValues,SaveSort.ResponseVa
                 if (b){
                     getUseCaseCallback().onError();
                 }else{
-                    if (isNew) {
+                    if(isNew) {
                         sortsRepository.saveSort(sort, new SortsDataSource.SaveCallback() {
                             @Override
                             public void onSave(Long id) {

@@ -40,7 +40,7 @@ public class TasksDisplayBySort implements TaskDisplay {
         }
         List<Task> tmp = new ArrayList<>();
         if (count < tasks.size()){
-            Sort s = new Sort();
+            Sort s = null;
             for (Task task : tasks) {
                 int i = 0;
                 for (Sort sort : sorts) {
@@ -53,8 +53,14 @@ public class TasksDisplayBySort implements TaskDisplay {
                 if (i == sorts.size())
                     tmp.add(task);
             }
-            displayedTasks.get(s).addAll(tmp);
-            Collections.sort(displayedTasks.get(s));
+            if (s == null){
+                s = new Sort((long)1,"默认");
+                Collections.sort(tmp);
+                displayedTasks.put(s,tmp);
+            }else {
+                displayedTasks.get(s).addAll(tmp);
+                Collections.sort(displayedTasks.get(s));
+            }
         }
 
         return displayedTasks;

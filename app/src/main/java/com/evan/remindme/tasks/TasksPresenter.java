@@ -128,6 +128,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                             loadTasks(false);
                         }
                     });
+        }else{
+            loadTasks(false);
         }
     }
 
@@ -256,7 +258,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(TurnOnTask.ResponseValue response) {
                         mTasksView.showTaskMarkedTurnOn();
-//                        loadTasks(false,false);
+                        loadTasks(false,false);
                     }
 
                     @Override
@@ -274,7 +276,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(TurnOffTask.ResponseValue response) {
                         mTasksView.showTaskMarkedTurnOff();
-//                        loadTasks(false,false);
+                        loadTasks(false,false);
                     }
 
                     @Override

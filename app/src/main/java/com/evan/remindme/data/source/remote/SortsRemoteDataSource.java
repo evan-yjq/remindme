@@ -49,8 +49,10 @@ public class SortsRemoteDataSource implements SortsDataSource {
     @Override
     public void check(@NonNull Sort sort, @NonNull CheckCallback callback) {
         for (Sort s : SORTS_SERVICE_DATA.values()) {
-            if (Objects.equal(sort.getName(),s.getName()))
+            if (Objects.equal(sort.getName(),s.getName())) {
                 callback.onCheck(true);
+                return;
+            }
         }
         callback.onCheck(false);
     }

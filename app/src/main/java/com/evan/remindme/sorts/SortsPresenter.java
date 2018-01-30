@@ -7,6 +7,7 @@ import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.sorts.domain.usecase.SaveSort;
 import com.evan.remindme.sorts.domain.usecase.DeleteSort;
 import com.evan.remindme.sorts.domain.usecase.GetSorts;
+import com.evan.remindme.tasks.TasksContract;
 
 import java.util.List;
 

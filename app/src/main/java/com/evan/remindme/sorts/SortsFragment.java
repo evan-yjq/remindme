@@ -1,7 +1,9 @@
 package com.evan.remindme.sorts;
 
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +20,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.evan.remindme.R;
 import com.evan.remindme.sorts.domain.model.Sort;
@@ -150,7 +154,6 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         EditText et = new EditText(getActivity());
         et.setSingleLine();
         et.setHint(hint);
-        et.requestFocus();
         layout.addView(et);
 
         MyDialogFragment dialog = new MyDialogFragment(title,layout,listener);
@@ -238,7 +241,11 @@ public class SortsFragment extends Fragment implements SortsContract.View {
 
         @Override
         public void onSortClick(Sort sort) {
-            showSortRename(sort);
+            if (Objects.equal(sort.getId(),(long)1)){
+                showAddSort();
+            }else {
+                showSortRename(sort);
+            }
         }
     };
 
@@ -332,11 +339,13 @@ public class SortsFragment extends Fragment implements SortsContract.View {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mListener.onPositiveClick((EditText) mLayout.getChildAt(0));
+                            mListener.onPositiveClick(mLayout.getEditText());
                         }
                     })
                     .setNegativeButton("取消",null);
-            return builder.create();
+            Dialog dialog = builder.create();
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            return dialog;
         }
     }
 
