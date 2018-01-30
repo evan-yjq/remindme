@@ -21,7 +21,7 @@ android {
     /*针对greenDao的一些配置*/
     greendao {
         schemaVersion 1 //数据库版本号
-        daoPackage 'com.evan.remindme.data.source.local' //自动生成的工具类的包名
+        daoPackage 'com.evan.remindme.data.source.dao' //自动生成的工具类的包名
         targetGenDir 'src/main/java' //路径
     }
 }

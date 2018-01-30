@@ -58,10 +58,10 @@ public class SortsRepository implements SortsDataSource{
     @Override
     public void openSort(@NonNull Sort sort) {
         checkNotNull(sort);
+        sort.setIsOpen(true);
         mSortsRemoteDataSource.openSort(sort);
         mSortsLocalDataSource.openSort(sort);
 
-        sort.setIsOpen(true);
         Sort openTask = new Sort(sort);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedSorts== null) {
@@ -79,10 +79,10 @@ public class SortsRepository implements SortsDataSource{
     @Override
     public void closeSort(@NonNull Sort sort) {
         checkNotNull(sort);
+        sort.setIsOpen(false);
         mSortsRemoteDataSource.closeSort(sort);
         mSortsLocalDataSource.closeSort(sort);
 
-        sort.setIsOpen(false);
         Sort closeTask = new Sort(sort);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedSorts== null) {
@@ -150,7 +150,7 @@ public class SortsRepository implements SortsDataSource{
                 if (mCachedSorts == null) {
                     mCachedSorts = new LinkedHashMap<>();
                 }
-                mCachedSorts.put(sort.getId(), sort);
+                mCachedSorts.put(sortId, sort);
                 callback.onSortLoaded(sort);
             }
 
@@ -163,7 +163,7 @@ public class SortsRepository implements SortsDataSource{
                         if (mCachedSorts == null) {
                             mCachedSorts = new LinkedHashMap<>();
                         }
-                        mCachedSorts.put(sort.getId(), sort);
+                        mCachedSorts.put(sortId, sort);
                         callback.onSortLoaded(sort);
                     }
 
@@ -179,7 +179,7 @@ public class SortsRepository implements SortsDataSource{
     @Override
     public void saveSort(@NonNull final Sort sort,@NonNull final SaveCallback callback){
         checkNotNull(sort);
-
+        checkNotNull(callback);
         mSortsLocalDataSource.saveSort(sort, new SaveCallback() {
             @Override
             public void onSave(Long id) {
@@ -190,7 +190,7 @@ public class SortsRepository implements SortsDataSource{
                     mCachedSorts = new LinkedHashMap<>();
                 }
 
-                mCachedSorts.put(sort.getId(), sort);
+                mCachedSorts.put(id, sort);
                 callback.onSave(id);
             }
         });
@@ -199,6 +199,7 @@ public class SortsRepository implements SortsDataSource{
     @Override
     public void check(@NonNull final Sort sort, @NonNull final CheckCallback callback){
         checkNotNull(sort);
+        checkNotNull(callback);
         mSortsLocalDataSource.check(sort, new CheckCallback() {
             @Override
             public void onCheck(boolean b) {
@@ -208,11 +209,7 @@ public class SortsRepository implements SortsDataSource{
                     mSortsRemoteDataSource.check(sort, new CheckCallback() {
                         @Override
                         public void onCheck(boolean b) {
-                            if (b){
-                                callback.onCheck(true);
-                            }else{
-                                callback.onCheck(false);
-                            }
+                            callback.onCheck(b);
                         }
                     });
                 }
@@ -222,9 +219,12 @@ public class SortsRepository implements SortsDataSource{
 
     @Override
     public void deleteSort(@NonNull Long sortId) {
-        mSortsRemoteDataSource.deleteSort(checkNotNull(sortId));
-        mSortsLocalDataSource.deleteSort(checkNotNull(sortId));
-
+        checkNotNull(sortId);
+        mSortsRemoteDataSource.deleteSort(sortId);
+        mSortsLocalDataSource.deleteSort(sortId);
+        if (mCachedSorts == null) {
+            mCachedSorts = new LinkedHashMap<>();
+        }
         mCachedSorts.remove(sortId);
     }
 
@@ -260,6 +260,7 @@ public class SortsRepository implements SortsDataSource{
 
     @Override
     public void getSortWithName(@NonNull final String name, @NonNull final GetSortCallback callback) {
+        checkNotNull(name);
         checkNotNull(callback);
 
         final Sort sort = getSortWithName(name);

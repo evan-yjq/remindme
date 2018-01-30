@@ -400,10 +400,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 //                        .getResources().getDrawable(R.drawable.touch_feedback));
 //            }
 
-            turnOnCB.setOnClickListener(new View.OnClickListener() {
+            turnOnCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View view) {
-                    if (!task.isTurnOn()) {
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) {
                         mItemListener.onTurnOnTaskClick(task);
                     } else {
                         mItemListener.onTurnOffTaskClick(task);

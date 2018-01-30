@@ -40,7 +40,6 @@ public interface SortsContract {
 
         void showLoadingSortsError();
 
-
     }
     interface Presenter extends BasePresenter{
 

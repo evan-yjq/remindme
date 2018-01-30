@@ -36,7 +36,6 @@ public class SaveSort extends UseCase<SaveSort.RequestValues,SaveSort.ResponseVa
                         sortsRepository.saveSort(sort, new SortsDataSource.SaveCallback() {
                             @Override
                             public void onSave(Long id) {
-                                sort.setId(id);
                                 getUseCaseCallback().onSuccess(new ResponseValue(sort));
                             }
                         });

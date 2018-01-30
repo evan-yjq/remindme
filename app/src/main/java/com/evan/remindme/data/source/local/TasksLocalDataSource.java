@@ -1,12 +1,11 @@
 package com.evan.remindme.data.source.local;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import com.evan.remindme.data.source.TasksDataSource;
+import com.evan.remindme.data.source.dao.TaskDao;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.util.AppExecutors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

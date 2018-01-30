@@ -65,10 +65,10 @@ public class TasksRepository implements TasksDataSource {
     @Override
     public void turnOnTask(@NonNull Task task) {
         checkNotNull(task);
+        task.setTurnOn(true);
         mTasksRemoteDataSource.turnOnTask(task);
         mTasksLocalDataSource.turnOnTask(task);
 
-        task.setTurnOn(true);
         Task turnOnTask = new Task(task);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedTasks == null) {
@@ -87,10 +87,10 @@ public class TasksRepository implements TasksDataSource {
     @Override
     public void turnOffTask(@NonNull Task task) {
         checkNotNull(task);
+        task.setTurnOn(false);
         mTasksRemoteDataSource.turnOffTask(task);
         mTasksLocalDataSource.turnOffTask(task);
 
-        task.setTurnOn(false);
         Task turnOffTask = new Task(task);
         //在内存缓存更新，以保持应用程序界面最新
         if (mCachedTasks == null) {

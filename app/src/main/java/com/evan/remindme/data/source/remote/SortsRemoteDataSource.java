@@ -33,7 +33,7 @@ public class SortsRemoteDataSource implements SortsDataSource {
 
     private static void addSort(Long id,String title) {
         Sort newSort = new Sort(id,title);
-        SORTS_SERVICE_DATA.put(newSort.getId(), newSort);
+        SORTS_SERVICE_DATA.put(id, newSort);
     }
 
     public static SortsRemoteDataSource getInstance() {

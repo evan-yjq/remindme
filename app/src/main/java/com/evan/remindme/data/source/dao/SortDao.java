@@ -1,4 +1,4 @@
-package com.evan.remindme.data.source.local;
+package com.evan.remindme.data.source.dao;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;

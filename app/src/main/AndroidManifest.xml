@@ -1,7 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-
-          package="com.evan.remindme"
->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.evan.remindme">
 
     <application android:allowBackup="true"
                  android:label="@string/app_name"
@@ -15,13 +13,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".sorts.SortsActivity"
-                  android:parentActivityName=".tasks.TasksActivity"
-                  tools:ignore="UnusedAttribute">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".tasks.TasksActivity" />
-        </activity>
+
+        <activity android:name=".sorts.SortsActivity"/>
+
+        <activity android:name=".settings.SettingsActivity"/>
+
 
     </application>
 

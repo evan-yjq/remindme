@@ -17,15 +17,22 @@
 package com.evan.remindme;
 
 import android.content.Context;
+import android.gesture.GestureUtils;
 import android.support.annotation.NonNull;
+import com.evan.remindme.data.source.SettingsRepository;
 import com.evan.remindme.data.source.SortsRepository;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.data.source.TasksRepository;
-import com.evan.remindme.data.source.local.DaoSession;
+import com.evan.remindme.data.source.dao.DaoSession;
+import com.evan.remindme.data.source.local.SettingsLocalDataSource;
 import com.evan.remindme.data.source.local.SortsLocalDataSource;
 import com.evan.remindme.data.source.local.TasksLocalDataSource;
+import com.evan.remindme.data.source.remote.SettingRemoteDataSource;
 import com.evan.remindme.data.source.remote.SortsRemoteDataSource;
 import com.evan.remindme.data.source.remote.TasksRemoteDataSource;
+import com.evan.remindme.settings.domain.usecase.EditSetting;
+import com.evan.remindme.settings.domain.usecase.GetSetting;
+import com.evan.remindme.settings.domain.usecase.GetSettings;
 import com.evan.remindme.sorts.domain.usecase.DeleteSort;
 import com.evan.remindme.sorts.domain.usecase.SaveSort;
 import com.evan.remindme.tasks.domain.usecase.CloseSort;
@@ -64,6 +71,25 @@ public class Injection {
                 SortsLocalDataSource.getInstance(new AppExecutors(),
                         database.getSortDao()));
 
+    }
+
+    public static SettingsRepository provideSettingsRepository(@NonNull Context context){
+        checkNotNull(context);
+        DaoSession database = GreenDaoUtils.getSingleTon().getmDaoSession(context);
+        return SettingsRepository.getInstance(SettingsLocalDataSource.getInstance(new AppExecutors(),database.getSettingDao()),
+                SettingRemoteDataSource.getInstance());
+    }
+
+    public static EditSetting provideEditSetting(@NonNull Context context){
+        return new EditSetting(provideSettingsRepository(context));
+    }
+
+    public static GetSettings provideGetSettings(@NonNull Context context){
+        return new GetSettings(provideSettingsRepository(context));
+    }
+
+    public static GetSetting provideGetSetting(@NonNull Context context){
+        return new GetSetting(provideSettingsRepository(context));
     }
 
     public static GetTasks provideGetTasks(@NonNull Context context) {

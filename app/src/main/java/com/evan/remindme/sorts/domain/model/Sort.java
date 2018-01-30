@@ -1,6 +1,6 @@
 package com.evan.remindme.sorts.domain.model;
 
-import com.evan.remindme.util.Objects;
+import java.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
@@ -76,8 +76,8 @@ public class Sort implements Comparable<Sort>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Sort sort = (Sort)o;
-        return Objects.equal(this.id,sort.id)&&
-                Objects.equal(this.name,sort.name);
+        return Objects.equals(this.id,sort.id)&&
+                Objects.equals(this.name,sort.name);
     }
 
     @Override

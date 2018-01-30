@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.data.source.TasksDataSource;
+import com.evan.remindme.settings.SettingKey;
+import com.evan.remindme.settings.domain.model.Setting;
+import com.evan.remindme.settings.domain.usecase.GetSetting;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.usecase.CloseSort;
 import com.evan.remindme.tasks.domain.usecase.GetSortByName;
@@ -35,12 +38,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final OpenSort mOpenSort;
     private final CloseSort mCloseSort;
     private final GetSortByName mGetSortByName;
+    private final GetSetting mGetSetting;
 
     //默认显示方式
     private TasksDisplayType mCurrentDisplaying = TasksDisplayType.TASKS_BY_SORT;
 
-    // 设定第一次是否从网络数据中启动
-    private boolean mFirstLoad = false;
+    // 是否是第一次启动
+    private boolean mFirstLoad = true;
 
     private final UseCaseHandler mUseCaseHandler;
 
@@ -49,7 +53,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull GetTasks getTasks, @NonNull TurnOnTask turnOnTask,
                           @NonNull TurnOffTask turnOffTask, @NonNull SaveTask saveTask,
                           @NonNull OpenSort openSort, @NonNull CloseSort closeSort,
-                          @NonNull GetSortByName getSortByName) {
+                          @NonNull GetSortByName getSortByName,@NonNull GetSetting getSetting) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTasks = checkNotNull(getTasks, "getTask cannot be null!");
@@ -59,6 +63,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mOpenSort = checkNotNull(openSort,"openSort cannot be null!");
         mCloseSort = checkNotNull(closeSort,"closeSort cannot be null!");
         mGetSortByName = checkNotNull(getSortByName,"getSortByName cannot be null!");
+        mGetSetting = checkNotNull(getSetting,"getSetting cannot be null!");
 
         mTasksView.setPresenter(this);
     }
@@ -66,7 +71,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
-        loadTasks(false);
+        loadDefaultDisplaySetting();
     }
 
     @Override
@@ -102,10 +107,33 @@ public class TasksPresenter implements TasksContract.Presenter {
         mCurrentDisplaying = requestType;
     }
 
+    private void loadDefaultDisplaySetting(){
+        if (mFirstLoad){
+            GetSetting.RequestValues requestValues = new GetSetting.RequestValues(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString());
+            mUseCaseHandler.execute(mGetSetting, requestValues,
+                    new UseCase.UseCaseCallback<GetSetting.ResponseValue>() {
+                        @Override
+                        public void onSuccess(GetSetting.ResponseValue response) {
+                            Setting setting = response.getSetting();
+                            if (Boolean.parseBoolean(setting.getValue())) {
+                                setDisplay(TasksDisplayType.TASKS_BY_SORT);
+                            }else{
+                                setDisplay(TasksDisplayType.TASKS_BY_TIME);
+                            }
+                            loadTasks(false);
+                        }
+                        @Override
+                        public void onError() {
+                            setDisplay(TasksDisplayType.TASKS_BY_SORT);
+                            loadTasks(false);
+                        }
+                    });
+        }
+    }
+
     @Override
     public void loadTasks(boolean forceUpdate) {
-        //简化示例：网络重新加载将强制在第一次加载。
-        loadTasks(forceUpdate || mFirstLoad, true);
+        loadTasks(forceUpdate, true);
         mFirstLoad = false;
     }
 
@@ -228,7 +256,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(TurnOnTask.ResponseValue response) {
                         mTasksView.showTaskMarkedTurnOn();
-                        loadTasks(false,false);
+//                        loadTasks(false,false);
                     }
 
                     @Override
@@ -246,7 +274,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(TurnOffTask.ResponseValue response) {
                         mTasksView.showTaskMarkedTurnOff();
-                        loadTasks(false,false);
+//                        loadTasks(false,false);
                     }
 
                     @Override

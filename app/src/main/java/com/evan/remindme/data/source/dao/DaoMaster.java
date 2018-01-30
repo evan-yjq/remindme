@@ -1,4 +1,4 @@
-package com.evan.remindme.data.source.local;
+package com.evan.remindme.data.source.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,12 +23,14 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         TaskDao.createTable(db, ifNotExists);
         SortDao.createTable(db, ifNotExists);
+        SettingDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         TaskDao.dropTable(db, ifExists);
         SortDao.dropTable(db, ifExists);
+        SettingDao.dropTable(db, ifExists);
     }
 
     /**
@@ -49,6 +51,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(TaskDao.class);
         registerDaoClass(SortDao.class);
+        registerDaoClass(SettingDao.class);
     }
 
     public DaoSession newSession() {

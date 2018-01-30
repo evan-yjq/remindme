@@ -2,9 +2,9 @@ package com.evan.remindme.data.source.local;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.data.source.SortsDataSource;
+import com.evan.remindme.data.source.dao.SortDao;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.util.AppExecutors;
-import org.greenrobot.greendao.query.WhereCondition;
 
 import java.util.List;
 

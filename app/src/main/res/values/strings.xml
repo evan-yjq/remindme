@@ -33,6 +33,8 @@
     <string name="no_sorts_all">你还没有分类!</string>
     <string name="no_sorts_add">添加分类+</string>
 
+    <string name="settings_list_title">设置选项</string>
+
     <string name="refresh">刷新</string>
 
 </resources>

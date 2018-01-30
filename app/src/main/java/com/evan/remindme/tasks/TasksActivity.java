@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
+import com.evan.remindme.settings.SettingsActivity;
 import com.evan.remindme.sorts.SortsActivity;
 import com.evan.remindme.util.ActivityUtils;
 
@@ -77,7 +78,8 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideOpenSort(getApplicationContext()),
                 Injection.provideCloseSort(getApplicationContext()),
-                Injection.provideGetSortByName(getApplicationContext()));
+                Injection.provideGetSortByName(getApplicationContext()),
+                Injection.provideGetSetting(getApplicationContext()));
 
         //加载之前保存的状态（如果可用）。
         if (savedInstanceState != null) {
@@ -108,12 +110,17 @@ public class TasksActivity extends AppCompatActivity{
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent intent;
                 switch (item.getItemId()){
                     case R.id.tasks_navigation_menu_item:
                         //已经再次界面，什么都不用做
                         break;
                     case R.id.sorts_navigation_menu_item:
-                        Intent intent = new Intent(TasksActivity.this, SortsActivity.class);
+                        intent = new Intent(TasksActivity.this, SortsActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.settings_navigation_menu_item:
+                        intent = new Intent(TasksActivity.this, SettingsActivity.class);
                         startActivity(intent);
                         break;
                     default:

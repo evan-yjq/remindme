@@ -2,8 +2,8 @@ package com.evan.remindme.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import com.evan.remindme.data.source.local.DaoMaster;
-import com.evan.remindme.data.source.local.DaoSession;
+import com.evan.remindme.data.source.dao.DaoMaster;
+import com.evan.remindme.data.source.dao.DaoSession;
 
 public class GreenDaoUtils {
 

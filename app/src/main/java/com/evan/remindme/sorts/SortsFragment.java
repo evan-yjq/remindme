@@ -45,8 +45,6 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     private LinearLayout mSortsView;
     private SortsAdapter mSortsAdapter;
 
-    private ListView listView;
-
     public SortsFragment(){
     }
 
@@ -69,9 +67,9 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.socks_frag,container,false);
+        View root = inflater.inflate(R.layout.sorts_frag,container,false);
 
-        listView = root.findViewById(R.id.sorts_list);
+        ListView listView = root.findViewById(R.id.sorts_list);
         listView.setAdapter(mSortsAdapter);
         mSortsView = root.findViewById(R.id.sortsLL);
 
@@ -106,6 +104,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
                 mPresenter.loadSorts(false);
             }
         });
+        swipeRefreshLayout.setScrollUpChild(listView);
         setHasOptionsMenu(true);
         return root;
     }
@@ -151,6 +150,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         EditText et = new EditText(getActivity());
         et.setSingleLine();
         et.setHint(hint);
+        et.requestFocus();
         layout.addView(et);
 
         MyDialogFragment dialog = new MyDialogFragment(title,layout,listener);
@@ -283,20 +283,22 @@ public class SortsFragment extends Fragment implements SortsContract.View {
                 view = inflater.inflate(R.layout.sort_item,viewGroup,false);
             }
 
+            final Sort sort = getItem(i);
+
             TextView titleTV = view.findViewById(R.id.title);
-            titleTV.setText(getItem(i).getName());
+            titleTV.setText(sort.getName());
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    mItemListener.onSortLongClick(getItem(i));
+                    mItemListener.onSortLongClick(sort);
                     return true;
                 }
             });
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mItemListener.onSortClick(getItem(i));
+                    mItemListener.onSortClick(sort);
                 }
             });
             return view;
