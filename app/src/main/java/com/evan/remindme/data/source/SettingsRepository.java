@@ -49,6 +49,9 @@ public class SettingsRepository implements SettingsDataSource{
         checkNotNull(id);
         checkNotNull(callback);
 
+        // 因为在进入设置界面前有过加载设置操作，
+        // 所以为了不弄脏缓存，删除插入缓存的操作
+
         Setting setting = getSettingWithId(id);
 
         if (setting!=null){
@@ -59,10 +62,6 @@ public class SettingsRepository implements SettingsDataSource{
         mSettingsLocalDataSource.getSetting(id, new GetSettingCallback() {
             @Override
             public void onSettingLoaded(Setting setting) {
-                if (mCachedSettings == null){
-                    mCachedSettings = new LinkedHashMap<>();
-                }
-                mCachedSettings.put(id,setting);
                 callback.onSettingLoaded(setting);
             }
 
@@ -71,10 +70,7 @@ public class SettingsRepository implements SettingsDataSource{
                 mSettingsRemoteDataSource.getSetting(id, new GetSettingCallback() {
                     @Override
                     public void onSettingLoaded(Setting setting) {
-                        if (mCachedSettings == null){
-                            mCachedSettings = new LinkedHashMap<>();
-                        }
-                        mCachedSettings.put(id,setting);
+                        mSettingsLocalDataSource.saveSetting(setting);
                         callback.onSettingLoaded(setting);
                     }
 
@@ -85,7 +81,6 @@ public class SettingsRepository implements SettingsDataSource{
                 });
             }
         });
-
     }
 
     @Override

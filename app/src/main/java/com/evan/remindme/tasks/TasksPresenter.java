@@ -191,7 +191,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     mTasksView.showSortTasks(tasks);
                     break;
                 case TASKS_BY_TIME:
-                    mTasksView.showTimeTasks(tasks.get(new Sort("")));
+                    mTasksView.showTimeTasks(tasks.get(null));
                     break;
             }
             //设置显示label标题

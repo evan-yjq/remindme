@@ -28,7 +28,7 @@ public class SettingRemoteDataSource implements SettingsDataSource{
     static {
         SETTINGS_SERVICE_DATA = new LinkedHashMap<>(1);
         addSetting(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString(),"默认分类显示"
-                , "true", SettingDisplay.SWITCH_ITEM.toString());
+                , "true", SettingDisplay.CAPTION_SWITCH_ITEM.toString());
     }
 
     private static void addSetting(String id, String key, String value,String display){

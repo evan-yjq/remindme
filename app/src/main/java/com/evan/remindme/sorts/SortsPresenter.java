@@ -49,8 +49,11 @@ public class SortsPresenter implements SortsContract.Presenter {
     }
 
     @Override
-    public void rename(@NonNull Sort sort) {
+    public void rename(@NonNull final Sort sort, @NonNull String name) {
         checkNotNull(sort,"sort cannot be null!");
+        checkNotNull(name,"name cannot be null!");
+        final String nameBack = sort.getName();
+        sort.setName(name);
         mUseCaseHandler.execute(mSaveSort, new SaveSort.RequestValues(sort,false),
                 new UseCase.UseCaseCallback<SaveSort.ResponseValue>() {
                     @Override
@@ -60,14 +63,16 @@ public class SortsPresenter implements SortsContract.Presenter {
 
                     @Override
                     public void onError() {
+                        sort.setName(nameBack);
                         mSortsView.showSortRenameError();
                     }
                 });
     }
 
     @Override
-    public void save(@NonNull Sort sort) {
-        checkNotNull(sort,"sort cannot be null!");
+    public void save(@NonNull String name) {
+        checkNotNull(name,"name cannot be null!");
+        Sort sort = new Sort(name);
         mUseCaseHandler.execute(mSaveSort, new SaveSort.RequestValues(sort,true),
                 new UseCase.UseCaseCallback<SaveSort.ResponseValue>() {
                     @Override

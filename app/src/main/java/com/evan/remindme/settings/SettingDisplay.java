@@ -12,4 +12,10 @@ public enum SettingDisplay {
      * 以settings_switch_item显示
      */
     SWITCH_ITEM,
+
+    /**
+     * 以settings_caption_switch_item显示
+     */
+    CAPTION_SWITCH_ITEM,
+
 }

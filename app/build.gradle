@@ -24,6 +24,18 @@ android {
         daoPackage 'com.evan.remindme.data.source.dao' //自动生成的工具类的包名
         targetGenDir 'src/main/java' //路径
     }
+    sourceSets {
+        main {
+            res.srcDirs = [
+                'src/main/res/layouts/addtask',
+                'src/main/res/layouts/item',
+                'src/main/res/layouts/settings',
+                'src/main/res/layouts/sorts',
+                'src/main/res/layouts/tasks',
+                'src/main/res'
+            ]
+        }
+    }
 }
 
 dependencies {

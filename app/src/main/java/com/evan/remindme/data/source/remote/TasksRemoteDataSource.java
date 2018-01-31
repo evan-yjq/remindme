@@ -25,9 +25,6 @@ public class TasksRemoteDataSource implements TasksDataSource{
 
     static {
         TASKS_SERVICE_DATA = new LinkedHashMap<>(2);
-        addTask("Build tower in Pisa",(long)1);
-        addTask("Finish bridge in Tacoma",(long)2);
-        addTask("test",(long)3);
     }
 
     private static void addTask(String title,Long sortId) {

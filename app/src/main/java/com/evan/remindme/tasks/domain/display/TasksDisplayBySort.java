@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks.domain.display;
 
+import com.evan.remindme.data.source.SortsDataSource;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
@@ -13,7 +14,7 @@ import java.util.*;
  */
 public class TasksDisplayBySort implements TaskDisplay {
     @Override
-    public Map<Sort,List<Task>> display(List<Task>tasks,List<Sort>sorts) {
+    public Map<Sort,List<Task>> display(List<Task>tasks, List<Sort>sorts, SortsDataSource.GetSortCallback callback) {
         Map<Sort,List<Task>> displayedTasks = new HashMap<>();
 
         if (sorts==null||tasks==null){
@@ -55,6 +56,7 @@ public class TasksDisplayBySort implements TaskDisplay {
             }
             if (s == null){
                 s = new Sort((long)1,"默认");
+                callback.onSortLoaded(s);
                 Collections.sort(tmp);
                 displayedTasks.put(s,tmp);
             }else {

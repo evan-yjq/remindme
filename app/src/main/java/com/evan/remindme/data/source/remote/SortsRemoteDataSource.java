@@ -1,7 +1,6 @@
 package com.evan.remindme.data.source.remote;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.evan.remindme.data.source.SortsDataSource;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.util.Objects;
@@ -9,7 +8,6 @@ import com.evan.remindme.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
  * Created by IntelliJ IDEA
@@ -27,8 +25,6 @@ public class SortsRemoteDataSource implements SortsDataSource {
 
     static {
         SORTS_SERVICE_DATA = new LinkedHashMap<>(1);
-        addSort((long)1,"默认");
-        addSort((long)2,"新建");
     }
 
     private static void addSort(Long id,String title) {

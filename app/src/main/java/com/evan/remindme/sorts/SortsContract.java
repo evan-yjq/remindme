@@ -43,9 +43,9 @@ public interface SortsContract {
     }
     interface Presenter extends BasePresenter{
 
-        void rename(@NonNull Sort sort);
+        void rename(@NonNull Sort sort,@NonNull String name);
 
-        void save(@NonNull Sort sort);
+        void save(@NonNull String name);
 
         void delete(@NonNull Sort sort);
 

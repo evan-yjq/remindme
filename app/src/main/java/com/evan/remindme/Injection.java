@@ -94,7 +94,8 @@ public class Injection {
 
     public static GetTasks provideGetTasks(@NonNull Context context) {
         return new GetTasks(provideTasksRepository(context), new DisplayFactory(),
-                provideUseCaseHandler(),provideGetSorts(context));
+                provideUseCaseHandler(),provideGetSorts(context),
+                provideSaveSort(context));
     }
 
     public static GetSortByName provideGetSortByName(@NonNull Context context){

@@ -105,7 +105,7 @@ public class SettingsFragment extends Fragment implements SettingsContract.View{
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
     }
 
-    ListItemListener mItemListener = new ListItemListener() {
+    private ListItemListener mItemListener = new ListItemListener() {
 
         @Override
         public void onSwitchOpen(Setting setting) {
@@ -162,28 +162,43 @@ public class SettingsFragment extends Fragment implements SettingsContract.View{
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 if (Objects.equals(setting.getDisplay(),SettingDisplay.SWITCH_ITEM.toString())){
                     view = inflater.inflate(R.layout.settings_switch_item,viewGroup,false);
+                }else if(Objects.equals(setting.getDisplay(),SettingDisplay.CAPTION_SWITCH_ITEM.toString())){
+                    view = inflater.inflate(R.layout.settings_caption_switch_item,viewGroup,false);
                 }
             }
 
             TextView titleTV = view.findViewById(R.id.title);
             titleTV.setText(setting.getTitle());
             if (Objects.equals(setting.getDisplay(),SettingDisplay.SWITCH_ITEM.toString())) {
-                Switch switch_ = view.findViewById(R.id.switch_);
-                switch_.setChecked(Boolean.parseBoolean(setting.getValue()));
-
-                switch_.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if (b){
-                            mItemListener.onSwitchOpen(setting);
-                        }else{
-                            mItemListener.onSwitchClose(setting);
-                        }
-                    }
-                });
+                setSettingSwitchItem(setting, view, mItemListener);
+            }else if(Objects.equals(setting.getDisplay(),SettingDisplay.CAPTION_SWITCH_ITEM.toString())){
+                setSettingCaptionSwitchItem(setting, view, mItemListener);
             }
             return view;
         }
+    }
+
+    private static void setSettingSwitchItem(final Setting setting, View v, final ListItemListener listener){
+        Switch s = v.findViewById(R.id.switch_);
+        s.setChecked(Boolean.parseBoolean(setting.getValue()));
+        s.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!Boolean.parseBoolean(setting.getValue())){
+                    listener.onSwitchOpen(setting);
+                }else{
+                    listener.onSwitchClose(setting);
+                }
+            }
+        });
+    }
+
+    private static void setSettingCaptionSwitchItem(final Setting setting,View v,final ListItemListener listener){
+        TextView bodyTV = v.findViewById(R.id.caption);
+        if (Objects.equals(setting.getId(),SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString())){
+            bodyTV.setText("重新打开应用后生效");
+        }
+        setSettingSwitchItem(setting,v,listener);
     }
 
     interface ListItemListener{

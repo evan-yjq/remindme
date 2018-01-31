@@ -8,6 +8,7 @@ import com.evan.remindme.data.source.SortsRepository;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.data.source.TasksRepository;
 import com.evan.remindme.sorts.domain.usecase.GetSorts;
+import com.evan.remindme.sorts.domain.usecase.SaveSort;
 import com.evan.remindme.tasks.TasksDisplayType;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.tasks.domain.display.TaskDisplay;
@@ -34,13 +35,16 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
     private final UseCaseHandler mUseCaseHandler;
 
     private final GetSorts mGetSorts;
+    private final SaveSort mSaveSort;
 
     public GetTasks(@NonNull TasksRepository tasksRepository, @NonNull DisplayFactory displayFactory,
-                    @NonNull UseCaseHandler useCaseHandler,@NonNull GetSorts getSorts) {
+                    @NonNull UseCaseHandler useCaseHandler, @NonNull GetSorts getSorts,
+                    @NonNull SaveSort saveSort) {
         mGetSorts = checkNotNull(getSorts,"getSorts cannot be null!");
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
         mDisplayFactory = checkNotNull(displayFactory, "filterFactory cannot be null!");
+        mSaveSort = checkNotNull(saveSort, "saveSort cannot be null!");
     }
 
     @Override
@@ -58,14 +62,36 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
                         new UseCaseCallback<GetSorts.ResponseValue>() {
                             @Override
                             public void onSuccess(GetSorts.ResponseValue response) {
-                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,response.getSorts());
+                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,response.getSorts(),
+                                        new SortsDataSource.GetSortCallback(){
+                                            @Override
+                                            public void onSortLoaded(Sort sort) {
+                                                mUseCaseHandler.execute(mSaveSort, new SaveSort.RequestValues(sort, true),
+                                                        new UseCaseCallback<SaveSort.ResponseValue>() {
+                                                            @Override
+                                                            public void onSuccess(SaveSort.ResponseValue response) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onError() {
+
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void onDataNotAvailable() {
+
+                                            }
+                                        });
                                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                                 getUseCaseCallback().onSuccess(responseValue);
                             }
 
                             @Override
                             public void onError() {
-                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,null);
+                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,null,null);
                                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                                 getUseCaseCallback().onSuccess(responseValue);
                             }

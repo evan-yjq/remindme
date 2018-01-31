@@ -142,8 +142,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
                 if (input.equals("")) {
                     showMessage("分类名不能为空");
                 }else{
-                    Sort sort = new Sort(input);
-                    mPresenter.save(sort);
+                    mPresenter.save(input);
                 }
             }
         },"");
@@ -216,8 +215,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
                 if (input.equals("")) {
                     showMessage("分类名不能为空");
                 }else if(!Objects.equal(input,sort.getName())){
-                    sort.setName(input);
-                    mPresenter.rename(sort);
+                    mPresenter.rename(sort,input);
                 }
             }
         },sort.getName());
