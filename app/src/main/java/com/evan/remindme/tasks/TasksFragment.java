@@ -12,13 +12,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.*;
 import android.widget.*;
 import com.evan.remindme.R;
+import com.evan.remindme.addedittask.AddEditTaskActivity;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
+import com.evan.remindme.util.DateUtils;
+import com.evan.remindme.util.Objects;
 
 import java.util.*;
 
-import static com.evan.remindme.util.CreateRandomField.getRandomEnglishName;
-import static com.evan.remindme.util.CreateRandomField.getRandomSortName;
+import static com.evan.remindme.addedittask.TasksCircleType.TASKS_CIRCLE_TYPE_LIST;
+import static com.evan.remindme.addedittask.TasksRepeatType.TASKS_REPEAT_TYPE_LIST;
 import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
@@ -79,6 +82,20 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mPresenter.result(requestCode,resultCode);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //设置浮动按钮
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add);
+        fab.setImageResource(R.drawable.ic_add);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.addNewTask();
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -100,18 +117,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mNoTaskAddView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.addNewTask(getRandomSortName());
-            }
-        });
-
-        //设置浮动按钮
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add);
-
-        fab.setImageResource(R.drawable.ic_add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.addNewTask(getRandomSortName());
+                mPresenter.addNewTask();
             }
         });
 
@@ -192,12 +198,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showAddTask(String name,Long id) {
-        // TODO 等有了添加页面来解除注释
-//        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
-//        startActivityForResult(intent, AddEditTaskActivity.REQUEST_ADD_TASK);
-        Task task = new Task(name+getRandomEnglishName(),id,new Date());
-        mPresenter.save(task);
+    public void showAddTask() {
+        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
+        startActivityForResult(intent, AddEditTaskActivity.REQUEST_ADD_TASK);
     }
 
     @Override
@@ -388,6 +391,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitle());
 
+            TextView captionTV = rowView.findViewById(R.id.caption);
+            captionTV.setText("起始时间:"+new DateUtils().Date2String(task.getTime())+"/"+
+                    TASKS_CIRCLE_TYPE_LIST[task.getCircle()+1]+"/"+
+                    TASKS_REPEAT_TYPE_LIST[task.getRepeat()+1]);
+
             Switch turnOnCB = rowView.findViewById(R.id.turn_on);
 
             //打开/关闭提醒UI
@@ -425,9 +433,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         private Map<Sort,List<Task>> mTasks;
         private ListItemListener mItemListener;
-        private Sort[]mSorts;
+        private List<Sort>mSorts;
 
         public TasksExpandableListAdapter(Map<Sort,List<Task>>mTasks,ListItemListener itemListener){
+            mSorts = new ArrayList<>();
             setMap(mTasks);
             mItemListener = itemListener;
         }
@@ -439,9 +448,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         private void setMap(Map<Sort,List<Task>> tasks){
             mTasks = checkNotNull(tasks);
-            mSorts = mTasks.keySet().toArray(new Sort[0]);
-            for (int i = 0; i < mSorts.length; i++) {
-                if (mSorts[i].isOpen()){
+            mSorts.clear();
+            Collections.addAll(mSorts,mTasks.keySet().toArray(new Sort[0]));
+            Collections.sort(mSorts);
+            for (int i = 0; i < mSorts.size(); i++) {
+                if (mSorts.get(i).isOpen()) {
                     mItemListener.openSort(i);
                 }
             }
@@ -456,19 +467,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         //  获得某个父项的子项数目
         @Override
         public int getChildrenCount(int i) {
-            return mTasks.get(mSorts[i]).size();
+            return mTasks.get(mSorts.get(i)).size();
         }
 
         //  获得某个父项
         @Override
         public List<Task> getGroup(int i) {
-            return mTasks.get(mSorts[i]);
+            return mTasks.get(mSorts.get(i));
         }
 
         //  获得某个父项的某个子项
         @Override
         public Task getChild(int i, int i1) {
-            return mTasks.get(mSorts[i]).get(i1);
+            return mTasks.get(mSorts.get(i)).get(i1);
         }
 
         //  获得某个父项的id
@@ -504,14 +515,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mItemListener.onSortClick(b,mSorts[i],i);
+                    mItemListener.onSortClick(b,mSorts.get(i),i);
                 }
             });
             TextView numTV = rowView.findViewById(R.id.num);
             numTV.setText(j+"/"+getChildrenCount(i));
 
             TextView titleTV = rowView.findViewById(R.id.title);
-            titleTV.setText(mSorts[i].getName());
+            titleTV.setText(mSorts.get(i).getName());
             return rowView;
         }
 
@@ -528,6 +539,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitle());
+
+            TextView captionTV = rowView.findViewById(R.id.caption);
+            captionTV.setText("起始时间:"+new DateUtils().Date2String(task.getTime())+"/"+
+                                TASKS_CIRCLE_TYPE_LIST[task.getCircle()+1]+"/"+
+                                TASKS_REPEAT_TYPE_LIST[task.getRepeat()+1]);
 
             Switch turnOnCB = rowView.findViewById(R.id.turn_on);
 

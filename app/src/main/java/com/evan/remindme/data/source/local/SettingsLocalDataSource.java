@@ -41,7 +41,7 @@ public class SettingsLocalDataSource implements SettingsDataSource{
     }
 
     @Override
-    public void getSetting(@NonNull final String id, @NonNull final GetSettingCallback callback) {
+    public void getSetting(@NonNull final Long id, @NonNull final GetSettingCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -73,7 +73,7 @@ public class SettingsLocalDataSource implements SettingsDataSource{
     }
 
     @Override
-    public void deleteSetting(@NonNull final String id) {
+    public void deleteSetting(@NonNull final Long id) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

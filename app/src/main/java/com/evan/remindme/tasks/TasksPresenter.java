@@ -1,19 +1,20 @@
 package com.evan.remindme.tasks;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
+import com.evan.remindme.addedittask.AddEditTaskActivity;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.settings.SettingKey;
 import com.evan.remindme.settings.domain.model.Setting;
 import com.evan.remindme.settings.domain.usecase.GetSetting;
 import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.usecase.CloseSort;
-import com.evan.remindme.tasks.domain.usecase.GetSortByName;
 import com.evan.remindme.tasks.domain.usecase.OpenSort;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.tasks.domain.usecase.GetTasks;
-import com.evan.remindme.tasks.domain.usecase.SaveTask;
+import com.evan.remindme.addedittask.domain.usecase.SaveTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOffTask;
 import com.evan.remindme.tasks.domain.usecase.TurnOnTask;
 
@@ -37,7 +38,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final SaveTask mSaveTask;
     private final OpenSort mOpenSort;
     private final CloseSort mCloseSort;
-    private final GetSortByName mGetSortByName;
     private final GetSetting mGetSetting;
 
     //默认显示方式
@@ -53,7 +53,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull GetTasks getTasks, @NonNull TurnOnTask turnOnTask,
                           @NonNull TurnOffTask turnOffTask, @NonNull SaveTask saveTask,
                           @NonNull OpenSort openSort, @NonNull CloseSort closeSort,
-                          @NonNull GetSortByName getSortByName,@NonNull GetSetting getSetting) {
+                          @NonNull GetSetting getSetting) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTasks = checkNotNull(getTasks, "getTask cannot be null!");
@@ -62,7 +62,6 @@ public class TasksPresenter implements TasksContract.Presenter {
         mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
         mOpenSort = checkNotNull(openSort,"openSort cannot be null!");
         mCloseSort = checkNotNull(closeSort,"closeSort cannot be null!");
-        mGetSortByName = checkNotNull(getSortByName,"getSortByName cannot be null!");
         mGetSetting = checkNotNull(getSetting,"getSetting cannot be null!");
 
         mTasksView.setPresenter(this);
@@ -76,12 +75,11 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void result(int requestCode, int resultCode) {
-        // TODO 等有了添加页面来解除注释
-        //如果任务已成功添加，显示消息提示
-//        if (AddEditTaskActivity.REQUEST_ADD_TASK == requestCode
-//                && Activity.RESULT_OK == resultCode) {
-//            mTasksView.showSuccessfullySavedMessage();
-//        }
+//        如果任务已成功添加，显示消息提示
+        if (AddEditTaskActivity.REQUEST_ADD_TASK == requestCode
+                && Activity.RESULT_OK == resultCode) {
+            mTasksView.showSuccessfullySavedMessage();
+        }
     }
 
     @Override
@@ -109,7 +107,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     private void loadDefaultDisplaySetting(){
         if (mFirstLoad){
-            GetSetting.RequestValues requestValues = new GetSetting.RequestValues(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString());
+            GetSetting.RequestValues requestValues = new GetSetting.RequestValues(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE);
             mUseCaseHandler.execute(mGetSetting, requestValues,
                     new UseCase.UseCaseCallback<GetSetting.ResponseValue>() {
                         @Override
@@ -194,24 +192,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                     mTasksView.showTimeTasks(tasks.get(null));
                     break;
             }
-            //设置显示label标题
-//            showDisplayLabel();
         }
     }
-
-//    private void showDisplayLabel() {
-//        switch (mCurrentDisplaying) {
-//            case TASKS_BY_SORT:
-//                mTasksView.showDisplayBySortLabel();
-//                break;
-//            case TASKS_BY_TIME:
-//                mTasksView.showDisplayByTimeLabel();
-//                break;
-//            default:
-//                mTasksView.showDisplayBySortLabel();
-//                break;
-//        }
-//    }
 
     private void processEmptyTasks() {
         switch (mCurrentDisplaying) {
@@ -228,20 +210,21 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void addNewTask(final String name) {
-        checkNotNull(name,"name cannot be null!");
-        mUseCaseHandler.execute(mGetSortByName, new GetSortByName.RequestValues(name),
-                new UseCase.UseCaseCallback<GetSortByName.ResponseValue>() {
-                    @Override
-                    public void onSuccess(GetSortByName.ResponseValue response) {
-                        mTasksView.showAddTask(name,response.getSort().getId());
-                    }
-
-                    @Override
-                    public void onError() {
-                        mTasksView.showAddTask(name,(long)1);
-                    }
-                });
+    public void addNewTask() {
+        mTasksView.showAddTask();
+//        checkNotNull(name,"name cannot be null!");
+//        mUseCaseHandler.execute(mGetSortByName, new GetSort.RequestValues(name),
+//                new UseCase.UseCaseCallback<GetSort.ResponseValue>() {
+//                    @Override
+//                    public void onSuccess(GetSort.ResponseValue response) {
+//                        mTasksView.showAddTask(name,response.getSort().getId());
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//                        mTasksView.showAddTask(name,(long)1);
+//                    }
+//                });
     }
 
     @Override

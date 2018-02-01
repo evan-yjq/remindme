@@ -23,15 +23,15 @@ public class SettingRemoteDataSource implements SettingsDataSource{
 
     private static final int SERVICE_LATENCY_IN_MILLIS = 5000;
 
-    private static final Map<String,Setting>SETTINGS_SERVICE_DATA;
+    private static final Map<Long,Setting>SETTINGS_SERVICE_DATA;
 
     static {
         SETTINGS_SERVICE_DATA = new LinkedHashMap<>(1);
-        addSetting(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString(),"默认分类显示"
-                , "true", SettingDisplay.CAPTION_SWITCH_ITEM.toString());
+        addSetting(SettingKey.DEFAULT_TASKS_DISPLAY_TYPE,"默认分类显示"
+                , "true", SettingDisplay.CAPTION_SWITCH_ITEM);
     }
 
-    private static void addSetting(String id, String key, String value,String display){
+    private static void addSetting(Long id, String key, String value,int display){
         Setting setting = new Setting(id, key, value,display);
         SETTINGS_SERVICE_DATA.put(id,setting);
     }
@@ -46,7 +46,7 @@ public class SettingRemoteDataSource implements SettingsDataSource{
     private SettingRemoteDataSource(){}
 
     @Override
-    public void getSetting(@NonNull String id, @NonNull GetSettingCallback callback) {
+    public void getSetting(@NonNull Long id, @NonNull GetSettingCallback callback) {
         Setting setting = SETTINGS_SERVICE_DATA.get(id);
         if (setting!=null) {
             callback.onSettingLoaded(setting);
@@ -61,7 +61,7 @@ public class SettingRemoteDataSource implements SettingsDataSource{
     }
 
     @Override
-    public void deleteSetting(@NonNull String id) {
+    public void deleteSetting(@NonNull Long id) {
         SETTINGS_SERVICE_DATA.remove(id);
     }
 

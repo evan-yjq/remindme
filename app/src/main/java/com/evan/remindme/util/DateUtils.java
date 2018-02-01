@@ -13,7 +13,7 @@ import java.util.Date;
 public class DateUtils {
     private SimpleDateFormat mFormat;
 
-    public final static SimpleDateFormat defaultFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public final static SimpleDateFormat defaultFormat = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分");
 
     private DateUtils(SimpleDateFormat format){
         if (format == null){

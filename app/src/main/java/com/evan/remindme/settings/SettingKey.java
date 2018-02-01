@@ -6,11 +6,11 @@ package com.evan.remindme.settings;
  * Date: 2018/1/30
  * Time: 下午8:47
  */
-public enum SettingKey {
+public class SettingKey {
 
     /**
      * tasks列表默认显示方式
      */
-    DEFAULT_TASKS_DISPLAY_TYPE
+    public static final Long DEFAULT_TASKS_DISPLAY_TYPE = 0L;
 
 }

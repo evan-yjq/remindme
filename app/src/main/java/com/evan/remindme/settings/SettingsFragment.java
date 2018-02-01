@@ -160,19 +160,28 @@ public class SettingsFragment extends Fragment implements SettingsContract.View{
             final Setting setting = getItem(i);
             if (view == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                if (Objects.equals(setting.getDisplay(),SettingDisplay.SWITCH_ITEM.toString())){
-                    view = inflater.inflate(R.layout.settings_switch_item,viewGroup,false);
-                }else if(Objects.equals(setting.getDisplay(),SettingDisplay.CAPTION_SWITCH_ITEM.toString())){
-                    view = inflater.inflate(R.layout.settings_caption_switch_item,viewGroup,false);
+                switch (setting.getDisplay()){
+                    case SettingDisplay.SWITCH_ITEM:
+                        view = inflater.inflate(R.layout.settings_switch_item,viewGroup,false);
+                        break;
+                    case SettingDisplay.CAPTION_SWITCH_ITEM:
+                        view = inflater.inflate(R.layout.settings_caption_switch_item,viewGroup,false);
+                        break;
+                    default:
+                        view = inflater.inflate(R.layout.settings_switch_item,viewGroup,false);
                 }
             }
-
             TextView titleTV = view.findViewById(R.id.title);
             titleTV.setText(setting.getTitle());
-            if (Objects.equals(setting.getDisplay(),SettingDisplay.SWITCH_ITEM.toString())) {
-                setSettingSwitchItem(setting, view, mItemListener);
-            }else if(Objects.equals(setting.getDisplay(),SettingDisplay.CAPTION_SWITCH_ITEM.toString())){
-                setSettingCaptionSwitchItem(setting, view, mItemListener);
+            switch (setting.getDisplay()){
+                case SettingDisplay.SWITCH_ITEM:
+                    setSettingSwitchItem(setting, view, mItemListener);
+                    break;
+                case SettingDisplay.CAPTION_SWITCH_ITEM:
+                    setSettingCaptionSwitchItem(setting, view, mItemListener);
+                    break;
+                default:
+                    setSettingSwitchItem(setting, view, mItemListener);
             }
             return view;
         }
@@ -195,7 +204,7 @@ public class SettingsFragment extends Fragment implements SettingsContract.View{
 
     private static void setSettingCaptionSwitchItem(final Setting setting,View v,final ListItemListener listener){
         TextView bodyTV = v.findViewById(R.id.caption);
-        if (Objects.equals(setting.getId(),SettingKey.DEFAULT_TASKS_DISPLAY_TYPE.toString())){
+        if (Objects.equals(setting.getId(),SettingKey.DEFAULT_TASKS_DISPLAY_TYPE)){
             bodyTV.setText("重新打开应用后生效");
         }
         setSettingSwitchItem(setting,v,listener);

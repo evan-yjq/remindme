@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.BinderThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -68,6 +69,19 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         mPresenter.start();
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add);
+        fab.setImageResource(R.drawable.ic_add);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.addNewSort();
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,14 +102,6 @@ public class SortsFragment extends Fragment implements SortsContract.View {
             }
         });
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_add);
-        fab.setImageResource(R.drawable.ic_add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.addNewSort();
-            }
-        });
         final ScrollChildSwipeRefreshLayout swipeRefreshLayout = root.findViewById(R.id.refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(
                 ContextCompat.getColor(getActivity(), R.color.colorPrimary),
@@ -109,7 +115,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
             }
         });
         swipeRefreshLayout.setScrollUpChild(listView);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
         return root;
     }
 

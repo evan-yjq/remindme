@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    
+    <color name="line_gray">#d8d8d8</color>
 
-    <drawable name="completedTaskBackground">#CCCCCC</drawable>
+    <color name="day_gray">#88d8d8d8</color>
 
     <drawable name="touchFeedback">#CFD8DC</drawable>
 </resources>

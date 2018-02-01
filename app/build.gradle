@@ -70,4 +70,6 @@ dependencies {
     //数据库greendao
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    //日历material-calendarview
+    compile 'com.prolificinteractive:material-calendarview:1.4.3'
 }

@@ -78,7 +78,6 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideOpenSort(getApplicationContext()),
                 Injection.provideCloseSort(getApplicationContext()),
-                Injection.provideGetSortByName(getApplicationContext()),
                 Injection.provideGetSetting(getApplicationContext()));
 
         //加载之前保存的状态（如果可用）。

@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Id;
 
 import java.util.Objects;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
 
 /**
  * Created by IntelliJ IDEA
@@ -18,13 +19,13 @@ import org.greenrobot.greendao.annotation.Generated;
 public class Setting {
 
     @Id
-    private String id;
+    private Long id;
 
     private String title;
 
     private String value;
 
-    private String display;
+    private int display;
 
     public Setting(Setting setting){
         this.id = setting.id;
@@ -33,8 +34,9 @@ public class Setting {
         this.display = setting.display;
     }
 
-    @Generated(hash = 1755906519)
-    public Setting(String id, String title, String value, String display) {
+    @Keep
+    @Generated(hash = 1913017900)
+    public Setting(Long id, String title, String value, int display) {
         this.id = id;
         this.title = title;
         this.value = value;
@@ -70,19 +72,19 @@ public class Setting {
         return Objects.hash(id, title, value, display);
     }
 
-    public String getDisplay() {
+    public int getDisplay() {
         return display;
     }
 
-    public void setDisplay(String display) {
+    public void setDisplay(int display) {
         this.display = display;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -28,11 +28,11 @@ public interface SettingsDataSource {
         void onDataNotAvailable();
     }
 
-    void getSetting(@NonNull String id, @NonNull GetSettingCallback callback);
+    void getSetting(@NonNull Long id, @NonNull GetSettingCallback callback);
 
     void saveSetting(@NonNull Setting setting);
 
-    void deleteSetting(@NonNull String id);
+    void deleteSetting(@NonNull Long id);
 
     void deleteAllSetting();
 

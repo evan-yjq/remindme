@@ -14,18 +14,18 @@ import static com.evan.remindme.util.Objects.checkNotNull;
  * Date: 2018/1/28
  * Time: 下午11:18
  */
-public class GetSortByName extends UseCase<GetSortByName.RequestValues,GetSortByName.ResponseValue>{
+public class GetSort extends UseCase<GetSort.RequestValues,GetSort.ResponseValue>{
 
     private final SortsRepository sortsRepository;
 
-    public GetSortByName(@NonNull SortsRepository sortsRepository) {
+    public GetSort(@NonNull SortsRepository sortsRepository) {
         this.sortsRepository = checkNotNull(sortsRepository,"sortsRepository cannot be null!");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        String name = requestValues.getName();
-        sortsRepository.getSortWithName(name, new SortsDataSource.GetSortCallback() {
+        Long id = requestValues.getId();
+        sortsRepository.getSort(id, new SortsDataSource.GetSortCallback() {
             @Override
             public void onSortLoaded(Sort sort) {
                 getUseCaseCallback().onSuccess(new ResponseValue(sort));
@@ -39,14 +39,14 @@ public class GetSortByName extends UseCase<GetSortByName.RequestValues,GetSortBy
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final String name;
+        private final Long id;
 
-        public RequestValues(@NonNull String name) {
-            this.name = checkNotNull(name,"name cannot be null!");
+        public RequestValues(@NonNull Long id) {
+            this.id = checkNotNull(id,"id cannot be null!");
         }
 
-        public String getName() {
-            return name;
+        public Long getId() {
+            return id;
         }
     }
     public static final class ResponseValue implements UseCase.ResponseValue {

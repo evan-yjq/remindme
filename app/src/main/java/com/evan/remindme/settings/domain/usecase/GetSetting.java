@@ -24,7 +24,7 @@ public class GetSetting extends UseCase<GetSetting.RequestValues,GetSetting.Resp
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        final String id = requestValues.getId();
+        final Long id = requestValues.getId();
         settingsRepository.getSetting(id, new SettingsDataSource.GetSettingCallback() {
             @Override
             public void onSettingLoaded(Setting setting) {
@@ -40,13 +40,13 @@ public class GetSetting extends UseCase<GetSetting.RequestValues,GetSetting.Resp
 
     public static final class RequestValues implements UseCase.RequestValues {
 
-        private final String id;
+        private final Long id;
 
-        public RequestValues(@NonNull String id) {
+        public RequestValues(@NonNull Long id) {
             this.id = checkNotNull(id,"id cannot be null!");
         }
 
-        public String getId() {
+        public Long getId() {
             return id;
         }
     }

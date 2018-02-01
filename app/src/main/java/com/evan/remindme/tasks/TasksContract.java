@@ -25,7 +25,7 @@ public interface TasksContract {
 
         void showTimeTasks(List<Task> tasks);
 
-        void showAddTask(String name,Long id);
+        void showAddTask();
 
         void showTaskDetailsUi(String taskId);
 
@@ -63,7 +63,7 @@ public interface TasksContract {
 
         void loadTasks(boolean forceUpdate);
 
-        void addNewTask(String name);
+        void addNewTask();
 
         void openTaskDetails(@NonNull Task requestedTask);
 

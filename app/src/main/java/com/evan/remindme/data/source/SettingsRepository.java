@@ -22,7 +22,7 @@ public class SettingsRepository implements SettingsDataSource{
 
     private final SettingsDataSource mSettingsLocalDataSource;
 
-    private Map<String,Setting>mCachedSettings;
+    private Map<Long,Setting>mCachedSettings;
 
     private boolean mCacheIsDirty = false;
 
@@ -45,7 +45,7 @@ public class SettingsRepository implements SettingsDataSource{
     }
 
     @Override
-    public void getSetting(@NonNull final String id, @NonNull final GetSettingCallback callback) {
+    public void getSetting(@NonNull final Long id, @NonNull final GetSettingCallback callback) {
         checkNotNull(id);
         checkNotNull(callback);
 
@@ -95,7 +95,7 @@ public class SettingsRepository implements SettingsDataSource{
     }
 
     @Override
-    public void deleteSetting(@NonNull String id) {
+    public void deleteSetting(@NonNull Long id) {
         checkNotNull(id);
         mSettingsLocalDataSource.deleteSetting(id);
         mSettingsRemoteDataSource.deleteSetting(id);
@@ -190,7 +190,7 @@ public class SettingsRepository implements SettingsDataSource{
     }
 
     @Nullable
-    private Setting getSettingWithId(@NonNull String id) {
+    private Setting getSettingWithId(@NonNull Long id) {
         checkNotNull(id);
         if (mCachedSettings == null || mCachedSettings.isEmpty()) {
             return null;

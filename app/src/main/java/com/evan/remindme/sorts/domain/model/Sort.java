@@ -87,12 +87,12 @@ public class Sort implements Comparable<Sort>{
 
     @Override
     public String toString() {
-        return "Sort name is " + name;
+        return name;
     }
 
     @Override
     public int compareTo(Sort sort) {
-        return this.name.compareTo(sort.name);
+        return this.id.compareTo(sort.id);
     }
 
     public boolean getIsOpen() {

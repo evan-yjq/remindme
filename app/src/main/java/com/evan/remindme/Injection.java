@@ -17,8 +17,9 @@
 package com.evan.remindme;
 
 import android.content.Context;
-import android.gesture.GestureUtils;
 import android.support.annotation.NonNull;
+import com.evan.remindme.addedittask.domain.usecase.DeleteTask;
+import com.evan.remindme.addedittask.domain.usecase.GetTask;
 import com.evan.remindme.data.source.SettingsRepository;
 import com.evan.remindme.data.source.SortsRepository;
 import com.evan.remindme.data.source.TasksDataSource;
@@ -35,15 +36,11 @@ import com.evan.remindme.settings.domain.usecase.GetSetting;
 import com.evan.remindme.settings.domain.usecase.GetSettings;
 import com.evan.remindme.sorts.domain.usecase.DeleteSort;
 import com.evan.remindme.sorts.domain.usecase.SaveSort;
-import com.evan.remindme.tasks.domain.usecase.CloseSort;
-import com.evan.remindme.tasks.domain.usecase.GetSortByName;
+import com.evan.remindme.tasks.domain.usecase.*;
+import com.evan.remindme.tasks.domain.usecase.GetSort;
 import com.evan.remindme.sorts.domain.usecase.GetSorts;
-import com.evan.remindme.tasks.domain.usecase.OpenSort;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
-import com.evan.remindme.tasks.domain.usecase.GetTasks;
-import com.evan.remindme.tasks.domain.usecase.SaveTask;
-import com.evan.remindme.tasks.domain.usecase.TurnOffTask;
-import com.evan.remindme.tasks.domain.usecase.TurnOnTask;
+import com.evan.remindme.addedittask.domain.usecase.SaveTask;
 import com.evan.remindme.util.AppExecutors;
 import com.evan.remindme.util.GreenDaoUtils;
 
@@ -98,16 +95,16 @@ public class Injection {
                 provideSaveSort(context));
     }
 
-    public static GetSortByName provideGetSortByName(@NonNull Context context){
-        return new GetSortByName(Injection.provideSortsRepository(context));
+    public static GetSort provideGetSort(@NonNull Context context){
+        return new GetSort(provideSortsRepository(context));
     }
 
     public static SaveSort provideSaveSort(@NonNull Context context){
-        return new SaveSort(Injection.provideSortsRepository(context));
+        return new SaveSort(provideSortsRepository(context));
     }
 
     public static DeleteSort provideDeleteSort(@NonNull Context context){
-        return new DeleteSort(Injection.provideSortsRepository(context));
+        return new DeleteSort(provideSortsRepository(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {
@@ -115,33 +112,36 @@ public class Injection {
     }
 
     public static GetSorts provideGetSorts(@NonNull Context context){
-        return new GetSorts(Injection.provideSortsRepository(context));
+        return new GetSorts(provideSortsRepository(context));
     }
 
     public static TurnOnTask provideTurnOnTask(@NonNull Context context) {
-        return new TurnOnTask(Injection.provideTasksRepository(context));
+        return new TurnOnTask(provideTasksRepository(context));
     }
 
     public static TurnOffTask provideTurnOffTasks(@NonNull Context context) {
-        return new TurnOffTask(Injection.provideTasksRepository(context));
+        return new TurnOffTask(provideTasksRepository(context));
     }
 
     public static SaveTask provideSaveTasks(@NonNull Context context) {
-        return new SaveTask(Injection.provideTasksRepository(context));
+        return new SaveTask(provideTasksRepository(context));
     }
 
     public static OpenSort provideOpenSort(@NonNull Context context){
-        return new OpenSort(Injection.provideSortsRepository(context));
+        return new OpenSort(provideSortsRepository(context));
     }
 
     public static CloseSort provideCloseSort(@NonNull Context context){
-        return new CloseSort(Injection.provideSortsRepository(context));
+        return new CloseSort(provideSortsRepository(context));
     }
 
+    public static DeleteTask provideDeleteTask(@NonNull Context context) {
+        return new DeleteTask(provideTasksRepository(context));
+    }
 
-//    public static DeleteTask provideDeleteTask(@NonNull Context context) {
-//        return new DeleteTask(Injection.provideTasksRepository(context));
-//    }
+    public static GetTask provideGetTask(@NonNull Context context){
+        return new GetTask(provideTasksRepository(context));
+    }
 
 //    public static GetStatistics provideGetStatistics(@NonNull Context context) {
 //        return new GetStatistics(Injection.provideTasksRepository(context));

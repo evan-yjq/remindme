@@ -1,13 +1,14 @@
 package com.evan.remindme.tasks.domain.model;
 
-import com.evan.remindme.sorts.domain.model.Sort;
-import com.evan.remindme.addedittasks.TasksCircleType;
-import com.evan.remindme.addedittasks.TasksRepeatType;
+import com.evan.remindme.addedittask.TasksCircleType;
+import com.evan.remindme.addedittask.TasksRepeatType;
 import com.evan.remindme.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.util.Date;
+import java.util.UUID;
+
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Keep;
 
@@ -135,31 +136,11 @@ public class Task implements Comparable<Task>{
     }
 
     public boolean isRepeat(){
-        return repeat==-1;
-    }
-
-    public TasksRepeatType repeatTime(){
-        switch (repeat){
-            case 0 : return TasksRepeatType.REPEAT_1;
-            case 1 : return TasksRepeatType.REPEAT_5;
-            case 2 : return TasksRepeatType.REPEAT_10;
-            case 3 : return TasksRepeatType.REPEAT_30;
-        }
-        return TasksRepeatType.REPEAT_;
+        return repeat==TasksRepeatType.REPEAT_;
     }
 
     public boolean isCircle(){
-        return circle==-1;
-    }
-
-    public TasksCircleType circleTime(){
-        switch (repeat){
-            case 0 : return TasksCircleType.CIRCLE_D;
-            case 1 : return TasksCircleType.CIRCLE_W;
-            case 2 : return TasksCircleType.CIRCLE_M;
-            case 3 : return TasksCircleType.CIRCLE_Y;
-        }
-        return TasksCircleType.CIRCLE_;
+        return circle==TasksCircleType.CIRCLE_;
     }
 
     @Override
@@ -189,16 +170,16 @@ public class Task implements Comparable<Task>{
     }
 
     public Task(String title,Long id,Date time){
-        this("",title,-1,-1,time,time,id,"",true);
+        this(title,-1,-1,time,time,id,"",true);
     }
 
     public Task(String title,Date time){
-        this("",title,-1,-1,time,time,(long)1,"",true);
+        this(title,(long)1,time);
     }
 
     @Keep
-    @Generated(hash = 869892191)
-    public Task(String id, String title, int circle, int repeat, Date time,
+    @Generated(hash = 970674395)
+    public Task(String title, int circle, int repeat, Date time,
             Date nextTime, Long sortId, String bell, boolean turnOn) {
         this.title = title;
         this.circle = circle;
@@ -208,17 +189,30 @@ public class Task implements Comparable<Task>{
         this.sortId = sortId;
         this.bell = bell;
         this.turnOn = turnOn;
-        this.id = this.hashCode()+"";
+        this.id = UUID.randomUUID().toString();
     }
 
     @Generated(hash = 733837707)
     public Task() {
     }
 
+    @Generated(hash = 970674395)
+    public Task(String id, String title, int circle, int repeat, Date time,
+            Date nextTime, Long sortId, String bell, boolean turnOn) {
+        this.id = id;
+        this.title = title;
+        this.circle = circle;
+        this.repeat = repeat;
+        this.time = time;
+        this.nextTime = nextTime;
+        this.sortId = sortId;
+        this.bell = bell;
+        this.turnOn = turnOn;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(title,time);
+        return Objects.hashCode(title,sortId);
     }
 
     @Override
