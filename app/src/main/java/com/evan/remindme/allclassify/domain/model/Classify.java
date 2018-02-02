@@ -1,10 +1,9 @@
-package com.evan.remindme.sorts.domain.model;
+package com.evan.remindme.allclassify.domain.model;
 
 import java.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Keep;
 
 /**
  * Created by IntelliJ IDEA
@@ -13,7 +12,7 @@ import org.greenrobot.greendao.annotation.Keep;
  * Time: 上午2:18
  */
 @Entity
-public class Sort implements Comparable<Sort>{
+public class Classify implements Comparable<Classify>{
     @Id(autoincrement = true)
     private Long id;
 
@@ -21,29 +20,28 @@ public class Sort implements Comparable<Sort>{
 
     private boolean isOpen;
 
-    public Sort(Sort sort){
-        this.id = sort.id;
-        this.name = sort.name;
-        this.isOpen = sort.isOpen;
+    public Classify(Classify classify){
+        this.id = classify.id;
+        this.name = classify.name;
+        this.isOpen = classify.isOpen;
     }
 
-    @Keep
-    @Generated(hash = 75960416)
-    public Sort(Long id, String name, boolean isOpen) {
+    @Generated(hash = 538268575)
+    public Classify(Long id, String name, boolean isOpen) {
         this.id = id;
         this.name = name;
         this.isOpen = isOpen;
     }
 
-    @Generated(hash = 1984197757)
-    public Sort() {
+    @Generated(hash = 767880343)
+    public Classify() {
     }
 
-    public Sort(String name){
+    public Classify(String name){
         this(null, name);
     }
 
-    public Sort(Long id,String name){
+    public Classify(Long id, String name){
         this(id,name,false);
     }
 
@@ -75,9 +73,9 @@ public class Sort implements Comparable<Sort>{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Sort sort = (Sort)o;
-        return Objects.equals(this.id,sort.id)&&
-                Objects.equals(this.name,sort.name);
+        Classify classify = (Classify)o;
+        return Objects.equals(this.id, classify.id)&&
+                Objects.equals(this.name, classify.name);
     }
 
     @Override
@@ -91,8 +89,8 @@ public class Sort implements Comparable<Sort>{
     }
 
     @Override
-    public int compareTo(Sort sort) {
-        return this.id.compareTo(sort.id);
+    public int compareTo(Classify classify) {
+        return this.id.compareTo(classify.id);
     }
 
     public boolean getIsOpen() {

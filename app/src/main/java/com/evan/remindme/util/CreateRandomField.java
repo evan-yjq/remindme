@@ -157,7 +157,7 @@ public class CreateRandomField {
             "21cn.com","sogou.com"
 
     };
-    public final static String[] SORTS={"默认","测试","新建"};
+    public final static String[] CLASSIFY={"默认","测试","新建"};
     public final static <T>T nextValue(T[] array){
 
         assert (array!=null && array.length>0);
@@ -170,9 +170,9 @@ public class CreateRandomField {
         return getRandomEnglishFirstName()+" "+getRandomEnglishLastName();
 
     }
-    public final static String getRandomSortName(){
+    public final static String getRandomClassifyName(){
 
-        return nextValue(SORTS);
+        return nextValue(CLASSIFY);
 
     }
     public final static String getRandomEnglishFirstName(){

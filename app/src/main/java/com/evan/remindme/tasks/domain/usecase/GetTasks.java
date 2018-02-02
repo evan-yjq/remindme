@@ -3,16 +3,15 @@ package com.evan.remindme.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
-import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.data.source.SortsRepository;
+import com.evan.remindme.allclassify.domain.usecase.GetAllClassify;
+import com.evan.remindme.allclassify.domain.usecase.SaveClassify;
+import com.evan.remindme.data.source.ClassifyDataSource;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.data.source.TasksRepository;
-import com.evan.remindme.sorts.domain.usecase.GetSorts;
-import com.evan.remindme.sorts.domain.usecase.SaveSort;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.TasksDisplayType;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.tasks.domain.display.TaskDisplay;
-import com.evan.remindme.sorts.domain.model.Sort;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.List;
@@ -34,17 +33,17 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
     private final UseCaseHandler mUseCaseHandler;
 
-    private final GetSorts mGetSorts;
-    private final SaveSort mSaveSort;
+    private final GetAllClassify mGetAllClassify;
+    private final SaveClassify mSaveClassify;
 
     public GetTasks(@NonNull TasksRepository tasksRepository, @NonNull DisplayFactory displayFactory,
-                    @NonNull UseCaseHandler useCaseHandler, @NonNull GetSorts getSorts,
-                    @NonNull SaveSort saveSort) {
-        mGetSorts = checkNotNull(getSorts,"getSorts cannot be null!");
+                    @NonNull UseCaseHandler useCaseHandler, @NonNull GetAllClassify getAllClassify,
+                    @NonNull SaveClassify saveClassify) {
+        mGetAllClassify = checkNotNull(getAllClassify,"getAllClassify cannot be null!");
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
         mDisplayFactory = checkNotNull(displayFactory, "filterFactory cannot be null!");
-        mSaveSort = checkNotNull(saveSort, "saveSort cannot be null!");
+        mSaveClassify = checkNotNull(saveClassify, "saveClassify cannot be null!");
     }
 
     @Override
@@ -58,32 +57,25 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
         mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(final List<Task> tasks) {
-                mUseCaseHandler.execute(mGetSorts, new GetSorts.RequestValues(values.isForceUpdate()),
-                        new UseCaseCallback<GetSorts.ResponseValue>() {
+                mUseCaseHandler.execute(mGetAllClassify, new GetAllClassify.RequestValues(values.isForceUpdate()),
+                        new UseCaseCallback<GetAllClassify.ResponseValue>() {
                             @Override
-                            public void onSuccess(GetSorts.ResponseValue response) {
-                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,response.getSorts(),
-                                        new SortsDataSource.GetSortCallback(){
+                            public void onSuccess(GetAllClassify.ResponseValue response) {
+                                Map<Classify,List<Task>> tasksDisplay = taskDisplay.display(tasks,response.getAllClassify(),
+                                        new ClassifyDataSource.GetClassifyCallback(){
                                             @Override
-                                            public void onSortLoaded(Sort sort) {
-                                                mUseCaseHandler.execute(mSaveSort, new SaveSort.RequestValues(sort, true),
-                                                        new UseCaseCallback<SaveSort.ResponseValue>() {
+                                            public void onClassifyLoaded(Classify classify) {
+                                                mUseCaseHandler.execute(mSaveClassify, new SaveClassify.RequestValues(classify, true),
+                                                        new UseCaseCallback<SaveClassify.ResponseValue>() {
                                                             @Override
-                                                            public void onSuccess(SaveSort.ResponseValue response) {
-
-                                                            }
+                                                            public void onSuccess(SaveClassify.ResponseValue response) {}
 
                                                             @Override
-                                                            public void onError() {
-
-                                                            }
+                                                            public void onError() {}
                                                         });
                                             }
-
                                             @Override
-                                            public void onDataNotAvailable() {
-
-                                            }
+                                            public void onDataNotAvailable() {}
                                         });
                                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                                 getUseCaseCallback().onSuccess(responseValue);
@@ -91,7 +83,7 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
                             @Override
                             public void onError() {
-                                Map<Sort,List<Task>> tasksDisplay = taskDisplay.display(tasks,null,null);
+                                Map<Classify,List<Task>> tasksDisplay = taskDisplay.display(tasks,null,null);
                                 ResponseValue responseValue = new ResponseValue(tasksDisplay);
                                 getUseCaseCallback().onSuccess(responseValue);
                             }
@@ -126,13 +118,13 @@ public class GetTasks extends UseCase<GetTasks.RequestValues,GetTasks.ResponseVa
 
     }
     public static final class ResponseValue implements UseCase.ResponseValue {
-        private final Map<Sort,List<Task>> mTasks;
+        private final Map<Classify,List<Task>> mTasks;
 
-        public ResponseValue(@NonNull Map<Sort,List<Task>> tasks) {
+        public ResponseValue(@NonNull Map<Classify,List<Task>> tasks) {
             mTasks = checkNotNull(tasks, "tasks cannot be null!");
         }
 
-        public Map<Sort,List<Task>> getTasks() {
+        public Map<Classify,List<Task>> getTasks() {
             return mTasks;
         }
     }

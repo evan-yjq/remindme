@@ -74,42 +74,6 @@ public class TasksLocalDataSource implements TasksDataSource {
         mAppExecutors.diskIO().execute(runnable);
     }
 
-//    @Override
-//    public void getSorts(@NonNull final LoadSortsCallback callback) {
-//        final String SQL = "SELECT DISTINCT "+TaskDao.Properties.Sort.columnName+" FROM "+TaskDao.TABLENAME;
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                final ArrayList<String> sorts = new ArrayList<String>();
-//                Cursor c = mTaskDao.getDatabase().rawQuery(SQL, null);
-//                try {
-//                    if (c != null) {
-//                        if (c.moveToFirst()) {
-//                            do {
-//                                sorts.add(c.getString(0));
-//                            } while (c.moveToNext());
-//                        }
-//                    }
-//                }finally {
-//                    if (c != null) {
-//                        c.close();
-//                    }
-//                }
-//                mAppExecutors.mainThread().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (sorts.isEmpty()){
-//                            callback.onDataNotAvailable();
-//                        }else{
-//                            callback.onSortsLoaded(sorts);
-//                        }
-//                    }
-//                });
-//            }
-//        };
-//        mAppExecutors.diskIO().execute(runnable);
-//    }
-
     @Override
     public void getTasks(@NonNull final LoadTasksCallback callback) {
         Runnable runnable = new Runnable() {

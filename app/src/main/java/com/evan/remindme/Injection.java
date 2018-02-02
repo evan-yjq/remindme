@@ -20,25 +20,25 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.evan.remindme.addedittask.domain.usecase.DeleteTask;
 import com.evan.remindme.addedittask.domain.usecase.GetTask;
+import com.evan.remindme.allclassify.domain.usecase.GetAllClassify;
 import com.evan.remindme.data.source.SettingsRepository;
-import com.evan.remindme.data.source.SortsRepository;
+import com.evan.remindme.data.source.ClassifyRepository;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.data.source.TasksRepository;
 import com.evan.remindme.data.source.dao.DaoSession;
 import com.evan.remindme.data.source.local.SettingsLocalDataSource;
-import com.evan.remindme.data.source.local.SortsLocalDataSource;
+import com.evan.remindme.data.source.local.ClassifyLocalDataSource;
 import com.evan.remindme.data.source.local.TasksLocalDataSource;
 import com.evan.remindme.data.source.remote.SettingRemoteDataSource;
-import com.evan.remindme.data.source.remote.SortsRemoteDataSource;
+import com.evan.remindme.data.source.remote.ClassifyRemoteDataSource;
 import com.evan.remindme.data.source.remote.TasksRemoteDataSource;
 import com.evan.remindme.settings.domain.usecase.EditSetting;
 import com.evan.remindme.settings.domain.usecase.GetSetting;
 import com.evan.remindme.settings.domain.usecase.GetSettings;
-import com.evan.remindme.sorts.domain.usecase.DeleteSort;
-import com.evan.remindme.sorts.domain.usecase.SaveSort;
+import com.evan.remindme.allclassify.domain.usecase.DeleteClassify;
+import com.evan.remindme.allclassify.domain.usecase.SaveClassify;
 import com.evan.remindme.tasks.domain.usecase.*;
-import com.evan.remindme.tasks.domain.usecase.GetSort;
-import com.evan.remindme.sorts.domain.usecase.GetSorts;
+import com.evan.remindme.tasks.domain.usecase.GetClassify;
 import com.evan.remindme.tasks.domain.display.DisplayFactory;
 import com.evan.remindme.addedittask.domain.usecase.SaveTask;
 import com.evan.remindme.util.AppExecutors;
@@ -61,12 +61,12 @@ public class Injection {
                         database.getTaskDao()));
     }
 
-    public static SortsRepository provideSortsRepository(@NonNull Context context){
+    public static ClassifyRepository provideClassifyRepository(@NonNull Context context){
         checkNotNull(context);
         DaoSession database = GreenDaoUtils.getSingleTon().getmDaoSession(context);
-        return SortsRepository.getInstance(SortsRemoteDataSource.getInstance(),
-                SortsLocalDataSource.getInstance(new AppExecutors(),
-                        database.getSortDao()));
+        return ClassifyRepository.getInstance(ClassifyRemoteDataSource.getInstance(),
+                ClassifyLocalDataSource.getInstance(new AppExecutors(),
+                        database.getClassifyDao()));
 
     }
 
@@ -91,28 +91,28 @@ public class Injection {
 
     public static GetTasks provideGetTasks(@NonNull Context context) {
         return new GetTasks(provideTasksRepository(context), new DisplayFactory(),
-                provideUseCaseHandler(),provideGetSorts(context),
-                provideSaveSort(context));
+                provideUseCaseHandler(),provideGetAllClassify(context),
+                provideSaveClassify(context));
     }
 
-    public static GetSort provideGetSort(@NonNull Context context){
-        return new GetSort(provideSortsRepository(context));
+    public static GetClassify provideGetClassify(@NonNull Context context){
+        return new GetClassify(provideClassifyRepository(context));
     }
 
-    public static SaveSort provideSaveSort(@NonNull Context context){
-        return new SaveSort(provideSortsRepository(context));
+    public static SaveClassify provideSaveClassify(@NonNull Context context){
+        return new SaveClassify(provideClassifyRepository(context));
     }
 
-    public static DeleteSort provideDeleteSort(@NonNull Context context){
-        return new DeleteSort(provideSortsRepository(context));
+    public static DeleteClassify provideDeleteClassify(@NonNull Context context){
+        return new DeleteClassify(provideClassifyRepository(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {
         return UseCaseHandler.getInstance();
     }
 
-    public static GetSorts provideGetSorts(@NonNull Context context){
-        return new GetSorts(provideSortsRepository(context));
+    public static GetAllClassify provideGetAllClassify(@NonNull Context context){
+        return new GetAllClassify(provideClassifyRepository(context));
     }
 
     public static TurnOnTask provideTurnOnTask(@NonNull Context context) {
@@ -127,12 +127,12 @@ public class Injection {
         return new SaveTask(provideTasksRepository(context));
     }
 
-    public static OpenSort provideOpenSort(@NonNull Context context){
-        return new OpenSort(provideSortsRepository(context));
+    public static OpenClassify provideOpenClassify(@NonNull Context context){
+        return new OpenClassify(provideClassifyRepository(context));
     }
 
-    public static CloseSort provideCloseSort(@NonNull Context context){
-        return new CloseSort(provideSortsRepository(context));
+    public static CloseClassify provideCloseClassify(@NonNull Context context){
+        return new CloseClassify(provideClassifyRepository(context));
     }
 
     public static DeleteTask provideDeleteTask(@NonNull Context context) {

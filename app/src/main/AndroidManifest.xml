@@ -14,7 +14,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".sorts.SortsActivity"/>
+        <activity android:name=".allclassify.AllClassifyActivity"/>
 
         <activity android:name=".settings.SettingsActivity"/>
 

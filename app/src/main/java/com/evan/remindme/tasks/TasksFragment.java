@@ -1,5 +1,6 @@
 package com.evan.remindme.tasks;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,14 +10,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.*;
 import com.evan.remindme.R;
 import com.evan.remindme.addedittask.AddEditTaskActivity;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.util.DateUtils;
-import com.evan.remindme.util.Objects;
 
 import java.util.*;
 
@@ -39,21 +40,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private TasksExpandableListAdapter mExpandableListAdapter;
 
     private LinearLayout mNoTaskView;
-
     private ImageView mNoTaskIcon;
-
     private TextView mNoTaskMainView;
-
     private TextView mNoTaskAddView;
 
+    private View mEmptyView;
     private LinearLayout mTasksView;
-
-//    private TextView mDisplayingLabelView;
 
     private ScrollChildSwipeRefreshLayout swipeRefreshLayout;
 
     private ListView listView;
-
     private ExpandableListView expandableListView;
 
     public TasksFragment(){
@@ -68,7 +64,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mListAdapter = new TasksAdapter(new ArrayList<Task>(0),mItemListener);
-        mExpandableListAdapter = new TasksExpandableListAdapter(new HashMap<Sort,List<Task>>(0),mItemListener);
+        mExpandableListAdapter = new TasksExpandableListAdapter(new HashMap<Classify,List<Task>>(0),mItemListener);
     }
 
     @Override
@@ -96,15 +92,33 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         });
     }
 
+    public static View setEmptyView(Context context,View view, int dimenId){
+        if(view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                viewGroup.getChildAt(i).setVisibility(View.GONE);
+            }
+        }
+        int height = context.getResources().getDimensionPixelOffset(dimenId);
+        AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        view.setLayoutParams(params);
+        return view;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.tasks_frag,container,false);
 
+        mEmptyView = inflater.inflate(R.layout.task_item,null);
+        mEmptyView = setEmptyView(getActivity(),mEmptyView,R.dimen.task_empty);
+
         //设置Tasks界面
         listView = root.findViewById(R.id.tasks_list);
+        listView.addFooterView(mEmptyView,null,false);
         listView.setAdapter(mListAdapter);
         expandableListView = root.findViewById(R.id.expandable_tasks_list);
+        expandableListView.addFooterView(mEmptyView,null,false);
         expandableListView.setAdapter(mExpandableListAdapter);
 //        mDisplayingLabelView = root.findViewById(R.id.displayingLabel);
         mTasksView = root.findViewById(R.id.tasksLL);
@@ -161,19 +175,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void setLoadingIndicator(final boolean active) {
         //显示加载动画
-
         if (getView() == null)return;
+        final ScrollChildSwipeRefreshLayout srl = getView().findViewById(R.id.refresh_layout);
         //确保setRefreshing（）在布局完成后再调用。
-        swipeRefreshLayout.post(new Runnable() {
+        srl.post(new Runnable() {
             @Override
             public void run() {
-                swipeRefreshLayout.setRefreshing(active);
+                srl.setRefreshing(active);
             }
         });
     }
 
     @Override
-    public void showSortTasks(Map<Sort,List<Task>> tasks) {
+    public void showClassifyTasks(Map<Classify,List<Task>> tasks) {
         mExpandableListAdapter.replaceData(tasks);
         //在自定义的SwipeRefreshLayout中设置滚动视图
         swipeRefreshLayout.setScrollUpChild(expandableListView);
@@ -217,16 +231,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         showNoTasksViews(
                 getResources().getString(R.string.no_tasks_all),
                 R.drawable.ic_assignment_turned_in_24dp,
-                false
+                true
         );
     }
 
     @Override
-    public void showNoSortTasks() {
+    public void showNoClassifyTasks() {
         showNoTasksViews(
                 getResources().getString(R.string.no_tasks_all),
                 R.drawable.ic_assignment_turned_in_24dp,
-                false
+                true
         );
     }
 
@@ -255,16 +269,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         showMessage(getString(R.string.loading_tasks_error));
     }
 
-//    @Override
-//    public void showDisplayBySortLabel() {
-//        mDisplayingLabelView.setText(getResources().getString(R.string.label_sort));
-//    }
-
-//    @Override
-//    public void showDisplayByTimeLabel() {
-//        mDisplayingLabelView.setText(getResources().getString(R.string.label_time));
-//    }
-
     private void showNoTasksViews(String mainText,int iconRes,boolean showAddView){
         mTasksView.setVisibility(View.GONE);
         mNoTaskView.setVisibility(View.VISIBLE);
@@ -283,8 +287,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()){
-                    case R.id.display_by_sort:
-                        mPresenter.setDisplay(TasksDisplayType.TASKS_BY_SORT);
+                    case R.id.display_by_classify:
+                        mPresenter.setDisplay(TasksDisplayType.TASKS_BY_CLASSIFY);
                         break;
                     case R.id.display_by_time:
                         mPresenter.setDisplay(TasksDisplayType.TASKS_BY_TIME);
@@ -308,17 +312,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     ListItemListener mItemListener = new ListItemListener() {
 
         @Override
-        public void openSort(int groupId) {
+        public void openClassify(int groupId) {
             expandableListView.expandGroup(groupId);
         }
 
         @Override
-        public void onSortClick(boolean isOpen, Sort clickSort, int groupId) {
+        public void onClassifyClick(boolean isOpen, Classify clickClassify, int groupId) {
             if (isOpen){
-                mPresenter.closeSort(clickSort);
+                mPresenter.closeClassify(clickClassify);
                 expandableListView.collapseGroup(groupId);
             }else{
-                mPresenter.openSort(clickSort);
+                mPresenter.openClassify(clickClassify);
                 expandableListView.expandGroup(groupId,true);
             }
         }
@@ -381,18 +385,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public View getView(final int i, View view, final ViewGroup viewGroup) {
             View rowView = view;
+            final Task task = getItem(i);
             if (rowView == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 rowView = inflater.inflate(R.layout.task_item,viewGroup,false);
             }
-
-            final Task task = getItem(i);
-
             TextView titleTV = rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitle());
 
             TextView captionTV = rowView.findViewById(R.id.caption);
-            captionTV.setText("起始时间:"+new DateUtils().Date2String(task.getTime())+"/"+
+            captionTV.setText("起始时间:"+new DateUtils(DateUtils.tasksFormat).Date2String(task.getTime())+"/"+
                     TASKS_CIRCLE_TYPE_LIST[task.getCircle()+1]+"/"+
                     TASKS_REPEAT_TYPE_LIST[task.getRepeat()+1]);
 
@@ -400,13 +402,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
             //打开/关闭提醒UI
             turnOnCB.setChecked(task.isTurnOn());
-//            if (task.isTurnOn()) {
-//                rowView.setBackgroundDrawable(viewGroup.getContext()
-//                        .getResources().getDrawable(R.drawable.list_turn_on_touch_feedback));
-//            } else {
-//                rowView.setBackgroundDrawable(viewGroup.getContext()
-//                        .getResources().getDrawable(R.drawable.touch_feedback));
-//            }
 
             turnOnCB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -431,29 +426,29 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private static class TasksExpandableListAdapter extends BaseExpandableListAdapter{
 
-        private Map<Sort,List<Task>> mTasks;
+        private Map<Classify,List<Task>> mTasks;
         private ListItemListener mItemListener;
-        private List<Sort>mSorts;
+        private List<Classify> mClassifies;
 
-        public TasksExpandableListAdapter(Map<Sort,List<Task>>mTasks,ListItemListener itemListener){
-            mSorts = new ArrayList<>();
+        public TasksExpandableListAdapter(Map<Classify,List<Task>>mTasks, ListItemListener itemListener){
+            mClassifies = new ArrayList<>();
             setMap(mTasks);
             mItemListener = itemListener;
         }
 
-        public void replaceData(Map<Sort,List<Task>>tasks){
+        public void replaceData(Map<Classify,List<Task>>tasks){
             setMap(tasks);
             notifyDataSetChanged();
         }
 
-        private void setMap(Map<Sort,List<Task>> tasks){
+        private void setMap(Map<Classify,List<Task>> tasks){
             mTasks = checkNotNull(tasks);
-            mSorts.clear();
-            Collections.addAll(mSorts,mTasks.keySet().toArray(new Sort[0]));
-            Collections.sort(mSorts);
-            for (int i = 0; i < mSorts.size(); i++) {
-                if (mSorts.get(i).isOpen()) {
-                    mItemListener.openSort(i);
+            mClassifies.clear();
+            Collections.addAll(mClassifies,mTasks.keySet().toArray(new Classify[0]));
+            Collections.sort(mClassifies);
+            for (int i = 0; i < mClassifies.size(); i++) {
+                if (mClassifies.get(i).isOpen()) {
+                    mItemListener.openClassify(i);
                 }
             }
         }
@@ -467,19 +462,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         //  获得某个父项的子项数目
         @Override
         public int getChildrenCount(int i) {
-            return mTasks.get(mSorts.get(i)).size();
+            return mTasks.get(mClassifies.get(i)).size();
         }
 
         //  获得某个父项
         @Override
         public List<Task> getGroup(int i) {
-            return mTasks.get(mSorts.get(i));
+            return mTasks.get(mClassifies.get(i));
         }
 
         //  获得某个父项的某个子项
         @Override
         public Task getChild(int i, int i1) {
-            return mTasks.get(mSorts.get(i)).get(i1);
+            return mTasks.get(mClassifies.get(i)).get(i1);
         }
 
         //  获得某个父项的id
@@ -504,9 +499,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public View getGroupView(final int i, final boolean b, View view, ViewGroup viewGroup) {
             View rowView = view;
+            final Classify classify = mClassifies.get(i);
             if (rowView == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                rowView = inflater.inflate(R.layout.sort_item,viewGroup,false);
+                rowView = inflater.inflate(R.layout.classify_item,viewGroup,false);
             }
             int j = 0;
             for (Task task : getGroup(i)) {
@@ -515,14 +511,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mItemListener.onSortClick(b,mSorts.get(i),i);
+                    mItemListener.onClassifyClick(b, classify ,i);
                 }
             });
             TextView numTV = rowView.findViewById(R.id.num);
             numTV.setText(j+"/"+getChildrenCount(i));
 
             TextView titleTV = rowView.findViewById(R.id.title);
-            titleTV.setText(mSorts.get(i).getName());
+            titleTV.setText(classify.getName());
             return rowView;
         }
 
@@ -541,7 +537,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             titleTV.setText(task.getTitle());
 
             TextView captionTV = rowView.findViewById(R.id.caption);
-            captionTV.setText("起始时间:"+new DateUtils().Date2String(task.getTime())+"/"+
+            captionTV.setText("起始时间:"+new DateUtils(DateUtils.tasksFormat).Date2String(task.getTime())+"/"+
                                 TASKS_CIRCLE_TYPE_LIST[task.getCircle()+1]+"/"+
                                 TASKS_REPEAT_TYPE_LIST[task.getRepeat()+1]);
 
@@ -586,9 +582,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public interface ListItemListener{
 
-        void openSort(int groupId);
+        void openClassify(int groupId);
 
-        void onSortClick(boolean isOpen,Sort clickSort,int groupId);
+        void onClassifyClick(boolean isOpen, Classify clickClassify, int groupId);
 
         void onTaskClick(Task clickTask);
 

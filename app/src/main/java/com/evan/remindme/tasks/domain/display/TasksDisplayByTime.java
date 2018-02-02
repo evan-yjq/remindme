@@ -1,7 +1,7 @@
 package com.evan.remindme.tasks.domain.display;
 
-import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.data.source.ClassifyDataSource;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.*;
@@ -15,9 +15,9 @@ import java.util.*;
 public class TasksDisplayByTime implements TaskDisplay{
 
     @Override
-    public Map<Sort,List<Task>> display(List<Task>tasks, List<Sort> sorts, SortsDataSource.GetSortCallback callback) {
+    public Map<Classify,List<Task>> display(List<Task>tasks, List<Classify> classifies, ClassifyDataSource.GetClassifyCallback callback) {
 
-        Map<Sort,List<Task>> map = new HashMap<>();
+        Map<Classify,List<Task>> map = new HashMap<>();
 
         Collections.sort(tasks);
 

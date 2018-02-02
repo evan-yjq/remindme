@@ -7,25 +7,25 @@ package com.evan.remindme.addedittask;
  * Time: 下午11:13
  */
 public class TasksCircleType {
-    public static final String[] TASKS_CIRCLE_TYPE_LIST = new String[]{"不循环","一天后循环","一周后循环","一月后循环","一年后循环"};
+    public static final String[] TASKS_CIRCLE_TYPE_LIST = new String[]{"一次性提醒","每天","每周","每月","每年"};
     /**
-     * 不循环
+     * 一次性提醒
      */
     public static final int CIRCLE_ = -1;
     /**
-     * 一天后循环
+     * 每天
      */
     public static final int CIRCLE_D = 0;
     /**
-     * 一周后循环
+     * 每周
      */
     public static final int CIRCLE_W = 1;
     /**
-     * 一月后循环
+     * 每月
      */
     public static final int CIRCLE_M = 2;
     /**
-     * 一年后循环
+     * 每年
      */
     public static final int CIRCLE_Y = 3;
 }

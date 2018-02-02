@@ -25,42 +25,37 @@ public class NextDecorator implements DayViewDecorator {
     private int circleType;
     private CalendarDay day;
 
-    private boolean next = true;
+    private boolean next;
 
     public NextDecorator(CalendarDay day,Activity context,int circle) {
         nextDrawable = context.getResources().getDrawable(R.drawable.calendar_today);
         this.day = day;
         this.circleType = circle;
+        next = false;
     }
 
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {
         if ((day.isAfter(CalendarDay.today())||day.equals(CalendarDay.today()))
-                &&(day.isAfter(this.day)||day.equals(this.day))){
+                &&(day.isAfter(this.day)||day.equals(this.day))&&!next){
             day.copyTo(calendar);
             switch (circleType){
                 case CIRCLE_W:
                     int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
                     this.day.copyTo(calendar);
-                    if (weekDay == calendar.get(Calendar.DAY_OF_WEEK)&&next){
-                        next = false;
-                        return true;
-                    }else return false;
+                    next = true;
+                    return weekDay == calendar.get(Calendar.DAY_OF_WEEK);
                 case CIRCLE_M:
-                    int monthDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    int monthDay = calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
                     this.day.copyTo(calendar);
-                    if (monthDay == calendar.get(Calendar.DAY_OF_MONTH)&&next){
-                        next = false;
-                        return true;
-                    }else return false;
+                    next = true;
+                    return monthDay == calendar.get(Calendar.DAY_OF_MONTH);
                 case CIRCLE_Y:
                     int yearDay = calendar.get(Calendar.DAY_OF_YEAR);
                     this.day.copyTo(calendar);
-                    if (yearDay == calendar.get(Calendar.DAY_OF_YEAR)&&next){
-                        next = false;
-                        return true;
-                    }else return false;
+                    next = true;
+                    return yearDay == calendar.get(Calendar.DAY_OF_YEAR);
                 default:
                     return false;
             }

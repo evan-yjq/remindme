@@ -1,8 +1,8 @@
-package com.evan.remindme.sorts.domain.usecase;
+package com.evan.remindme.allclassify.domain.usecase;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
-import com.evan.remindme.data.source.SortsRepository;
+import com.evan.remindme.data.source.ClassifyRepository;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
@@ -12,18 +12,18 @@ import static com.evan.remindme.util.Objects.checkNotNull;
  * Date: 2018/1/28
  * Time: 下午9:21
  */
-public class DeleteSort extends UseCase<DeleteSort.RequestValues,DeleteSort.ResponseValue>{
+public class DeleteClassify extends UseCase<DeleteClassify.RequestValues,DeleteClassify.ResponseValue>{
 
-    private final SortsRepository sortsRepository;
+    private final ClassifyRepository classifyRepository;
 
-    public DeleteSort(@NonNull SortsRepository sortsRepository) {
-        this.sortsRepository = checkNotNull(sortsRepository,"sortsRepository cannot be null!");
+    public DeleteClassify(@NonNull ClassifyRepository classifyRepository) {
+        this.classifyRepository = checkNotNull(classifyRepository,"classifyRepository cannot be null!");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         Long id = requestValues.getId();
-        sortsRepository.deleteSort(id);
+        classifyRepository.deleteClassify(id);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

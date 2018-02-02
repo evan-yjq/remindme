@@ -21,9 +21,9 @@
         android:icon="@drawable/ic_task"
         android:title="@string/tasks_list_title" />
     <item
-        android:id="@+id/sorts_navigation_menu_item"
-        android:icon="@drawable/ic_sort"
-        android:title="@string/sorts_list_title" />
+        android:id="@+id/all_classify_navigation_menu_item"
+        android:icon="@drawable/ic_classify"
+        android:title="@string/all_classify_list_title" />
     <item
         android:id="@+id/settings_navigation_menu_item"
         android:icon="@drawable/ic_settings"

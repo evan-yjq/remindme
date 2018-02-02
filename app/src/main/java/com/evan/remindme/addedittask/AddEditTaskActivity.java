@@ -62,11 +62,11 @@ public class AddEditTaskActivity extends AppCompatActivity{
 
         mAddEditTaskPresenter = new AddEditTaskPresenter(addEditTaskFragment,
                 Injection.provideGetTask(getApplicationContext()),
-                Injection.provideGetSorts(getApplicationContext()),
+                Injection.provideGetAllClassify(getApplicationContext()),
                 Injection.provideUseCaseHandler(),
-                Injection.provideGetSort(getApplicationContext()),
+                Injection.provideGetClassify(getApplicationContext()),
                 Injection.provideSaveTasks(getApplicationContext()),
-                Injection.provideSaveSort(getApplicationContext()),
+                Injection.provideSaveClassify(getApplicationContext()),
                 taskId,shouldLoadDataFromRepo);
     }
 

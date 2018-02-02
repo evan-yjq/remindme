@@ -7,12 +7,14 @@ import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.addedittask.domain.usecase.GetTask;
 import com.evan.remindme.addedittask.domain.usecase.SaveTask;
-import com.evan.remindme.sorts.domain.model.Sort;
-import com.evan.remindme.sorts.domain.usecase.GetSorts;
-import com.evan.remindme.sorts.domain.usecase.SaveSort;
+import com.evan.remindme.allclassify.domain.model.Classify;
+import com.evan.remindme.allclassify.domain.usecase.GetAllClassify;
+import com.evan.remindme.allclassify.domain.usecase.SaveClassify;
 import com.evan.remindme.tasks.domain.model.Task;
-import com.evan.remindme.tasks.domain.usecase.GetSort;
+import com.evan.remindme.tasks.domain.usecase.GetClassify;
+import com.evan.remindme.util.DateUtils;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
@@ -27,35 +29,36 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     private final AddEditTasksContract.View mView;
     private final GetTask mGetTask;
-    private final GetSorts mGetSorts;
-    private final GetSort mGetSort;
+    private final GetAllClassify mGetAllClassify;
+    private final GetClassify mGetClassify;
     private final SaveTask mSaveTask;
-    private final SaveSort mSaveSort;
+    private final SaveClassify mSaveClassify;
 
     private boolean mIsDataMissing;
+
     @Nullable
     private String mTaskId;
 
     private final UseCaseHandler mUseCaseHandler;
 
+    //一些默认值
     private int mCircleType = TasksCircleType.CIRCLE_;
-
     private int mRepeatType = TasksRepeatType.REPEAT_;
-
-    private Long mSortId = 1L;
+    private Long mClassifyId = 1L;
+    private Date mDate = new Date();
 
     public AddEditTaskPresenter(@NonNull AddEditTasksContract.View mView, @NonNull GetTask mGetTask,
-                                @NonNull GetSorts mGetSorts, @NonNull UseCaseHandler mUseCaseHandler,
-                                @NonNull GetSort mGetSort,@NonNull SaveTask mSaveTask,
-                                @NonNull SaveSort mSaveSort,
-                                @Nullable String mTaskId,boolean shouldLoadDataFromRepo) {
+                                @NonNull GetAllClassify mGetAllClassify, @NonNull UseCaseHandler mUseCaseHandler,
+                                @NonNull GetClassify mGetClassify, @NonNull SaveTask mSaveTask,
+                                @NonNull SaveClassify mSaveClassify,
+                                @Nullable String mTaskId, boolean shouldLoadDataFromRepo) {
         this.mView = checkNotNull(mView,"mView cannot be null!");
         this.mGetTask = checkNotNull(mGetTask,"mGetTask cannot be null!");
-        this.mGetSorts = checkNotNull(mGetSorts,"mGetSorts cannot be null!");
+        this.mGetAllClassify = checkNotNull(mGetAllClassify,"mGetAllClassify cannot be null!");
         this.mUseCaseHandler = checkNotNull(mUseCaseHandler,"mUseCaseHandler cannot be null!");
-        this.mGetSort = checkNotNull(mGetSort,"mGetSort cannot be null!");
+        this.mGetClassify = checkNotNull(mGetClassify,"mGetClassify cannot be null!");
         this.mSaveTask = checkNotNull(mSaveTask,"mSaveTask cannot be null!");
-        this.mSaveSort = checkNotNull(mSaveSort,"mSaveSort cannot be null!");
+        this.mSaveClassify = checkNotNull(mSaveClassify,"mSaveClassify cannot be null!");
         this.mTaskId = mTaskId;
         this.mIsDataMissing = shouldLoadDataFromRepo;
 
@@ -65,7 +68,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     @Override
     public void start() {
-        setSorts(new BaseCallback() {
+        setAllClassify(new BaseCallback() {
             @Override
             public void callback() {
                 if (!isNewTask() && mIsDataMissing) {
@@ -75,13 +78,13 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
         });
     }
 
-    private void setSorts(final BaseCallback callback){
-        mUseCaseHandler.execute(mGetSorts, new GetSorts.RequestValues(false),
-                new UseCase.UseCaseCallback<GetSorts.ResponseValue>() {
+    private void setAllClassify(final BaseCallback callback){
+        mUseCaseHandler.execute(mGetAllClassify, new GetAllClassify.RequestValues(false),
+                new UseCase.UseCaseCallback<GetAllClassify.ResponseValue>() {
                     @Override
-                    public void onSuccess(GetSorts.ResponseValue response) {
+                    public void onSuccess(GetAllClassify.ResponseValue response) {
                         if (mView.isActive()){
-                            mView.setSortSpinner(response.getSorts());
+                            mView.setClassifySpinner(response.getAllClassify());
                             mView.setTitle("提醒名");
                         }
                         callback.callback();
@@ -101,18 +104,18 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     @Override
-    public void saveSort(@NonNull String name) {
+    public void saveClassify(@NonNull String name) {
         checkNotNull(name,"name cannot be null!");
-        Sort sort = new Sort(name);
-        mUseCaseHandler.execute(mSaveSort, new SaveSort.RequestValues(sort,true),
-                new UseCase.UseCaseCallback<SaveSort.ResponseValue>() {
+        Classify classify = new Classify(name);
+        mUseCaseHandler.execute(mSaveClassify, new SaveClassify.RequestValues(classify,true),
+                new UseCase.UseCaseCallback<SaveClassify.ResponseValue>() {
                     @Override
-                    public void onSuccess(final SaveSort.ResponseValue response) {
+                    public void onSuccess(final SaveClassify.ResponseValue response) {
                         mView.showMessage("新建分类成功");
-                        setSorts(new BaseCallback() {
+                        setAllClassify(new BaseCallback() {
                             @Override
                             public void callback() {
-                                mView.setSelectSort(response.getSort());
+                                mView.setSelectClassify(response.getClassify());
                             }
                         });
                     }
@@ -120,7 +123,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                     @Override
                     public void onError() {
                         mView.showMessage("创建分类失败");
-                        mView.setSelectSort(0);
+                        mView.setSelectClassify(0);
                     }
                 });
     }
@@ -142,28 +145,18 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     @Override
-    public void save(String title, Date time) {
+    public void save(String title) {
         if (title.trim().isEmpty()){
             mView.showMessage("标题不能为空");
             return;
         }
-        if (time == null){
-            mView.showMessage("未选择时间");
-            return;
-        }
-        Task task = new Task(title,mCircleType,mRepeatType,time,time,mSortId,"",true);
+        Task task = new Task("",title,mCircleType,mRepeatType,mDate,mDate,mClassifyId,"",true);
         save(task);
     }
 
     @Override
     public void getDateDialog() {
-        if (mView.isActive()) {
-            if (isNewTask()&&date==null) {
-                mView.showTimePickerDialog(new Date());
-            }else{
-                mView.showTimePickerDialog(date);
-            }
-        }
+        mView.showTimePickerDialog(mDate);
     }
 
     @Override
@@ -185,10 +178,10 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                 });
     }
 
-    private Date date = null;
+
     private void showTask(Task task) {
-        date = task.getTime();
-        mSortId = task.getSortId();
+        mDate = task.getTime();
+        mClassifyId = task.getClassifyId();
         mCircleType = task.getCircle();
         mRepeatType = task.getRepeat();
         // The view may not be able to handle UI updates anymore
@@ -198,12 +191,12 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
             mView.setSelectCircle(task.getCircle());
             mView.setSelectRepeat(task.getRepeat());
         }
-        mUseCaseHandler.execute(mGetSort, new GetSort.RequestValues(task.getSortId()),
-                new UseCase.UseCaseCallback<GetSort.ResponseValue>() {
+        mUseCaseHandler.execute(mGetClassify, new GetClassify.RequestValues(task.getClassifyId()),
+                new UseCase.UseCaseCallback<GetClassify.ResponseValue>() {
                     @Override
-                    public void onSuccess(GetSort.ResponseValue response) {
+                    public void onSuccess(GetClassify.ResponseValue response) {
                         if (mView.isActive()){
-                            mView.setSelectSort(response.getSort());
+                            mView.setSelectClassify(response.getClassify());
                         }
                     }
 
@@ -257,13 +250,23 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     @Override
-    public Long getSortId(){
-        return mSortId;
+    public Long getClassifyId(){
+        return mClassifyId;
     }
 
     @Override
-    public void setSortId(Long id){
-        mSortId = id;
+    public Date getDate(){
+        return mDate;
+    }
+
+    @Override
+    public void setDate(Date date){
+        mDate = date;
+    }
+
+    @Override
+    public void setClassifyId(Long id){
+        mClassifyId = id;
     }
 
 //    @Override

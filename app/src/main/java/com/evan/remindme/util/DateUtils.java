@@ -14,8 +14,9 @@ public class DateUtils {
     private SimpleDateFormat mFormat;
 
     public final static SimpleDateFormat defaultFormat = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分");
+    public final static SimpleDateFormat tasksFormat = new SimpleDateFormat("yy-MM-dd HH:mm");
 
-    private DateUtils(SimpleDateFormat format){
+    public DateUtils(SimpleDateFormat format){
         if (format == null){
             mFormat = defaultFormat;
         }else {

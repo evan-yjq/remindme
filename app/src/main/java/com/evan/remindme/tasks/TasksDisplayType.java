@@ -10,7 +10,7 @@ public enum TasksDisplayType {
     /**
      * 按分类显示
      */
-    TASKS_BY_SORT,
+    TASKS_BY_CLASSIFY,
     /**
      * 按时间从近到远显示
      */

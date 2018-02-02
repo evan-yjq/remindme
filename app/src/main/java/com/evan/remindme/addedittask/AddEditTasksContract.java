@@ -3,9 +3,7 @@ package com.evan.remindme.addedittask;
 import android.support.annotation.NonNull;
 import com.evan.remindme.BasePresenter;
 import com.evan.remindme.BaseView;
-import com.evan.remindme.sorts.domain.model.Sort;
-import com.evan.remindme.tasks.domain.model.Task;
-import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.evan.remindme.allclassify.domain.model.Classify;
 
 import java.util.Date;
 import java.util.List;
@@ -32,11 +30,11 @@ public interface AddEditTasksContract {
 
         void setSelectCircle(int circle);
 
-        void setSelectSort(Sort sort);
+        void setSelectClassify(Classify classify);
 
-        void setSelectSort(int i);
+        void setSelectClassify(int i);
 
-        void setSortSpinner(List<Sort> sorts);
+        void setClassifySpinner(List<Classify> classifies);
 
         void showTimePickerDialog(Date date);
 
@@ -47,7 +45,7 @@ public interface AddEditTasksContract {
 
     interface Presenter extends BasePresenter {
 
-        void save(String title,Date time);
+        void save(String title);
 
         void getDateDialog();
 
@@ -63,12 +61,15 @@ public interface AddEditTasksContract {
 
         void setRepeatType(int repeat);
 
-        void saveSort(@NonNull String name);
+        void saveClassify(@NonNull String name);
 
-        Long getSortId();
+        Long getClassifyId();
 
-        void setSortId(Long id);
+        void setClassifyId(Long id);
 
+        Date getDate();
+
+        void setDate(Date date);
     }
 
 }

@@ -16,7 +16,7 @@ public class DisplayFactory {
     private static final Map<TasksDisplayType,TaskDisplay>mDisplays = new HashMap<>();
 
     public DisplayFactory(){
-        mDisplays.put(TasksDisplayType.TASKS_BY_SORT, new TasksDisplayBySort());
+        mDisplays.put(TasksDisplayType.TASKS_BY_CLASSIFY, new TasksDisplayByClassify());
         mDisplays.put(TasksDisplayType.TASKS_BY_TIME, new TasksDisplayByTime());
     }
 

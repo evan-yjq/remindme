@@ -24,12 +24,11 @@ public class TasksRemoteDataSource implements TasksDataSource{
     private static final Map<String, Task> TASKS_SERVICE_DATA;
 
     static {
-        TASKS_SERVICE_DATA = new LinkedHashMap<>(2);
+        TASKS_SERVICE_DATA = new LinkedHashMap<>(1);
     }
 
-    private static void addTask(String title,Long sortId) {
-        Task newTask = new Task(title,sortId
-                ,new Date());
+    private static void addTask(String title,Long id) {
+        Task newTask = new Task(title,id,new Date());
         TASKS_SERVICE_DATA.put(newTask.getId(), newTask);
     }
 

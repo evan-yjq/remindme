@@ -1,4 +1,4 @@
-package com.evan.remindme.sorts;
+package com.evan.remindme.allclassify;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -16,12 +16,12 @@ import com.evan.remindme.util.ActivityUtils;
  * Date: 2018/1/28
  * Time: 下午10:20
  */
-public class SortsActivity extends AppCompatActivity {
+public class AllClassifyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sorts_act);
+        setContentView(R.layout.classify_act);
 
         //设置虚拟按键颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -34,22 +34,22 @@ public class SortsActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowHomeEnabled(true);
-        ab.setTitle(R.string.sorts_list_title);
+        ab.setTitle(R.string.all_classify_list_title);
 
-        SortsFragment sortsFragment = (SortsFragment)getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-        if (sortsFragment == null){
+        AllClassifyFragment allClassifyFragment = (AllClassifyFragment)getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (allClassifyFragment == null){
             //创建fragment
-            sortsFragment = SortsFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),sortsFragment,R.id.contentFrame);
+            allClassifyFragment = AllClassifyFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), allClassifyFragment,R.id.contentFrame);
         }
 
         //创建presenter
-        new SortsPresenter(
+        new AllClassifyPresenter(
                 Injection.provideUseCaseHandler(),
-                sortsFragment,
-                Injection.provideGetSorts(getApplicationContext()),
-                Injection.provideSaveSort(getApplicationContext()),
-                Injection.provideDeleteSort(getApplicationContext()));
+                allClassifyFragment,
+                Injection.provideGetAllClassify(getApplicationContext()),
+                Injection.provideSaveClassify(getApplicationContext()),
+                Injection.provideDeleteClassify(getApplicationContext()));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.evan.remindme.data.source.local;
 
 import android.support.annotation.NonNull;
-import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.data.source.dao.SortDao;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.data.source.ClassifyDataSource;
+import com.evan.remindme.data.source.dao.ClassifyDao;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.util.AppExecutors;
 
 import java.util.List;
@@ -14,26 +14,26 @@ import java.util.List;
  * Date: 2018/1/25
  * Time: 上午2:27
  */
-public class SortsLocalDataSource implements SortsDataSource{
+public class ClassifyLocalDataSource implements ClassifyDataSource {
 
-    private static volatile SortsLocalDataSource INSTANCE;
+    private static volatile ClassifyLocalDataSource INSTANCE;
 
-    private SortDao mSortDao;
+    private ClassifyDao classifyDao;
 
     private AppExecutors mAppExecutors;
 
-    private SortsLocalDataSource(@NonNull AppExecutors appExecutors,
-                                 @NonNull SortDao sortDao){
+    private ClassifyLocalDataSource(@NonNull AppExecutors appExecutors,
+                                    @NonNull ClassifyDao classifyDao){
         mAppExecutors = appExecutors;
-        mSortDao = sortDao;
+        this.classifyDao = classifyDao;
     }
 
-    public static SortsLocalDataSource getInstance(@NonNull AppExecutors appExecutors,
-                                                   @NonNull SortDao sortDao){
+    public static ClassifyLocalDataSource getInstance(@NonNull AppExecutors appExecutors,
+                                                      @NonNull ClassifyDao classifyDao){
         if (INSTANCE == null){
-            synchronized (SortsLocalDataSource.class) {
+            synchronized (ClassifyLocalDataSource.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new SortsLocalDataSource(appExecutors, sortDao);
+                    INSTANCE = new ClassifyLocalDataSource(appExecutors, classifyDao);
                 }
             }
         }
@@ -41,11 +41,11 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void check(@NonNull final Sort sort, @NonNull final CheckCallback callback) {
+    public void check(@NonNull final Classify classify, @NonNull final CheckCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Sort s = mSortDao.queryBuilder().where(SortDao.Properties.Name.eq(sort.getName())).unique();
+                Classify s = classifyDao.queryBuilder().where(ClassifyDao.Properties.Name.eq(classify.getName())).unique();
                 if (s!=null){
                     callback.onCheck(true);
                 }else{
@@ -57,38 +57,38 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void openSort(@NonNull Sort sort) {
-        updateSort(sort);
+    public void openClassify(@NonNull Classify classify) {
+        updateClassify(classify);
     }
 
     @Override
-    public void openSort(@NonNull Long sortId) {
-
-    }
-
-    @Override
-    public void closeSort(@NonNull Sort sort) {
-        updateSort(sort);
-    }
-
-    @Override
-    public void closeSort(@NonNull Long sortId) {
+    public void openClassify(@NonNull Long id) {
 
     }
 
     @Override
-    public void getSorts(@NonNull final LoadSortsCallback callback) {
+    public void closeClassify(@NonNull Classify classify) {
+        updateClassify(classify);
+    }
+
+    @Override
+    public void closeClassify(@NonNull Long id) {
+
+    }
+
+    @Override
+    public void getAllClassify(@NonNull final LoadAllClassifyCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final List<Sort> sorts = mSortDao.loadAll();
+                final List<Classify> classifies = classifyDao.loadAll();
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (sorts.isEmpty()){
+                        if (classifies.isEmpty()){
                             callback.onDataNotAvailable();
                         }else{
-                            callback.onSortsLoaded(sorts);
+                            callback.onAllClassifyLoaded(classifies);
                         }
                     }
                 });
@@ -99,16 +99,16 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void getSort(@NonNull final Long SortId, @NonNull final GetSortCallback callback) {
+    public void getClassify(@NonNull final Long id, @NonNull final GetClassifyCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final Sort sort = mSortDao.load(SortId);
+                final Classify classify = classifyDao.load(id);
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (sort != null){
-                            callback.onSortLoaded(sort);
+                        if (classify != null){
+                            callback.onClassifyLoaded(classify);
                         }else{
                             callback.onDataNotAvailable();
                         }
@@ -121,11 +121,11 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void saveSort(@NonNull final Sort sort,@NonNull final SaveCallback callback) {
+    public void saveClassify(@NonNull final Classify classify, @NonNull final SaveCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final Long id = mSortDao.insert(sort);
+                final Long id = classifyDao.insert(classify);
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -138,51 +138,51 @@ public class SortsLocalDataSource implements SortsDataSource{
     }
 
     @Override
-    public void deleteSort(@NonNull final Long sortId) {
+    public void deleteClassify(@NonNull final Long id) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mSortDao.deleteByKey(sortId);
+                classifyDao.deleteByKey(id);
             }
         };
         mAppExecutors.diskIO().execute(runnable);
     }
 
     @Override
-    public void deleteAllSorts() {
+    public void deleteAllClassify() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mSortDao.deleteAll();
+                classifyDao.deleteAll();
             }
         };
         mAppExecutors.diskIO().execute(runnable);
     }
 
     @Override
-    public void refreshSorts() {
+    public void refreshClassify() {
 
     }
 
     @Override
-    public void updateSort(@NonNull final Sort sort) {
+    public void updateClassify(@NonNull final Classify classify) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mSortDao.update(sort);
+                classifyDao.update(classify);
             }
         };
         mAppExecutors.diskIO().execute(runnable);
     }
 
     @Override
-    public void getSortWithName(@NonNull final String name, @NonNull final GetSortCallback callback) {
+    public void getClassifyWithName(@NonNull final String name, @NonNull final GetClassifyCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final Sort sort = mSortDao.queryBuilder().where(SortDao.Properties.Name.eq(name)).unique();
-                if (sort != null){
-                    callback.onSortLoaded(sort);
+                final Classify classify = classifyDao.queryBuilder().where(ClassifyDao.Properties.Name.eq(name)).unique();
+                if (classify != null){
+                    callback.onClassifyLoaded(classify);
                 }else{
                     callback.onDataNotAvailable();
                 }

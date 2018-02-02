@@ -2,9 +2,9 @@ package com.evan.remindme.tasks.domain.usecase;
 
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
-import com.evan.remindme.data.source.SortsDataSource;
-import com.evan.remindme.data.source.SortsRepository;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.data.source.ClassifyDataSource;
+import com.evan.remindme.data.source.ClassifyRepository;
+import com.evan.remindme.allclassify.domain.model.Classify;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
@@ -14,21 +14,21 @@ import static com.evan.remindme.util.Objects.checkNotNull;
  * Date: 2018/1/28
  * Time: 下午11:18
  */
-public class GetSort extends UseCase<GetSort.RequestValues,GetSort.ResponseValue>{
+public class GetClassify extends UseCase<GetClassify.RequestValues,GetClassify.ResponseValue>{
 
-    private final SortsRepository sortsRepository;
+    private final ClassifyRepository classifyRepository;
 
-    public GetSort(@NonNull SortsRepository sortsRepository) {
-        this.sortsRepository = checkNotNull(sortsRepository,"sortsRepository cannot be null!");
+    public GetClassify(@NonNull ClassifyRepository classifyRepository) {
+        this.classifyRepository = checkNotNull(classifyRepository,"classifyRepository cannot be null!");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         Long id = requestValues.getId();
-        sortsRepository.getSort(id, new SortsDataSource.GetSortCallback() {
+        classifyRepository.getClassify(id, new ClassifyDataSource.GetClassifyCallback() {
             @Override
-            public void onSortLoaded(Sort sort) {
-                getUseCaseCallback().onSuccess(new ResponseValue(sort));
+            public void onClassifyLoaded(Classify classify) {
+                getUseCaseCallback().onSuccess(new ResponseValue(classify));
             }
 
             @Override
@@ -50,14 +50,14 @@ public class GetSort extends UseCase<GetSort.RequestValues,GetSort.ResponseValue
         }
     }
     public static final class ResponseValue implements UseCase.ResponseValue {
-        private final Sort sort;
+        private final Classify classify;
 
-        public ResponseValue(@NonNull Sort sort) {
-            this.sort = checkNotNull(sort,"sort cannot be null!");
+        public ResponseValue(@NonNull Classify classify) {
+            this.classify = checkNotNull(classify,"classify cannot be null!");
         }
 
-        public Sort getSort() {
-            return sort;
+        public Classify getClassify() {
+            return classify;
         }
     }
 }

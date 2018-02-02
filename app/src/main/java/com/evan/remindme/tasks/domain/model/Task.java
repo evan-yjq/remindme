@@ -55,7 +55,7 @@ public class Task implements Comparable<Task>{
     private Date nextTime;
 
     //分类
-    private Long sortId;
+    private Long classifyId;
 
     //铃声所在地
     private String bell;
@@ -127,12 +127,12 @@ public class Task implements Comparable<Task>{
         this.circle = circle;
     }
 
-    public Long getSortId() {
-        return sortId;
+    public Long getClassifyId() {
+        return classifyId;
     }
 
-    public void setSortId(Long sortId) {
-        this.sortId = sortId;
+    public void setClassifyId(Long classifyId) {
+        this.classifyId = classifyId;
     }
 
     public boolean isRepeat(){
@@ -152,7 +152,7 @@ public class Task implements Comparable<Task>{
                 Objects.equal(title, task.title) &&
                 Objects.equal(circle, task.circle) &&
                 Objects.equal(time, task.time) &&
-                Objects.equal(sortId,task.sortId)&&
+                Objects.equal(classifyId,task.classifyId)&&
                 Objects.equal(repeat, task.repeat)&&
                 Objects.equal(bell, task.bell);
     }
@@ -165,54 +165,40 @@ public class Task implements Comparable<Task>{
         this.bell = task.bell;
         this.circle = task.circle;
         this.id = task.id;
-        this.sortId = task.sortId;
+        this.classifyId = task.classifyId;
         this.turnOn = task.turnOn;
     }
 
     public Task(String title,Long id,Date time){
-        this(title,-1,-1,time,time,id,"",true);
+//        this("",title,-1,-1,time,time,id,"",true);
     }
 
     public Task(String title,Date time){
         this(title,(long)1,time);
     }
 
+    @Generated(hash = 733837707)
+    public Task() {
+    }
+
     @Keep
-    @Generated(hash = 970674395)
-    public Task(String title, int circle, int repeat, Date time,
-            Date nextTime, Long sortId, String bell, boolean turnOn) {
+    @Generated(hash = 191800848)
+    public Task(String id, String title, int circle, int repeat, Date time,
+            Date nextTime, Long classifyId, String bell, boolean turnOn) {
         this.title = title;
         this.circle = circle;
         this.repeat = repeat;
         this.time = time;
         this.nextTime = nextTime;
-        this.sortId = sortId;
+        this.classifyId = classifyId;
         this.bell = bell;
         this.turnOn = turnOn;
         this.id = UUID.randomUUID().toString();
     }
 
-    @Generated(hash = 733837707)
-    public Task() {
-    }
-
-    @Generated(hash = 970674395)
-    public Task(String id, String title, int circle, int repeat, Date time,
-            Date nextTime, Long sortId, String bell, boolean turnOn) {
-        this.id = id;
-        this.title = title;
-        this.circle = circle;
-        this.repeat = repeat;
-        this.time = time;
-        this.nextTime = nextTime;
-        this.sortId = sortId;
-        this.bell = bell;
-        this.turnOn = turnOn;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hashCode(title,sortId);
+        return Objects.hashCode(title,classifyId);
     }
 
     @Override

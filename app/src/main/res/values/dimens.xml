@@ -23,4 +23,7 @@
 
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="task_empty">100dp</dimen>
+    <dimen name="classify_empty">64dp</dimen>
+
 </resources>

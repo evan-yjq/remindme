@@ -30,7 +30,7 @@ android {
                 'src/main/res/layouts/addtask',
                 'src/main/res/layouts/item',
                 'src/main/res/layouts/settings',
-                'src/main/res/layouts/sorts',
+                'src/main/res/layouts/allclassify',
                 'src/main/res/layouts/tasks',
                 'src/main/res'
             ]

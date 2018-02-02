@@ -1,12 +1,9 @@
-package com.evan.remindme.sorts;
+package com.evan.remindme.allclassify;
 
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.BinderThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,16 +19,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.evan.remindme.R;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.ScrollChildSwipeRefreshLayout;
 import com.evan.remindme.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.evan.remindme.tasks.TasksFragment.setEmptyView;
 import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
@@ -40,27 +37,27 @@ import static com.evan.remindme.util.Objects.checkNotNull;
  * Date: 2018/1/28
  * Time: 下午10:20
  */
-public class SortsFragment extends Fragment implements SortsContract.View {
+public class AllClassifyFragment extends Fragment implements AllClassifyContract.View {
 
-    private SortsContract.Presenter mPresenter;
-    private LinearLayout mNoSortView;
-    private ImageView mNoSortIcon;
-    private TextView mNoSortMainView;
-    private TextView mNoSortAddView;
-    private LinearLayout mSortsView;
-    private SortsAdapter mSortsAdapter;
+    private AllClassifyContract.Presenter mPresenter;
+    private LinearLayout mNoClassifyView;
+    private ImageView mNoClassifyIcon;
+    private TextView mNoClassifyMainView;
+    private TextView mNoClassifyAddView;
+    private LinearLayout mAllClassifyView;
+    private AllClassifyAdapter mAllClassifyAdapter;
 
-    public SortsFragment(){
+    public AllClassifyFragment(){
     }
 
-    public static SortsFragment newInstance(){
-        return new SortsFragment();
+    public static AllClassifyFragment newInstance(){
+        return new AllClassifyFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSortsAdapter = new SortsAdapter(new ArrayList<Sort>(0),mItemListener);
+        mAllClassifyAdapter = new AllClassifyAdapter(new ArrayList<Classify>(0),mItemListener);
     }
 
     @Override
@@ -77,7 +74,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.addNewSort();
+                mPresenter.addNewClassify();
             }
         });
     }
@@ -85,20 +82,23 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.sorts_frag,container,false);
+        View root = inflater.inflate(R.layout.classify_frag,container,false);
 
-        ListView listView = root.findViewById(R.id.sorts_list);
-        listView.setAdapter(mSortsAdapter);
-        mSortsView = root.findViewById(R.id.sortsLL);
+        View view = setEmptyView(getActivity(),inflater.inflate(R.layout.task_item,null),R.dimen.classify_empty);
 
-        mNoSortView = root.findViewById(R.id.noSorts);
-        mNoSortAddView = root.findViewById(R.id.noSortsAdd);
-        mNoSortIcon = root.findViewById(R.id.noSortsIcon);
-        mNoSortMainView = root.findViewById(R.id.noSortsMain);
-        mNoSortAddView.setOnClickListener(new View.OnClickListener() {
+        ListView listView = root.findViewById(R.id.allClassify_list);
+        listView.addFooterView(view,null,false);
+        listView.setAdapter(mAllClassifyAdapter);
+        mAllClassifyView = root.findViewById(R.id.allClassifyLL);
+
+        mNoClassifyView = root.findViewById(R.id.noClassify);
+        mNoClassifyAddView = root.findViewById(R.id.noClassifyAdd);
+        mNoClassifyIcon = root.findViewById(R.id.noClassifyIcon);
+        mNoClassifyMainView = root.findViewById(R.id.noClassifyMain);
+        mNoClassifyAddView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.addNewSort();
+                mPresenter.addNewClassify();
             }
         });
 
@@ -111,7 +111,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.loadSorts(false);
+                mPresenter.loadAllClassify(false);
             }
         });
         swipeRefreshLayout.setScrollUpChild(listView);
@@ -120,7 +120,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     }
 
     @Override
-    public void setPresenter(SortsContract.Presenter presenter) {
+    public void setPresenter(AllClassifyContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
@@ -140,7 +140,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     }
 
     @Override
-    public void showAddSort() {
+    public void showAddClassify() {
         showDialog("新建分类",new DialogListener() {
             @Override
             public void onPositiveClick(EditText text) {
@@ -174,21 +174,21 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     }
 
     @Override
-    public void showSorts(List<Sort>sorts) {
-        mSortsAdapter.replaceData(sorts);
+    public void showAllClassify(List<Classify> classifies) {
+        mAllClassifyAdapter.replaceData(classifies);
 
-        mSortsView.setVisibility(View.VISIBLE);
-        mNoSortView.setVisibility(View.GONE);
+        mAllClassifyView.setVisibility(View.VISIBLE);
+        mNoClassifyView.setVisibility(View.GONE);
     }
 
     @Override
-    public void showNoSort() {
-        mSortsView.setVisibility(View.GONE);
-        mNoSortView.setVisibility(View.VISIBLE);
+    public void showNoClassify() {
+        mAllClassifyView.setVisibility(View.GONE);
+        mNoClassifyView.setVisibility(View.VISIBLE);
 
-        mNoSortMainView.setText(R.string.no_sorts_all);
-        mNoSortIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_assignment_turned_in_24dp));
-        mNoSortAddView.setVisibility(View.VISIBLE);
+        mNoClassifyMainView.setText(R.string.no_classify_all);
+        mNoClassifyIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_assignment_turned_in_24dp));
+        mNoClassifyAddView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -199,87 +199,87 @@ public class SortsFragment extends Fragment implements SortsContract.View {
 
     @Override
     public void showSuccessfullySavedMessage() {
-        showMessage(getString(R.string.successfully_saved_sort_message));
+        showMessage(getString(R.string.successfully_saved_classify_message));
     }
 
     @Override
-    public void showSortDeleteError() {
-        showMessage(getString(R.string.delete_sort_error));
+    public void showClassifyDeleteError() {
+        showMessage(getString(R.string.delete_classify_error));
     }
 
     @Override
-    public void showSortSaveError() {
-        showMessage(getString(R.string.save_sort_error));
+    public void showClassifySaveError() {
+        showMessage(getString(R.string.save_classify_error));
     }
 
     @Override
-    public void showSortRename(final Sort sort) {
+    public void showClassifyRename(final Classify classify) {
         showDialog("修改分类名", new DialogListener() {
             @Override
             public void onPositiveClick(EditText text) {
                 String input = text.getText().toString();
                 if (input.equals("")) {
                     showMessage("分类名不能为空");
-                }else if(!Objects.equal(input,sort.getName())){
-                    mPresenter.rename(sort,input);
+                }else if(!Objects.equal(input, classify.getName())){
+                    mPresenter.rename(classify,input);
                 }
             }
-        },sort.getName());
+        }, classify.getName());
     }
 
     @Override
-    public void showSortRenameError() {
-        showMessage(getString(R.string.rename_sort_error));
+    public void showClassifyRenameError() {
+        showMessage(getString(R.string.rename_classify_error));
     }
 
     @Override
-    public void showLoadingSortsError() {
-        showMessage(getString(R.string.loading_sorts_error));
+    public void showLoadingAllClassifyError() {
+        showMessage(getString(R.string.loading_all_classify_error));
     }
 
     ListItemListener mItemListener = new ListItemListener() {
         @Override
-        public void onSortLongClick(Sort sort) {
+        public void onClassifyLongClick(Classify classify) {
             // TODO 删除界面
         }
 
         @Override
-        public void onSortClick(Sort sort) {
-            if (Objects.equal(sort.getId(),(long)1)){
-                showAddSort();
+        public void onClassifyClick(Classify classify) {
+            if (Objects.equal(classify.getId(),(long)1)){
+                showAddClassify();
             }else {
-                showSortRename(sort);
+                showClassifyRename(classify);
             }
         }
     };
 
-    private static class SortsAdapter extends BaseAdapter{
+    private static class AllClassifyAdapter extends BaseAdapter{
 
-        private List<Sort>mSorts;
+        private List<Classify> mClassifies;
         private ListItemListener mItemListener;
 
-        public SortsAdapter(List<Sort>sorts,ListItemListener itemListener){
+        public AllClassifyAdapter(List<Classify> classifies, ListItemListener itemListener){
             mItemListener = itemListener;
-            setList(sorts);
+            setList(classifies);
         }
 
-        public void replaceData(List<Sort>sorts){
-            setList(sorts);
+        public void replaceData(List<Classify> classifies){
+            setList(classifies);
             notifyDataSetChanged();
         }
 
-        private void setList(List<Sort>sorts){
-            mSorts = checkNotNull(sorts);
+        private void setList(List<Classify> classifies){
+            mClassifies = checkNotNull(classifies);
         }
 
         @Override
         public int getCount() {
-            return mSorts.size();
+            return mClassifies.size();
         }
 
         @Override
-        public Sort getItem(int i) {
-            return mSorts.get(i);
+        public Classify getItem(int i) {
+            return mClassifies.get(i);
         }
 
         @Override
@@ -289,27 +289,28 @@ public class SortsFragment extends Fragment implements SortsContract.View {
 
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
+
             if (view == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                view = inflater.inflate(R.layout.sort_item,viewGroup,false);
+                view = inflater.inflate(R.layout.classify_item,viewGroup,false);
             }
 
-            final Sort sort = getItem(i);
+            final Classify classify = getItem(i);
 
             TextView titleTV = view.findViewById(R.id.title);
-            titleTV.setText(sort.getName());
+            titleTV.setText(classify.getName());
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    mItemListener.onSortLongClick(sort);
+                    mItemListener.onClassifyLongClick(classify);
                     return true;
                 }
             });
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mItemListener.onSortClick(sort);
+                    mItemListener.onClassifyClick(classify);
                 }
             });
             return view;
@@ -358,7 +359,7 @@ public class SortsFragment extends Fragment implements SortsContract.View {
     }
 
     public interface ListItemListener{
-        void onSortLongClick(Sort sort);
-        void onSortClick(Sort sort);
+        void onClassifyLongClick(Classify classify);
+        void onClassifyClick(Classify classify);
     }
 }

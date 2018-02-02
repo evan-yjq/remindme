@@ -3,7 +3,6 @@ package com.evan.remindme.tasks;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -12,12 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
 import com.evan.remindme.settings.SettingsActivity;
-import com.evan.remindme.sorts.SortsActivity;
+import com.evan.remindme.allclassify.AllClassifyActivity;
 import com.evan.remindme.util.ActivityUtils;
 
 /**
@@ -76,8 +74,8 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideTurnOnTask(getApplicationContext()),
                 Injection.provideTurnOffTasks(getApplicationContext()),
                 Injection.provideSaveTasks(getApplicationContext()),
-                Injection.provideOpenSort(getApplicationContext()),
-                Injection.provideCloseSort(getApplicationContext()),
+                Injection.provideOpenClassify(getApplicationContext()),
+                Injection.provideCloseClassify(getApplicationContext()),
                 Injection.provideGetSetting(getApplicationContext()));
 
         //加载之前保存的状态（如果可用）。
@@ -114,8 +112,8 @@ public class TasksActivity extends AppCompatActivity{
                     case R.id.tasks_navigation_menu_item:
                         //已经再次界面，什么都不用做
                         break;
-                    case R.id.sorts_navigation_menu_item:
-                        intent = new Intent(TasksActivity.this, SortsActivity.class);
+                    case R.id.all_classify_navigation_menu_item:
+                        intent = new Intent(TasksActivity.this, AllClassifyActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.settings_navigation_menu_item:

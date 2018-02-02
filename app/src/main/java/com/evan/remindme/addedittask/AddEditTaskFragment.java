@@ -1,7 +1,6 @@
 package com.evan.remindme.addedittask;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +19,9 @@ import com.evan.remindme.R;
 import com.evan.remindme.addedittask.domain.decorators.NextDecorator;
 import com.evan.remindme.addedittask.domain.decorators.SelectDecorator;
 import com.evan.remindme.addedittask.domain.decorators.TodayDecorator;
-import com.evan.remindme.sorts.SortsFragment;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.allclassify.AllClassifyFragment;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.ScrollChildSwipeRefreshLayout;
-import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.util.DateUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -49,9 +46,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     private AddEditTasksContract.Presenter mPresenter;
     private MaterialCalendarView mCalendarView;
     private EditText mTitleEditText;
-    private TextView mDayTextView;
     private TextView mTimeTextView;
-    private Spinner mSortSpinner;
+    private Spinner mClassifySpinner;
     private Spinner mCircleSpinner;
     private Spinner mRepeatSpinner;
 
@@ -76,24 +72,14 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
             @Override
             public void onClick(View view) {
                 String title = mTitleEditText.getText().toString();
-                Date date = null;
-                if (day != null&&time != null){
-                    try {
-                        date = new DateUtils().String2Date(day + " " + time);
-                    } catch (ParseException e) {
-                        showMessage("解析时间出错");
-                    }
-                }
-                mPresenter.save(title,date);
-
+                mPresenter.save(title);
             }
         });
     }
 
-    private String day = null;
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.addtask_frag,container,false);
 
         mCalendarView = root.findViewById(R.id.calendar);
@@ -101,17 +87,19 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                calendar.setTime(date.getDate());
-                day = calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月"+calendar.get(Calendar.DAY_OF_MONTH)+"日";
-                mDayTextView.setText(day);
+                calendar.setTime(mPresenter.getDate());
+                calendar.set(date.getYear(),date.getMonth(),date.getDay());
+                mPresenter.setDate(calendar.getTime());
+                String day = new DateUtils().Date2String(calendar.getTime());
+                mTimeTextView.setText(day);
                 setCalendarDecorators(date,mPresenter.getCircleType());
             }
         });
 
         mTitleEditText = root.findViewById(R.id.title);
 
-        mDayTextView = root.findViewById(R.id.day);
         mTimeTextView = root.findViewById(R.id.time);
+        setDate(mPresenter.getDate());
 
         RelativeLayout mTimeView = root.findViewById(R.id.time_view);
         mTimeView.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +109,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
             }
         });
 
-        mSortSpinner = root.findViewById(R.id.sort_spinner);
+        mClassifySpinner = root.findViewById(R.id.classify_spinner);
 
         mCircleSpinner = root.findViewById(R.id.circle_spinner);
         setCircleSpinner();
@@ -142,7 +130,6 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         return root;
     }
 
-    private String time = null;
     private Calendar calendar = Calendar.getInstance();
     @Override
     public void showTimePickerDialog(Date date){
@@ -150,8 +137,11 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         new TimePickerDialog(getActivity(),5, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                time = i+"时"+i1+"分";
-                mTimeTextView.setText(time);
+                calendar.set(Calendar.HOUR_OF_DAY,i);
+                calendar.set(Calendar.MINUTE,i1);
+                mPresenter.setDate(calendar.getTime());
+                String day = new DateUtils().Date2String(calendar.getTime());
+                mTimeTextView.setText(day);
             }
         },calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),true).show();
     }
@@ -172,29 +162,27 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     }
 
     @Override
-    public void setSelectSort(Sort sort) {
-        ArrayAdapter<Sort> adapter = (ArrayAdapter<Sort>) mSortSpinner.getAdapter();
-        mSortSpinner.setSelection(adapter.getPosition(sort),true);
+    public void setSelectClassify(Classify classify) {
+        ArrayAdapter<Classify> adapter = (ArrayAdapter<Classify>) mClassifySpinner.getAdapter();
+        mClassifySpinner.setSelection(adapter.getPosition(classify),true);
     }
 
     @Override
-    public void setSelectSort(int i){
-        mSortSpinner.setSelection(i,true);
+    public void setSelectClassify(int i){
+        mClassifySpinner.setSelection(i,true);
     }
 
     @Override
     public void setDate(Date date){
         calendar.setTime(date);
         mCalendarView.setSelectedDate(date);
-        day = calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月"+calendar.get(Calendar.DAY_OF_MONTH)+"日";
-        time = calendar.get(Calendar.HOUR_OF_DAY)+"时"+calendar.get(Calendar.MINUTE)+"分";
-        mDayTextView.setText(day);
-        mTimeTextView.setText(time);
+        String day = new DateUtils().Date2String(date);
+        mTimeTextView.setText(day);
         setCalendarDecorators(CalendarDay.from(date),mPresenter.getCircleType());
     }
 
     private void setCalendarDecorators(CalendarDay day,int circle){
-        setSelectCalendar(day,circle);
+        setSelectCalendar(day, circle);
         setNextCalendar(day, circle);
     }
 
@@ -204,28 +192,28 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         getActivity().finish();
     }
 
-    public void showAddSort() {
-        showDialog("新建分类",new SortsFragment.DialogListener() {
+    public void showAddClassify() {
+        showDialog("新建分类",new AllClassifyFragment.DialogListener() {
             @Override
             public void onPositiveClick(EditText text) {
                 String input = text.getText().toString();
                 if (input.equals("")) {
                     showMessage("分类名不能为空");
                 }else{
-                    mPresenter.saveSort(input);
+                    mPresenter.saveClassify(input);
                 }
             }
         },"");
     }
 
-    private void showDialog(String title, SortsFragment.DialogListener listener, String hint){
+    private void showDialog(String title, AllClassifyFragment.DialogListener listener, String hint){
         TextInputLayout layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
         EditText et = new EditText(getActivity());
         et.setSingleLine();
         et.setHint(hint);
         layout.addView(et);
 
-        SortsFragment.MyDialogFragment dialog = new SortsFragment.MyDialogFragment(title,layout,listener);
+        AllClassifyFragment.MyDialogFragment dialog = new AllClassifyFragment.MyDialogFragment(title,layout,listener);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -242,17 +230,17 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     }
 
     @Override
-    public void setSortSpinner(final List<Sort>sorts){
-        sorts.add(new Sort("点击这里新建分类+"));
-        ArrayAdapter<Sort> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item,sorts);
-        mSortSpinner.setAdapter(adapter);
-        mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void setClassifySpinner(final List<Classify> classifies){
+        classifies.add(new Classify("点击这里新建分类+"));
+        ArrayAdapter<Classify> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item, classifies);
+        mClassifySpinner.setAdapter(adapter);
+        mClassifySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == sorts.size()-1){
-                    showAddSort();
+                if (i == classifies.size()-1){
+                    showAddClassify();
                 }else {
-                    mPresenter.setSortId(((ArrayAdapter<Sort>)adapterView.getAdapter()).getItem(i).getId());
+                    mPresenter.setClassifyId(((ArrayAdapter<Classify>)adapterView.getAdapter()).getItem(i).getId());
                 }
             }
 

@@ -27,24 +27,24 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/tasksLL"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+                android:id="@+id/tasksLL"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <ExpandableListView
                     android:id="@+id/expandable_tasks_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:divider="@drawable/list_item_divider_left_15_right_15"
-                    android:dividerHeight="1px"/>
-
+                    android:dividerHeight="1px"
+                    android:childDivider="@drawable/list_item_divider_left_15_right_15"/>
             <ListView
-                android:id="@+id/tasks_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@drawable/list_item_divider_left_15_right_15"
-                android:dividerHeight="1px"/>
+                    android:id="@+id/tasks_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/list_item_divider_left_15_right_15"
+                    android:dividerHeight="1px"/>
         </LinearLayout>
 
         <LinearLayout

@@ -3,7 +3,7 @@ package com.evan.remindme.tasks;
 import android.support.annotation.NonNull;
 import com.evan.remindme.BasePresenter;
 import com.evan.remindme.BaseView;
-import com.evan.remindme.sorts.domain.model.Sort;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.tasks.domain.model.Task;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public interface TasksContract {
 
         void setLoadingIndicator(boolean active);
 
-        void showSortTasks(Map<Sort,List<Task>> tasks);
+        void showClassifyTasks(Map<Classify,List<Task>> tasks);
 
         void showTimeTasks(List<Task> tasks);
 
@@ -31,7 +31,7 @@ public interface TasksContract {
 
         void showNoTasks();
 
-        void showNoSortTasks();
+        void showNoClassifyTasks();
 
         void showTaskMarkedTurnOn();
 
@@ -40,10 +40,6 @@ public interface TasksContract {
         void showSuccessfullySavedMessage();
 
         void showLoadingTasksError();
-
-//        void showDisplayBySortLabel();
-
-//        void showDisplayByTimeLabel();
 
         void showMessage(String message);
 
@@ -71,9 +67,9 @@ public interface TasksContract {
 
         void turnOffTask(@NonNull Task turnOffTask);
 
-        void openSort(@NonNull Sort openSort);
+        void openClassify(@NonNull Classify openClassify);
 
-        void closeSort(@NonNull Sort closeSort);
+        void closeClassify(@NonNull Classify closeClassify);
 
         TasksDisplayType getDisplaying();
     }
