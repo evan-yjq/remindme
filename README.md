@@ -28,10 +28,15 @@
 
 ---
 
-2018-2-1:
+2018-2-2:
 
-- [ ] 在tasksList长度大于屏幕长度后，最下面的一条task的`Switch`控件被`FloatingActionButton`覆盖，此时应适当提高list显示高度
-- [ ] 完成addtask（添加提醒）界面
+- [x] 在tasksList长度大于屏幕长度后，最下面的一条task的`Switch`控件被`FloatingActionButton`覆盖，此时应适当提高list显示高度
+- [x] 完成addtask（添加提醒）界面
+- [x] 列表项之间的分割线不要顶到屏幕边缘
+- [x] 列表项显示更多信息
+- [x] 按分类显示时，若分类下没有提醒，则该分类不显示
+- [ ] NextDecorator还有问题
+- [ ]  如果title有内容，去除焦点
 
 
 
