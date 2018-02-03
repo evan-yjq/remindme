@@ -151,17 +151,17 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
                     mPresenter.save(input);
                 }
             }
-        },"");
+        }, "");
     }
 
-    private void showDialog(String title,DialogListener listener,String hint){
+    private void showDialog(String title, DialogListener listener, String hint){
         TextInputLayout layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
         EditText et = new EditText(getActivity());
         et.setSingleLine();
         et.setHint(hint);
         layout.addView(et);
 
-        MyDialogFragment dialog = new MyDialogFragment(title,layout,listener);
+        MyDialogFragment dialog = new MyDialogFragment(title,layout,listener, null);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -330,10 +330,12 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
         private String mTitle;
         private DialogListener mListener;
         private TextInputLayout mLayout;
-        public MyDialogFragment(String title,TextInputLayout layout, DialogListener listener){
+        private DialogInterface.OnClickListener cancelListener;
+        public MyDialogFragment(String title,TextInputLayout layout, DialogListener listener,DialogInterface.OnClickListener cancel){
             mTitle = title;
             mListener = listener;
             mLayout = layout;
+            cancelListener = cancel;
         }
         @NonNull
         @Override
@@ -347,8 +349,9 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
                             mListener.onPositiveClick(mLayout.getEditText());
                         }
                     })
-                    .setNegativeButton("取消",null);
+                    .setNegativeButton("取消",cancelListener);
             Dialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             return dialog;
         }

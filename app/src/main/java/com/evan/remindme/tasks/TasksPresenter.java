@@ -80,24 +80,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void save(@NonNull Task task) {
-        checkNotNull(task,"saveTask cannot be null!");
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
-                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTask.ResponseValue response) {
-                        mTasksView.showSuccessfullySavedMessage();
-                        loadTasks(false,false);
-                    }
-
-                    @Override
-                    public void onError() {
-                        mTasksView.showLoadingTasksError();
-                    }
-                });
-    }
-
-    @Override
     public void setDisplay(TasksDisplayType requestType) {
         mCurrentDisplaying = requestType;
     }
@@ -132,6 +114,16 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void loadTasks(boolean forceUpdate) {
         loadTasks(forceUpdate, true);
         mFirstLoad = false;
+    }
+
+    @Override
+    public boolean isFirstLoad(){
+        return mFirstLoad;
+    }
+
+    @Override
+    public void setFirstLoad(boolean firstLoad){
+        mFirstLoad = firstLoad;
     }
 
     /**

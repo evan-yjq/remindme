@@ -169,8 +169,13 @@ public class Task implements Comparable<Task>{
         this.turnOn = task.turnOn;
     }
 
+    public Task(String title, int circle, int repeat, Date time,
+                Date nextTime, Long classifyId, String bell, boolean turnOn) {
+        this(UUID.randomUUID().toString(),title,circle,repeat,time,nextTime,classifyId,bell,turnOn);
+    }
+
     public Task(String title,Long id,Date time){
-//        this("",title,-1,-1,time,time,id,"",true);
+        this(title,-1,-1,time,time,id,"",true);
     }
 
     public Task(String title,Date time){
@@ -193,7 +198,7 @@ public class Task implements Comparable<Task>{
         this.classifyId = classifyId;
         this.bell = bell;
         this.turnOn = turnOn;
-        this.id = UUID.randomUUID().toString();
+        this.id = id;
     }
 
     @Override
@@ -203,7 +208,11 @@ public class Task implements Comparable<Task>{
 
     @Override
     public String toString() {
-        return "Task with title "+title;
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", turnOn=" + turnOn +
+                '}';
     }
 
     @Override

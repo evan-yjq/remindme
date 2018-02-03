@@ -32,8 +32,6 @@ public interface AddEditTasksContract {
 
         void setSelectClassify(Classify classify);
 
-        void setSelectClassify(int i);
-
         void setClassifySpinner(List<Classify> classifies);
 
         void showTimePickerDialog(Date date);

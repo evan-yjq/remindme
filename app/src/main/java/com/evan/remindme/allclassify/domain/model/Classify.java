@@ -1,5 +1,6 @@
 package com.evan.remindme.allclassify.domain.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
@@ -12,7 +13,8 @@ import org.greenrobot.greendao.annotation.Generated;
  * Time: 上午2:18
  */
 @Entity
-public class Classify implements Comparable<Classify>{
+public class Classify implements Comparable<Classify>,Serializable{
+    private static final long serialVersionUID = 1L;
     @Id(autoincrement = true)
     private Long id;
 

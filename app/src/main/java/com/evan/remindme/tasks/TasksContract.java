@@ -51,7 +51,9 @@ public interface TasksContract {
 
     interface Presenter extends BasePresenter{
 
-        void save(@NonNull Task task);
+        boolean isFirstLoad();
+
+        void setFirstLoad(boolean firstLoad);
 
         void result(int requestCode, int resultCode);
 

@@ -2,6 +2,7 @@ package com.evan.remindme.addedittask;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -89,6 +90,34 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.addtask_frag,container,false);
 
+
+        //初始化输入法
+        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+
+        mTitleEditText = root.findViewById(R.id.title);
+        mTitleEditText.setHint("提醒名称");
+        mTitleEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTitleEditText.setFocusable(true);
+                mTitleEditText.setFocusableInTouchMode(true);//设置触摸聚焦
+                mTitleEditText.requestFocus();//请求焦点
+                mTitleEditText.findFocus();//获取焦点
+            }
+        });
+        mTitleEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (mInputMethodManager.isActive()) {
+                        mInputMethodManager.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);// 隐藏输入法
+                    }
+                }else{
+                    mInputMethodManager.showSoftInput(mTitleEditText, InputMethodManager.SHOW_FORCED);// 显示输入法
+                }
+            }
+        });
+
         mCalendarView = root.findViewById(R.id.calendar);
         mCalendarView.addDecorator(new TodayDecorator(getActivity()));
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
@@ -103,17 +132,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
             }
         });
 
-        mTitleEditText = root.findViewById(R.id.title);
-        mTitleEditText.setHint("提醒名称");
-        mTitleEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showInput();
-            }
-        });
-
         mTimeTextView = root.findViewById(R.id.time);
-        setDate(new Date());
 
         RelativeLayout mTimeView = root.findViewById(R.id.time_view);
         mTimeView.setOnClickListener(new View.OnClickListener() {
@@ -141,9 +160,6 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         ScrollView layout = root.findViewById(R.id.addeditLL);
         srl.setScrollUpChild(layout);
         srl.setEnabled(false);
-
-        //初始化输入法
-        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
         return root;
     }
 
@@ -171,20 +187,9 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         },calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),true).show();
     }
 
-    private void showInput(){
-        mTitleEditText.setFocusable(true);
-        mTitleEditText.setFocusableInTouchMode(true);//设置触摸聚焦
-        mTitleEditText.requestFocus();//请求焦点
-        mTitleEditText.findFocus();//获取焦点
-        mInputMethodManager.showSoftInput(mTitleEditText, InputMethodManager.SHOW_FORCED);// 显示输入法
-    }
-
     @Override
     public void hiddenInput(){
         mTitleEditText.setFocusable(false);
-        if (mInputMethodManager.isActive()) {
-            mInputMethodManager.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);// 隐藏输入法
-        }
     }
 
     @Override
@@ -204,13 +209,10 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
 
     @Override
     public void setSelectClassify(Classify classify) {
-        ArrayAdapter<Classify> adapter = (ArrayAdapter<Classify>) mClassifySpinner.getAdapter();
-        mClassifySpinner.setSelection(adapter.getPosition(classify),true);
-    }
-
-    @Override
-    public void setSelectClassify(int i){
-        mClassifySpinner.setSelection(i,true);
+        if (classify!=null) {
+            ArrayAdapter<Classify> adapter = (ArrayAdapter<Classify>) mClassifySpinner.getAdapter();
+            mClassifySpinner.setSelection(adapter.getPosition(classify), true);
+        }
     }
 
     @Override
@@ -228,27 +230,34 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     }
 
     private void showAddClassify() {
-        showDialog("新建分类",new AllClassifyFragment.DialogListener() {
-            @Override
-            public void onPositiveClick(EditText text) {
-                String input = text.getText().toString();
-                if (input.equals("")) {
-                    showMessage("分类名不能为空");
-                }else{
-                    mPresenter.saveClassify(input);
-                }
-            }
-        },"");
+        showDialog("新建分类",
+                new AllClassifyFragment.DialogListener() {
+                    @Override
+                    public void onPositiveClick(EditText text) {
+                        String input = text.getText().toString();
+                        if (input.equals("")) {
+                            showMessage("分类名不能为空");
+                        } else {
+                            mPresenter.saveClassify(input);
+                        }
+                    }
+                },
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        setSelectClassify(mPresenter.getClassify());
+                    }
+                },"");
     }
 
-    private void showDialog(String title, AllClassifyFragment.DialogListener listener, String hint){
+    private void showDialog(String title, AllClassifyFragment.DialogListener listener, DialogInterface.OnClickListener cancle, String hint){
         TextInputLayout layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
         EditText et = new EditText(getActivity());
         et.setSingleLine();
         et.setHint(hint);
         layout.addView(et);
 
-        AllClassifyFragment.MyDialogFragment dialog = new AllClassifyFragment.MyDialogFragment(title,layout,listener);
+        AllClassifyFragment.MyDialogFragment dialog = new AllClassifyFragment.MyDialogFragment(title,layout,listener,cancle);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

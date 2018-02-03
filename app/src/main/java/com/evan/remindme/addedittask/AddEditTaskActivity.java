@@ -10,7 +10,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
+import com.evan.remindme.allclassify.domain.model.Classify;
 import com.evan.remindme.util.ActivityUtils;
+
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA
@@ -23,6 +26,8 @@ public class AddEditTaskActivity extends AppCompatActivity{
     public static final int REQUEST_ADD_TASK = 1;
 
     public static final String SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY";
+    public static final String SELECT_CLASSIFY = "SELECT_CLASSIFY";
+    public static final String SELECT_DATE = "SELECT_DATE";
 
     private ActionBar mActionBar;
 
@@ -71,6 +76,10 @@ public class AddEditTaskActivity extends AppCompatActivity{
                 Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideSaveClassify(getApplicationContext()),
                 taskId,shouldLoadDataFromRepo);
+        if (savedInstanceState != null) {
+            mAddEditTaskPresenter.setDate((Date)savedInstanceState.getSerializable(SELECT_DATE));
+            mAddEditTaskPresenter.setClassify((Classify) savedInstanceState.getSerializable(SELECT_CLASSIFY));
+        }
     }
 
     @Override
@@ -85,6 +94,8 @@ public class AddEditTaskActivity extends AppCompatActivity{
     protected void onSaveInstanceState(Bundle outState) {
         // Save the state so that next time we know if we need to refresh data.
         outState.putBoolean(SHOULD_LOAD_DATA_FROM_REPO_KEY, mAddEditTaskPresenter.isDataMissing());
+        outState.putSerializable(SELECT_CLASSIFY,mAddEditTaskPresenter.getClassify());
+        outState.putSerializable(SELECT_DATE,mAddEditTaskPresenter.getDate());
         super.onSaveInstanceState(outState);
     }
 

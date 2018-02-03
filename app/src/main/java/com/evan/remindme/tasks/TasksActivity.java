@@ -28,6 +28,7 @@ public class TasksActivity extends AppCompatActivity{
 
     //当前视图
     private static final String CURRENT_DISPLAY_KEY = "CURRENT_DISPLAY_KEY";
+    private static final String IS_FIRST_LOAD = "IS_FIRST_LOAD";
 
     private DrawerLayout mDrawerLayout;
 
@@ -82,13 +83,14 @@ public class TasksActivity extends AppCompatActivity{
         if (savedInstanceState != null) {
             TasksDisplayType currentDisplaying = (TasksDisplayType) savedInstanceState.getSerializable(CURRENT_DISPLAY_KEY);
             mTasksPresenter.setDisplay(currentDisplaying);
+            mTasksPresenter.setFirstLoad(savedInstanceState.getBoolean(IS_FIRST_LOAD));
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(CURRENT_DISPLAY_KEY,mTasksPresenter.getDisplaying());
-
+        outState.putBoolean(IS_FIRST_LOAD,mTasksPresenter.isFirstLoad());
         super.onSaveInstanceState(outState);
     }
 

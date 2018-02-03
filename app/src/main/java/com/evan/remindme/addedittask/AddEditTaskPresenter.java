@@ -75,9 +75,9 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                 public void callback() {
                     if (!isNewTask() && mIsDataMissing) {
                         populateTask();
-                    }else{
-                        mClassify = classifies.get(0);
+                    }else if (mView.isActive()){
                         mView.setSelectClassify(mClassify);
+                        mView.setDate(mDate);
                     }
                 }
             });
@@ -132,7 +132,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                     @Override
                     public void onError() {
                         mView.showMessage("创建分类失败");
-                        mView.setSelectClassify(0);
+                        mView.setSelectClassify(mClassify);
                     }
                 });
     }
@@ -159,7 +159,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
             mView.showMessage("标题不能为空");
             return;
         }
-        Task task = new Task("",title,mCircleType,mRepeatType,mDate,mDate,mClassify.getId(),"",true);
+        Task task = new Task(title,mCircleType,mRepeatType,mDate,mDate,mClassify.getId(),"",true);
         save(task);
     }
 
