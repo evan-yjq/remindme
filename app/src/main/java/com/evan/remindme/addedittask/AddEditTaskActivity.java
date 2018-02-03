@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
+import android.view.View;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
 import com.evan.remindme.util.ActivityUtils;
@@ -25,6 +27,7 @@ public class AddEditTaskActivity extends AppCompatActivity{
     private ActionBar mActionBar;
 
     private AddEditTaskPresenter mAddEditTaskPresenter;
+    private AddEditTaskFragment mAddEditTaskFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,11 +49,11 @@ public class AddEditTaskActivity extends AppCompatActivity{
         String taskId = getIntent().getStringExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID);
         setToolbarTitle(taskId);
 
-        AddEditTaskFragment addEditTaskFragment = (AddEditTaskFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-        if (addEditTaskFragment == null){
+        mAddEditTaskFragment = (AddEditTaskFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (mAddEditTaskFragment == null){
             //创建fragment
-            addEditTaskFragment = AddEditTaskFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),addEditTaskFragment,R.id.contentFrame);
+            mAddEditTaskFragment = AddEditTaskFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),mAddEditTaskFragment,R.id.contentFrame);
         }
 
         boolean shouldLoadDataFromRepo = true;
@@ -60,7 +63,7 @@ public class AddEditTaskActivity extends AppCompatActivity{
             shouldLoadDataFromRepo = savedInstanceState.getBoolean(SHOULD_LOAD_DATA_FROM_REPO_KEY);
         }
 
-        mAddEditTaskPresenter = new AddEditTaskPresenter(addEditTaskFragment,
+        mAddEditTaskPresenter = new AddEditTaskPresenter(mAddEditTaskFragment,
                 Injection.provideGetTask(getApplicationContext()),
                 Injection.provideGetAllClassify(getApplicationContext()),
                 Injection.provideUseCaseHandler(),
@@ -68,6 +71,14 @@ public class AddEditTaskActivity extends AppCompatActivity{
                 Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideSaveClassify(getApplicationContext()),
                 taskId,shouldLoadDataFromRepo);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN&&mAddEditTaskFragment.isActive()) {
+            mAddEditTaskFragment.hiddenInput();
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override

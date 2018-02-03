@@ -41,6 +41,8 @@ public interface AddEditTasksContract {
         void setDate(Date date);
 
         void showTasksList();
+
+        void hiddenInput();
     }
 
     interface Presenter extends BasePresenter {
@@ -63,9 +65,9 @@ public interface AddEditTasksContract {
 
         void saveClassify(@NonNull String name);
 
-        Long getClassifyId();
+        Classify getClassify();
 
-        void setClassifyId(Long id);
+        void setClassify(Classify classify);
 
         Date getDate();
 

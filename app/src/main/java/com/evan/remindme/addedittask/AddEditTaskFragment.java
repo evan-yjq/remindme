@@ -12,11 +12,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.evan.remindme.R;
-import com.evan.remindme.addedittask.domain.decorators.NextDecorator;
 import com.evan.remindme.addedittask.domain.decorators.SelectDecorator;
 import com.evan.remindme.addedittask.domain.decorators.TodayDecorator;
 import com.evan.remindme.allclassify.AllClassifyFragment;
@@ -26,10 +27,11 @@ import com.evan.remindme.util.DateUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
-import java.text.ParseException;
 import java.util.*;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.evan.remindme.addedittask.TasksCircleType.TASKS_CIRCLE_TYPE_LIST;
 import static com.evan.remindme.addedittask.TasksRepeatType.TASKS_REPEAT_TYPE_LIST;
 
@@ -42,6 +44,11 @@ import static com.evan.remindme.addedittask.TasksRepeatType.TASKS_REPEAT_TYPE_LI
 public class AddEditTaskFragment extends Fragment implements AddEditTasksContract.View{
 
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
+
+    /**
+     * 输入法管理器
+     */
+    private InputMethodManager mInputMethodManager;
 
     private AddEditTasksContract.Presenter mPresenter;
     private MaterialCalendarView mCalendarView;
@@ -92,14 +99,21 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
                 mPresenter.setDate(calendar.getTime());
                 String day = new DateUtils().Date2String(calendar.getTime());
                 mTimeTextView.setText(day);
-                setCalendarDecorators(date,mPresenter.getCircleType());
+                setSelectDecorator(date,mPresenter.getCircleType());
             }
         });
 
         mTitleEditText = root.findViewById(R.id.title);
+        mTitleEditText.setHint("提醒名称");
+        mTitleEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInput();
+            }
+        });
 
         mTimeTextView = root.findViewById(R.id.time);
-        setDate(mPresenter.getDate());
+        setDate(new Date());
 
         RelativeLayout mTimeView = root.findViewById(R.id.time_view);
         mTimeView.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +141,18 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         ScrollView layout = root.findViewById(R.id.addeditLL);
         srl.setScrollUpChild(layout);
         srl.setEnabled(false);
+
+        //初始化输入法
+        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
         return root;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mInputMethodManager.isActive()) {
+            mInputMethodManager.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);// 隐藏输入法
+        }
     }
 
     private Calendar calendar = Calendar.getInstance();
@@ -146,9 +171,25 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         },calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),true).show();
     }
 
+    private void showInput(){
+        mTitleEditText.setFocusable(true);
+        mTitleEditText.setFocusableInTouchMode(true);//设置触摸聚焦
+        mTitleEditText.requestFocus();//请求焦点
+        mTitleEditText.findFocus();//获取焦点
+        mInputMethodManager.showSoftInput(mTitleEditText, InputMethodManager.SHOW_FORCED);// 显示输入法
+    }
+
+    @Override
+    public void hiddenInput(){
+        mTitleEditText.setFocusable(false);
+        if (mInputMethodManager.isActive()) {
+            mInputMethodManager.hideSoftInputFromWindow(mTitleEditText.getWindowToken(), 0);// 隐藏输入法
+        }
+    }
+
     @Override
     public void setTitle(String title){
-        mTitleEditText.setHint(title);
+        mTitleEditText.setText(title);
     }
 
     @Override
@@ -178,12 +219,6 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         mCalendarView.setSelectedDate(date);
         String day = new DateUtils().Date2String(date);
         mTimeTextView.setText(day);
-        setCalendarDecorators(CalendarDay.from(date),mPresenter.getCircleType());
-    }
-
-    private void setCalendarDecorators(CalendarDay day,int circle){
-        setSelectCalendar(day, circle);
-        setNextCalendar(day, circle);
     }
 
     @Override
@@ -192,7 +227,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         getActivity().finish();
     }
 
-    public void showAddClassify() {
+    private void showAddClassify() {
         showDialog("新建分类",new AllClassifyFragment.DialogListener() {
             @Override
             public void onPositiveClick(EditText text) {
@@ -240,13 +275,12 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
                 if (i == classifies.size()-1){
                     showAddClassify();
                 }else {
-                    mPresenter.setClassifyId(((ArrayAdapter<Classify>)adapterView.getAdapter()).getItem(i).getId());
+                    mPresenter.setClassify(((ArrayAdapter<Classify>)adapterView.getAdapter()).getItem(i));
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
@@ -262,12 +296,11 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
                 mPresenter.setCircleType(i-1);
                 if (mCalendarView.getSelectedDate()==null)
                     return;
-                setCalendarDecorators(mCalendarView.getSelectedDate(),i-1);
+                setSelectDecorator(mCalendarView.getSelectedDate(),i-1);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
@@ -285,27 +318,17 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
 
     private SelectDecorator selectDecorator;
-    private void setSelectCalendar(CalendarDay day,int circleType){
+    private void setSelectDecorator(CalendarDay day,int circleType){
         if (selectDecorator!=null) {
             mCalendarView.removeDecorator(selectDecorator);
         }
         selectDecorator =  new SelectDecorator(day,getActivity(),circleType);
         mCalendarView.addDecorator(selectDecorator);
-    }
-
-    private NextDecorator nextDecorator;
-    private void setNextCalendar(CalendarDay day,int circleType){
-        if (nextDecorator!=null){
-            mCalendarView.removeDecorator(nextDecorator);
-        }
-        nextDecorator = new NextDecorator(day,getActivity(),circleType);
-        mCalendarView.addDecorator(nextDecorator);
     }
 
     @Override

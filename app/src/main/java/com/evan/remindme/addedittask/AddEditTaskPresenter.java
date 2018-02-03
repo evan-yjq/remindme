@@ -16,6 +16,7 @@ import com.evan.remindme.util.DateUtils;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
@@ -44,7 +45,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     //一些默认值
     private int mCircleType = TasksCircleType.CIRCLE_;
     private int mRepeatType = TasksRepeatType.REPEAT_;
-    private Long mClassifyId = 1L;
+    private Classify mClassify;
     private Date mDate = new Date();
 
     public AddEditTaskPresenter(@NonNull AddEditTasksContract.View mView, @NonNull GetTask mGetTask,
@@ -68,15 +69,22 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     @Override
     public void start() {
-        setAllClassify(new BaseCallback() {
-            @Override
-            public void callback() {
-                if (!isNewTask() && mIsDataMissing) {
-                    populateTask();
+        if (classifies==null) {
+            setAllClassify(new BaseCallback() {
+                @Override
+                public void callback() {
+                    if (!isNewTask() && mIsDataMissing) {
+                        populateTask();
+                    }else{
+                        mClassify = classifies.get(0);
+                        mView.setSelectClassify(mClassify);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
+
+    private List<Classify>classifies;
 
     private void setAllClassify(final BaseCallback callback){
         mUseCaseHandler.execute(mGetAllClassify, new GetAllClassify.RequestValues(false),
@@ -84,8 +92,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                     @Override
                     public void onSuccess(GetAllClassify.ResponseValue response) {
                         if (mView.isActive()){
-                            mView.setClassifySpinner(response.getAllClassify());
-                            mView.setTitle("提醒名");
+                            classifies = response.getAllClassify();
+                            mView.setClassifySpinner(classifies);
                         }
                         callback.callback();
                     }
@@ -115,7 +123,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                         setAllClassify(new BaseCallback() {
                             @Override
                             public void callback() {
-                                mView.setSelectClassify(response.getClassify());
+                                mClassify = response.getClassify();
+                                mView.setSelectClassify(mClassify);
                             }
                         });
                     }
@@ -150,7 +159,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
             mView.showMessage("标题不能为空");
             return;
         }
-        Task task = new Task("",title,mCircleType,mRepeatType,mDate,mDate,mClassifyId,"",true);
+        Task task = new Task("",title,mCircleType,mRepeatType,mDate,mDate,mClassify.getId(),"",true);
         save(task);
     }
 
@@ -181,7 +190,6 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     private void showTask(Task task) {
         mDate = task.getTime();
-        mClassifyId = task.getClassifyId();
         mCircleType = task.getCircle();
         mRepeatType = task.getRepeat();
         // The view may not be able to handle UI updates anymore
@@ -196,7 +204,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
                     @Override
                     public void onSuccess(GetClassify.ResponseValue response) {
                         if (mView.isActive()){
-                            mView.setSelectClassify(response.getClassify());
+                            mClassify = response.getClassify();
+                            mView.setSelectClassify(mClassify);
                         }
                     }
 
@@ -250,8 +259,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     @Override
-    public Long getClassifyId(){
-        return mClassifyId;
+    public Classify getClassify(){
+        return mClassify;
     }
 
     @Override
@@ -265,8 +274,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     @Override
-    public void setClassifyId(Long id){
-        mClassifyId = id;
+    public void setClassify(Classify classify){
+        mClassify = classify;
     }
 
 //    @Override
