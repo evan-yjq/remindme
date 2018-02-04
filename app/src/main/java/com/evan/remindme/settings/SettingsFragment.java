@@ -61,13 +61,14 @@ public class SettingsFragment extends Fragment implements SettingsContract.View{
                 ContextCompat.getColor(getActivity(), R.color.colorAccent),
                 ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
         );
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.loadSettings(false);
-            }
-        });
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mPresenter.loadSettings(false);
+//            }
+//        });
         swipeRefreshLayout.setScrollUpChild(listView);
+        swipeRefreshLayout.setEnabled(false);
         setHasOptionsMenu(true);
         return root;
     }

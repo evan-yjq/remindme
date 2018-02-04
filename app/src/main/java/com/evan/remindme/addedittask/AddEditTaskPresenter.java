@@ -138,8 +138,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     }
 
     private void save(@NonNull Task task) {
-        checkNotNull(task,"saveTask cannot be null!");
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
+        checkNotNull(task,"task cannot be null!");
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task,isNewTask()),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
@@ -159,7 +159,10 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
             mView.showMessage("标题不能为空");
             return;
         }
-        Task task = new Task(title,mCircleType,mRepeatType,mDate,mDate,mClassify.getId(),"",true);
+        Task task = new Task(title, mCircleType, mRepeatType, mDate, mDate, mClassify.getId(), "");
+        if (!isNewTask()) {
+            task.setId(mTaskId);
+        }
         save(task);
     }
 

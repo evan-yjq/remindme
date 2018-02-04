@@ -253,7 +253,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
         }
     };
 
-    private static class AllClassifyAdapter extends BaseAdapter{
+    public static class AllClassifyAdapter extends BaseAdapter{
 
         private List<Classify> mClassifies;
         private ListItemListener mItemListener;

@@ -31,13 +31,11 @@ public class TasksDisplayByClassify implements TaskDisplay {
                     list.add(task);
                     count++;
                 }
-                /*
-                 * 设置count，如果count==数据总长
-                 * 就可以提前停止循环，避免浪费系统资源
-                 */
+                //设置count，如果count==数据总长
+                //就可以提前停止循环，避免浪费系统资源
                 if (count==tasks.size())break;
             }
-            if (list.isEmpty())break;
+            if (list.isEmpty())continue;
             Collections.sort(list);
             displayedTasks.put(classify,list);
         }

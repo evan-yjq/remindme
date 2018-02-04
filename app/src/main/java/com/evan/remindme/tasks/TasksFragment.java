@@ -16,6 +16,7 @@ import android.widget.*;
 import com.evan.remindme.R;
 import com.evan.remindme.addedittask.AddEditTaskActivity;
 import com.evan.remindme.allclassify.domain.model.Classify;
+import com.evan.remindme.taskdetail.TaskDetailActivity;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.util.DateUtils;
 
@@ -219,11 +220,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showTaskDetailsUi(String taskId) {
-        // TODO 等有了详情页面来解除注释
         //在它自己的Activity中，因为这样做更有意义，它使我们可以灵活地显示一些Intent存根。
-//        Intent intent = new Intent(getContext(), TaskDetailActivity.class);
-//        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
-//        startActivity(intent);
+        Intent intent = new Intent(getContext(), TaskDetailActivity.class);
+        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
+        startActivity(intent);
     }
 
     @Override
@@ -246,7 +246,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showMessage(String message){
-        Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
+        Snackbar.make(Objects.requireNonNull(getView()),message,Snackbar.LENGTH_LONG).show();
     }
 
     @Override

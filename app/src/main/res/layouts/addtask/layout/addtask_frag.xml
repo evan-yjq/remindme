@@ -43,8 +43,7 @@
                     android:layout_height="wrap_content"
                     app:mcv_calendarMode="month"/>
 
-            <RelativeLayout
-                    android:id="@+id/time_view"
+            <RelativeLayout android:id="@+id/time_view"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/touch_feedback"
@@ -76,7 +75,7 @@
                         android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
-            <RelativeLayout
+            <RelativeLayout android:id="@+id/classify_view"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/touch_feedback"
@@ -106,7 +105,7 @@
 
         </RelativeLayout>
 
-            <RelativeLayout
+            <RelativeLayout android:id="@+id/circle_view"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/touch_feedback"
@@ -135,7 +134,7 @@
                         android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
-            <RelativeLayout
+            <RelativeLayout android:id="@+id/repeat_view"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/touch_feedback"
@@ -164,7 +163,7 @@
                         android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
-            <RelativeLayout
+            <RelativeLayout android:id="@+id/bell_view"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/touch_feedback"

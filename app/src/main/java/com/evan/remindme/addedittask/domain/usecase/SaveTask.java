@@ -23,20 +23,30 @@ public class SaveTask extends UseCase<SaveTask.RequestValues,SaveTask.ResponseVa
 
     @Override
     protected void executeUseCase(SaveTask.RequestValues values) {
-        Task saveTask = values.getmSaveTask();
-        mTasksRepository.saveTask(saveTask);
+        Task task = values.getSaveTask();
+        if (values.isNew()) {
+            mTasksRepository.saveTask(task);
+        }else {
+            mTasksRepository.updateTask(task);
+        }
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
         private final Task mSaveTask;
+        private final boolean isNew;
 
-        public RequestValues(@NonNull Task saveTask){
+        public RequestValues(@NonNull Task saveTask,@NonNull boolean isNew){
             mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
+            this.isNew = checkNotNull(isNew,"isNew cannot be null!");
         }
 
-        public Task getmSaveTask() {
+        public Task getSaveTask() {
             return mSaveTask;
+        }
+
+        public boolean isNew() {
+            return isNew;
         }
     }
 

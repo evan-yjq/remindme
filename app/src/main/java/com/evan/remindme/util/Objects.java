@@ -29,6 +29,12 @@ public class Objects {
         return reference;
     }
 
+    public static final class Strings{
+        public static boolean isNullOrEmpty(String s){
+            return s == null||s.isEmpty();
+        }
+    }
+
     public static <T> T checkNotNull(T reference, @Nullable Object errorMessage) {
         if (reference == null) {
             throw new NullPointerException(String.valueOf(errorMessage));

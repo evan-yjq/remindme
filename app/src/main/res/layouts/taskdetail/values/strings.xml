@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_task">删除提醒</string>
+    <string name="copy_task">复制提醒</string>
+    <string name="move_task">移动提醒</string>
+    <string name="edit_task">修改提醒</string>
+    <string name="no_data">加载该提醒时出错</string>
+
+    <string name="delete_error">删除失败</string>
+
+    <string name="move_ok">移动成功</string>
+    <string name="move_error">移动失败</string>
+
+    <string name="copy_ok">复制成功</string>
+    <string name="copy_error">复制失败</string>
+</resources>

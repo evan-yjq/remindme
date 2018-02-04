@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_all_classify_error">加载分类时出错</string>
+
+    <string name="save_classify_error">分类名已存在</string>
+
+    <string name="successfully_saved_classify_message">分类已保存</string>
+
+    <string name="delete_classify_error">删除分类失败</string>
+    <string name="rename_classify_error">修改分类名失败</string>
+
+    <string name="no_classify_all">你还没有分类!</string>
+    <string name="no_classify_add">添加分类+</string>
+</resources>

@@ -19,9 +19,10 @@ public class TasksDisplayByTime implements TaskDisplay{
 
         Map<Classify,List<Task>> map = new HashMap<>();
 
-        Collections.sort(tasks);
-
-        map.put(null,tasks);
+        if (!tasks.isEmpty()) {
+            Collections.sort(tasks);
+            map.put(null, tasks);
+        }
 
         return map;
     }

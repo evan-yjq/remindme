@@ -32,7 +32,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetTasks mGetTasks;
     private final TurnOnTask mTurnOnTask;
     private final TurnOffTask mTurnOffTask;
-    private final SaveTask mSaveTask;
     private final OpenClassify mOpenClassify;
     private final CloseClassify mCloseClassify;
     private final GetSetting mGetSetting;
@@ -48,15 +47,13 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler, @NonNull TasksContract.View tasksView,
                           @NonNull GetTasks getTasks, @NonNull TurnOnTask turnOnTask,
-                          @NonNull TurnOffTask turnOffTask, @NonNull SaveTask saveTask,
-                          @NonNull OpenClassify openClassify, @NonNull CloseClassify closeClassify,
-                          @NonNull GetSetting getSetting) {
+                          @NonNull TurnOffTask turnOffTask, @NonNull OpenClassify openClassify,
+                          @NonNull CloseClassify closeClassify, @NonNull GetSetting getSetting) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTasks = checkNotNull(getTasks, "getTask cannot be null!");
         mTurnOnTask = checkNotNull(turnOnTask, "turnOnTask cannot be null!");
         mTurnOffTask = checkNotNull(turnOffTask, "turnOffTask cannot be null!");
-        mSaveTask = checkNotNull(saveTask,"saveTask cannot be null!");
         mOpenClassify = checkNotNull(openClassify,"openClassify cannot be null!");
         mCloseClassify = checkNotNull(closeClassify,"closeClassify cannot be null!");
         mGetSetting = checkNotNull(getSetting,"getSetting cannot be null!");

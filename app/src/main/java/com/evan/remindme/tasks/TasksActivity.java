@@ -74,7 +74,6 @@ public class TasksActivity extends AppCompatActivity{
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideTurnOnTask(getApplicationContext()),
                 Injection.provideTurnOffTasks(getApplicationContext()),
-                Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideOpenClassify(getApplicationContext()),
                 Injection.provideCloseClassify(getApplicationContext()),
                 Injection.provideGetSetting(getApplicationContext()));

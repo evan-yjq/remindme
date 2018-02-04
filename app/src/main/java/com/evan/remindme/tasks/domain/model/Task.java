@@ -170,12 +170,12 @@ public class Task implements Comparable<Task>{
     }
 
     public Task(String title, int circle, int repeat, Date time,
-                Date nextTime, Long classifyId, String bell, boolean turnOn) {
-        this(UUID.randomUUID().toString(),title,circle,repeat,time,nextTime,classifyId,bell,turnOn);
+                Date nextTime, Long classifyId, String bell) {
+        this(UUID.randomUUID().toString(),title,circle,repeat,time,nextTime,classifyId,bell,true);
     }
 
     public Task(String title,Long id,Date time){
-        this(title,-1,-1,time,time,id,"",true);
+        this(title,-1,-1,time,time,id,"");
     }
 
     public Task(String title,Date time){
@@ -212,6 +212,7 @@ public class Task implements Comparable<Task>{
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", turnOn=" + turnOn +
+                ", classifyId=" + classifyId +
                 '}';
     }
 
