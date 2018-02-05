@@ -122,7 +122,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     @Override
     public void showMissingTask(List<Map<String,String>>errors) {
         mListAdapter = new SimpleAdapter(getActivity(),errors,R.layout.task_detail_text_item,
-                new String[]{"title","value"},new int[]{R.id.title,R.id.value});
+                new String[]{"title","value"},new int[]{R.id.detail_title,R.id.detail_value});
         mDetailList.setAdapter(mListAdapter);
         showMessage(getString(R.string.no_data));
     }

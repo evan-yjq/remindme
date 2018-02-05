@@ -6,6 +6,7 @@ import com.evan.remindme.data.source.ClassifyDataSource;
 import com.evan.remindme.data.source.ClassifyRepository;
 import com.evan.remindme.allclassify.domain.model.Classify;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
@@ -33,6 +34,7 @@ public class GetAllClassify extends UseCase<GetAllClassify.RequestValues,GetAllC
         classifyRepository.getAllClassify(new ClassifyDataSource.LoadAllClassifyCallback() {
             @Override
             public void onAllClassifyLoaded(List<Classify> classifies) {
+                Collections.sort(classifies);
                 getUseCaseCallback().onSuccess(new ResponseValue(classifies));
             }
 

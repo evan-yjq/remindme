@@ -20,18 +20,22 @@ public class Classify implements Comparable<Classify>,Serializable{
 
     private String name;
 
+    private int sort;
+
     private boolean isOpen;
 
     public Classify(Classify classify){
         this.id = classify.id;
         this.name = classify.name;
         this.isOpen = classify.isOpen;
+        this.sort = classify.sort;
     }
 
-    @Generated(hash = 538268575)
-    public Classify(Long id, String name, boolean isOpen) {
+    @Generated(hash = 2071821727)
+    public Classify(Long id, String name, int sort, boolean isOpen) {
         this.id = id;
         this.name = name;
+        this.sort = sort;
         this.isOpen = isOpen;
     }
 
@@ -39,12 +43,12 @@ public class Classify implements Comparable<Classify>,Serializable{
     public Classify() {
     }
 
-    public Classify(String name){
-        this(null, name);
+    public Classify(String name,int sort){
+        this(null, name,sort);
     }
 
-    public Classify(Long id, String name){
-        this(id,name,false);
+    public Classify(Long id, String name,int sort){
+        this(id,name,sort,false);
     }
 
     public boolean isOpen() {
@@ -71,13 +75,23 @@ public class Classify implements Comparable<Classify>,Serializable{
         this.name = name;
     }
 
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Classify classify = (Classify)o;
-        return Objects.equals(this.id, classify.id)&&
-                Objects.equals(this.name, classify.name);
+        Classify classify = (Classify) o;
+        return sort == classify.sort &&
+                isOpen == classify.isOpen &&
+                Objects.equals(id, classify.id) &&
+                Objects.equals(name, classify.name);
     }
 
     @Override
@@ -92,7 +106,15 @@ public class Classify implements Comparable<Classify>,Serializable{
 
     @Override
     public int compareTo(Classify classify) {
-        return this.id.compareTo(classify.id);
+        if (sort==0&&classify.sort==0)return 0;
+        if (sort==0) return 1;
+        if (classify.sort==0)return -1;
+
+        if (sort>classify.sort) return 1;
+        else if(sort == classify.sort){
+            if (id > classify.id)return 1;
+            else return -1;
+        }else return -1;
     }
 
     public boolean getIsOpen() {

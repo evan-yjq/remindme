@@ -68,10 +68,11 @@ public class AllClassifyPresenter implements AllClassifyContract.Presenter {
                 });
     }
 
+    private int mClassifySize = 0;
     @Override
     public void save(@NonNull String name) {
         checkNotNull(name,"name cannot be null!");
-        Classify classify = new Classify(name);
+        Classify classify = new Classify(name,mClassifySize);
         mUseCaseHandler.execute(mSaveClassify, new SaveClassify.RequestValues(classify,true),
                 new UseCase.UseCaseCallback<SaveClassify.ResponseValue>() {
                     @Override
@@ -127,6 +128,7 @@ public class AllClassifyPresenter implements AllClassifyContract.Presenter {
                     @Override
                     public void onSuccess(GetAllClassify.ResponseValue response) {
                         List<Classify> classifies = response.getAllClassify();
+                        mClassifySize = classifies.size();
                         if (!mAllClassifyView.isActive()){
                             return;
                         }
@@ -156,5 +158,13 @@ public class AllClassifyPresenter implements AllClassifyContract.Presenter {
         }else{
             mAllClassifyView.showAllClassify(classifies);
         }
+    }
+
+    public int getClassifySize() {
+        return mClassifySize;
+    }
+
+    public void setClassifySize(int classifySize) {
+        this.mClassifySize = classifySize;
     }
 }

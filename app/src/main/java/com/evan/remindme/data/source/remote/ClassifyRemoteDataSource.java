@@ -25,11 +25,11 @@ public class ClassifyRemoteDataSource implements ClassifyDataSource {
 
     static {
         CLASSIFY_SERVICE_DATA = new LinkedHashMap<>(1);
-        addClassify((long)1,"默认");
+        addClassify((long)1,"默认",1);
     }
 
-    private static void addClassify(Long id,String title) {
-        Classify newClassify = new Classify(id,title);
+    private static void addClassify(Long id,String title,int sort) {
+        Classify newClassify = new Classify(id,title,sort);
         CLASSIFY_SERVICE_DATA.put(id, newClassify);
     }
 
@@ -82,7 +82,8 @@ public class ClassifyRemoteDataSource implements ClassifyDataSource {
     @Override
     public void getClassify(@NonNull Long id, @NonNull GetClassifyCallback callback) {
         Classify classify = CLASSIFY_SERVICE_DATA.get(id);
-        callback.onClassifyLoaded(classify);
+        if (classify!=null)callback.onClassifyLoaded(classify);
+        else callback.onDataNotAvailable();
     }
 
     @Override

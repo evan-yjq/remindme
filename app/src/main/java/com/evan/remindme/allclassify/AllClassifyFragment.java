@@ -15,10 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.*;
 import com.evan.remindme.R;
 import com.evan.remindme.allclassify.domain.model.Classify;
@@ -46,6 +43,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
     private TextView mNoClassifyAddView;
     private LinearLayout mAllClassifyView;
     private AllClassifyAdapter mAllClassifyAdapter;
+    private ListView mListView;
 
     public AllClassifyFragment(){
     }
@@ -57,7 +55,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAllClassifyAdapter = new AllClassifyAdapter(new ArrayList<Classify>(0),mItemListener);
+        mAllClassifyAdapter = new AllClassifyAdapter(new ArrayList<Classify>(0), mItemListener);
     }
 
     @Override
@@ -86,9 +84,9 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
 
         View view = setEmptyView(getActivity(),inflater.inflate(R.layout.task_item,null),R.dimen.classify_empty);
 
-        ListView listView = root.findViewById(R.id.allClassify_list);
-        listView.addFooterView(view,null,false);
-        listView.setAdapter(mAllClassifyAdapter);
+        mListView = root.findViewById(R.id.allClassify_list);
+        mListView.addFooterView(view,null,false);
+        mListView.setAdapter(mAllClassifyAdapter);
         mAllClassifyView = root.findViewById(R.id.allClassifyLL);
 
         mNoClassifyView = root.findViewById(R.id.noClassify);
@@ -114,7 +112,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
                 mPresenter.loadAllClassify(false);
             }
         });
-        swipeRefreshLayout.setScrollUpChild(listView);
+        swipeRefreshLayout.setScrollUpChild(mListView);
 //        setHasOptionsMenu(true);
         return root;
     }
@@ -151,16 +149,21 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
                     mPresenter.save(input);
                 }
             }
-        }, "");
+        }, "",true);
     }
 
-    private void showDialog(String title, DialogListener listener, String hint){
-        TextInputLayout layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
-        EditText et = new EditText(getActivity());
-        et.setSingleLine();
-        et.setHint(hint);
-        layout.addView(et);
-
+    private void showDialog(String title, DialogListener listener, String hint,boolean isShowText){
+        TextInputLayout layout = null;
+        if (isShowText) {
+            layout = (TextInputLayout) setPadding(new TextInputLayout(getActivity()));
+            EditText et = new EditText(getActivity());
+            et.setSingleLine();
+            if (!hint.isEmpty()) {
+                et.setHint(hint);
+                et.setText(hint);
+            }
+            layout.addView(et);
+        }
         MyDialogFragment dialog = new MyDialogFragment(title,layout,listener, null);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -181,6 +184,15 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
         mNoClassifyView.setVisibility(View.GONE);
     }
 
+    private void showDeleteDialog(final Classify classify){
+        showDialog("是否删除该分类", new DialogListener() {
+            @Override
+            public void onPositiveClick(EditText text) {
+                mPresenter.delete(classify);
+            }
+        },"",false);
+    }
+
     @Override
     public void showNoClassify() {
         mAllClassifyView.setVisibility(View.GONE);
@@ -195,7 +207,6 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
     public void showMessage(String message){
         Snackbar.make(getView(),message,Snackbar.LENGTH_LONG).show();
     }
-
 
     @Override
     public void showSuccessfullySavedMessage() {
@@ -224,7 +235,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
                     mPresenter.rename(classify,input);
                 }
             }
-        }, classify.getName());
+        }, classify.getName(),true);
     }
 
     @Override
@@ -240,7 +251,7 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
     ListItemListener mItemListener = new ListItemListener() {
         @Override
         public void onClassifyLongClick(Classify classify) {
-            // TODO 删除界面
+            showDeleteDialog(classify);
         }
 
         @Override
@@ -289,7 +300,6 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
 
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-
             if (view == null){
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 view = inflater.inflate(R.layout.classify_item,viewGroup,false);
@@ -342,14 +352,15 @@ public class AllClassifyFragment extends Fragment implements AllClassifyContract
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(mTitle)
-                    .setView(mLayout)
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            mListener.onPositiveClick(mLayout.getEditText());
+                            if (mLayout!=null)mListener.onPositiveClick(mLayout.getEditText());
+                            else mListener.onPositiveClick(null);
                         }
                     })
                     .setNegativeButton("取消",cancelListener);
+            if (mLayout!=null)builder.setView(mLayout);
             Dialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

@@ -275,7 +275,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
 
     @Override
     public void setClassifySpinner(final List<Classify> classifies){
-        classifies.add(new Classify("点击这里新建分类+"));
+        classifies.add(new Classify("点击这里新建分类+",0));
         ArrayAdapter<Classify> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item, classifies);
         mClassifySpinner.setAdapter(adapter);
         mClassifySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

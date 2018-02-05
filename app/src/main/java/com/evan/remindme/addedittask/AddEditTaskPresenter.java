@@ -86,13 +86,15 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     private List<Classify>classifies;
 
+    private int mClassifySize = 0;
     private void setAllClassify(final BaseCallback callback){
         mUseCaseHandler.execute(mGetAllClassify, new GetAllClassify.RequestValues(false),
                 new UseCase.UseCaseCallback<GetAllClassify.ResponseValue>() {
                     @Override
                     public void onSuccess(GetAllClassify.ResponseValue response) {
+                        classifies = response.getAllClassify();
+                        mClassifySize = classifies.size();
                         if (mView.isActive()){
-                            classifies = response.getAllClassify();
                             mView.setClassifySpinner(classifies);
                         }
                         callback.callback();
@@ -114,7 +116,7 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     @Override
     public void saveClassify(@NonNull String name) {
         checkNotNull(name,"name cannot be null!");
-        Classify classify = new Classify(name);
+        Classify classify = new Classify(name,mClassifySize);
         mUseCaseHandler.execute(mSaveClassify, new SaveClassify.RequestValues(classify,true),
                 new UseCase.UseCaseCallback<SaveClassify.ResponseValue>() {
                     @Override

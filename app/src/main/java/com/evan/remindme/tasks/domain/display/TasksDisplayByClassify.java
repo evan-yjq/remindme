@@ -19,7 +19,7 @@ public class TasksDisplayByClassify implements TaskDisplay {
         Map<Classify,List<Task>> displayedTasks = new HashMap<>();
 
         if (classifies ==null||tasks==null){
-            displayedTasks.put(new Classify((long)1,"默认"),tasks);
+            displayedTasks.put(new Classify((long)1,"默认",1),tasks);
             return displayedTasks;
         }
 
@@ -54,8 +54,8 @@ public class TasksDisplayByClassify implements TaskDisplay {
                 if (i == classifies.size())
                     tmp.add(task);
             }
-            if (s == null){
-                s = new Classify((long)1,"默认");
+            if (s == null||displayedTasks.get(s)==null){
+                s = new Classify((long)1,"默认",1);
                 callback.onClassifyLoaded(s);
                 Collections.sort(tmp);
                 displayedTasks.put(s,tmp);

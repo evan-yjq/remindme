@@ -33,7 +33,8 @@ public class GetClassify extends UseCase<GetClassify.RequestValues,GetClassify.R
 
             @Override
             public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
+                Classify classify = new Classify((long)1,"默认",1);
+                getUseCaseCallback().onSuccess(new ResponseValue(classify));
             }
         });
     }
