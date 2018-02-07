@@ -78,7 +78,7 @@ public class AddEditTaskActivity extends AppCompatActivity{
                 Injection.provideGetAllClassify(getApplicationContext()),
                 Injection.provideUseCaseHandler(),
                 Injection.provideGetClassify(getApplicationContext()),
-                Injection.provideSaveTasks(getApplicationContext()),
+                Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideSaveClassify(getApplicationContext()),
                 taskId,shouldLoadDataFromRepo);
         if (savedInstanceState != null) {

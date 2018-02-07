@@ -3,6 +3,7 @@ package com.evan.remindme.addedittask;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.evan.remindme.addedittask.domain.decorators.SelectDecorator;
 import com.evan.remindme.addedittask.domain.decorators.TodayDecorator;
 import com.evan.remindme.allclassify.AllClassifyFragment;
 import com.evan.remindme.allclassify.domain.model.Classify;
+import com.evan.remindme.nexttimelistener.NextTimeListener;
 import com.evan.remindme.tasks.ScrollChildSwipeRefreshLayout;
 import com.evan.remindme.util.DateUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -58,6 +60,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     private Spinner mClassifySpinner;
     private Spinner mCircleSpinner;
     private Spinner mRepeatSpinner;
+    private Spinner mBellSpinner;
 
     public AddEditTaskFragment(){}
 
@@ -150,6 +153,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         mRepeatSpinner = root.findViewById(R.id.repeat_spinner);
         setRepeatSpinner();
 
+        mBellSpinner = root.findViewById(R.id.bell_spinner);
+        setBellSpinner();
 
         final ScrollChildSwipeRefreshLayout srl = root.findViewById(R.id.refresh_layout);
         srl.setColorSchemeColors(
@@ -216,6 +221,14 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
     }
 
     @Override
+    public void setSelectBell(String bell) {
+        if (bell!=null) {
+            ArrayAdapter<String> adapter = (ArrayAdapter<String>) mClassifySpinner.getAdapter();
+            mClassifySpinner.setSelection(adapter.getPosition(bell), true);
+        }
+    }
+
+    @Override
     public void setDate(Date date){
         calendar.setTime(date);
         mCalendarView.setSelectedDate(date);
@@ -225,6 +238,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
 
     @Override
     public void showTasksList() {
+        Intent intent = new Intent(getActivity(),NextTimeListener.class);
+        getActivity().startService(intent);
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }
@@ -323,6 +338,23 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mPresenter.setRepeatType(i-1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    private void setBellSpinner(){
+        List<String>bells = new ArrayList<>();
+        bells.add("震动");
+        ArrayAdapter<String>adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item,bells);
+        mBellSpinner.setAdapter(adapter);
+        mRepeatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mPresenter.setBell(((ArrayAdapter<String>)adapterView.getAdapter()).getItem(i));
             }
 
             @Override

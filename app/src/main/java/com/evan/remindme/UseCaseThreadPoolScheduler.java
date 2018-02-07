@@ -33,9 +33,9 @@ public class UseCaseThreadPoolScheduler implements UseCaseScheduler {
 
     private final Handler mHandler = new Handler();
 
-    public static final int POOL_SIZE = 2;
+    public static final int POOL_SIZE = 4;
 
-    public static final int MAX_POOL_SIZE = 4;
+    public static final int MAX_POOL_SIZE = 8;
 
     public static final int TIMEOUT = 30;
 

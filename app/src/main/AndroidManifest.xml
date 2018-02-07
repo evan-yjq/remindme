@@ -21,6 +21,8 @@
         <activity android:name=".addedittask.AddEditTaskActivity"/>
 
         <activity android:name=".taskdetail.TaskDetailActivity"/>
+
+        <service android:name=".nexttimelistener.NextTimeListener"/>
     </application>
 
 </manifest>

@@ -14,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import com.evan.remindme.Injection;
 import com.evan.remindme.R;
+import com.evan.remindme.nexttimelistener.NextTimeListener;
 import com.evan.remindme.settings.SettingsActivity;
 import com.evan.remindme.allclassify.AllClassifyActivity;
 import com.evan.remindme.util.ActivityUtils;
+
+import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA
@@ -24,7 +27,8 @@ import com.evan.remindme.util.ActivityUtils;
  * Date: 2018/1/24
  * Time: 下午9:00
  */
-public class TasksActivity extends AppCompatActivity{
+public class TasksActivity extends AppCompatActivity implements Serializable{
+    private static final long serialVersionUID = 2L;
 
     //当前视图
     private static final String CURRENT_DISPLAY_KEY = "CURRENT_DISPLAY_KEY";
@@ -84,6 +88,10 @@ public class TasksActivity extends AppCompatActivity{
             mTasksPresenter.setDisplay(currentDisplaying);
             mTasksPresenter.setFirstLoad(savedInstanceState.getBoolean(IS_FIRST_LOAD));
         }
+
+        //显示启动
+        Intent intent = new Intent(this,NextTimeListener.class);
+        startService(intent);
     }
 
     @Override

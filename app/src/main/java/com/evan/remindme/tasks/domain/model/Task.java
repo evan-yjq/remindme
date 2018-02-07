@@ -175,7 +175,7 @@ public class Task implements Comparable<Task>{
     }
 
     public Task(String title,Long id,Date time){
-        this(title,-1,-1,time,time,id,"");
+        this(title,-1,-1,time,null,id,"");
     }
 
     public Task(String title,Date time){
@@ -211,8 +211,13 @@ public class Task implements Comparable<Task>{
         return "Task{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
-                ", turnOn=" + turnOn +
+                ", circle=" + circle +
+                ", repeat=" + repeat +
+                ", time=" + time +
+                ", nextTime=" + nextTime +
                 ", classifyId=" + classifyId +
+                ", bell='" + bell + '\'' +
+                ", turnOn=" + turnOn +
                 '}';
     }
 

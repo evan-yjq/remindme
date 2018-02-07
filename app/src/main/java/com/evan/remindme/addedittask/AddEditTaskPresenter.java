@@ -47,6 +47,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     private int mRepeatType = TasksRepeatType.REPEAT_;
     private Classify mClassify;
     private Date mDate = new Date();
+    private Date mNext = null;
+    private String mBell = "震动";
 
     public AddEditTaskPresenter(@NonNull AddEditTasksContract.View mView, @NonNull GetTask mGetTask,
                                 @NonNull GetAllClassify mGetAllClassify, @NonNull UseCaseHandler mUseCaseHandler,
@@ -161,7 +163,8 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
             mView.showMessage("标题不能为空");
             return;
         }
-        Task task = new Task(title, mCircleType, mRepeatType, mDate, mDate, mClassify.getId(), "");
+        if (mNext==null)mNext = mDate;
+        Task task = new Task(title, mCircleType, mRepeatType, mDate, mNext, mClassify.getId(), mBell);
         if (!isNewTask()) {
             task.setId(mTaskId);
         }
@@ -195,14 +198,17 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
 
     private void showTask(Task task) {
         mDate = task.getTime();
+        mNext = task.getNextTime();
         mCircleType = task.getCircle();
         mRepeatType = task.getRepeat();
+        mBell = task.getBell();
         // The view may not be able to handle UI updates anymore
         if (mView.isActive()) {
             mView.setTitle(task.getTitle());
-            mView.setDate(task.getTime());
-            mView.setSelectCircle(task.getCircle());
-            mView.setSelectRepeat(task.getRepeat());
+            mView.setDate(mDate);
+            mView.setSelectCircle(mCircleType);
+            mView.setSelectRepeat(mRepeatType);
+            mView.setSelectBell(mBell);
         }
         mUseCaseHandler.execute(mGetClassify, new GetClassify.RequestValues(task.getClassifyId()),
                 new UseCase.UseCaseCallback<GetClassify.ResponseValue>() {
@@ -281,6 +287,10 @@ public class AddEditTaskPresenter implements AddEditTasksContract.Presenter{
     @Override
     public void setClassify(Classify classify){
         mClassify = classify;
+    }
+
+    public void setBell(String bell){
+        mBell = bell;
     }
 
 //    @Override

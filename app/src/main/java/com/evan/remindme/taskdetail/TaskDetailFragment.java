@@ -14,6 +14,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.*;
 import android.widget.*;
@@ -85,8 +87,33 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
         setHasOptionsMenu(true);
         mDetailList = root.findViewById(R.id.task_detail_list);
         final ScrollChildSwipeRefreshLayout swipeRefreshLayout = root.findViewById(R.id.refresh_layout);
-        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(getActivity(), R.color.colorPrimary),
+                ContextCompat.getColor(getActivity(), R.color.colorAccent),
+                ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
+        );
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.loadTask();
+            }
+        });
         return root;
+    }
+
+    @Override
+    public void setLoadingIndicator(final boolean active) {
+        //显示加载动画
+        if (getView() == null)return;
+        final ScrollChildSwipeRefreshLayout srl = getView().findViewById(R.id.refresh_layout);
+        //确保setRefreshing（）在布局完成后再调用。
+        srl.post(new Runnable() {
+            @Override
+            public void run() {
+                srl.setRefreshing(active);
+            }
+        });
     }
 
     @Override

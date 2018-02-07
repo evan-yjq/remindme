@@ -24,7 +24,6 @@ public class TurnOnTask extends UseCase<TurnOnTask.RequestValues,TurnOnTask.Resp
     protected void executeUseCase(RequestValues values) {
         String turnOnTask = values.getmTurnOnTask();
         mTasksRepository.turnOnTask(turnOnTask);
-        System.out.println(turnOnTask);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

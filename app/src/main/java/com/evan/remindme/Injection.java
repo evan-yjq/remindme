@@ -123,7 +123,7 @@ public class Injection {
         return new TurnOffTask(provideTasksRepository(context));
     }
 
-    public static SaveTask provideSaveTasks(@NonNull Context context) {
+    public static SaveTask provideSaveTask(@NonNull Context context) {
         return new SaveTask(provideTasksRepository(context));
     }
 

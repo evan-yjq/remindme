@@ -47,7 +47,7 @@ public class TaskDetailActivity extends AppCompatActivity{
                 taskId,ab,taskDetailFragment,
                 Injection.provideGetTask(getApplicationContext()),
                 Injection.provideGetAllClassify(getApplicationContext()),
-                Injection.provideSaveTasks(getApplicationContext()),
+                Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTask(getApplicationContext()),
                 Injection.provideGetClassify(getApplicationContext())
         );

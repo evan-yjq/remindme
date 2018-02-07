@@ -27,10 +27,9 @@ public interface AddEditTasksContract {
         void setTitle(String title);
 
         void setSelectRepeat(int repeat);
-
         void setSelectCircle(int circle);
-
         void setSelectClassify(Classify classify);
+        void setSelectBell(String bell);
 
         void setClassifySpinner(List<Classify> classifies);
 
@@ -70,6 +69,8 @@ public interface AddEditTasksContract {
         Date getDate();
 
         void setDate(Date date);
+
+        void setBell(String bell);
     }
 
 }

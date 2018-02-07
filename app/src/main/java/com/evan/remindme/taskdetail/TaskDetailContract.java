@@ -18,6 +18,8 @@ public interface TaskDetailContract {
 
     interface View extends BaseView<Presenter>{
 
+        void setLoadingIndicator(boolean active);
+
         void showDetails(List<Map<String,String>>details);
 
         void showTaskDeleted();
@@ -43,6 +45,7 @@ public interface TaskDetailContract {
         void copyTask(@NonNull Classify classify);
         void moveTask(@NonNull Classify classify);
         void getClassify(boolean isCopy);
+        void loadTask();
     }
 
 }

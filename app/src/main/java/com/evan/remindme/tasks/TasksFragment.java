@@ -16,6 +16,7 @@ import android.widget.*;
 import com.evan.remindme.R;
 import com.evan.remindme.addedittask.AddEditTaskActivity;
 import com.evan.remindme.allclassify.domain.model.Classify;
+import com.evan.remindme.nexttimelistener.NextTimeListener;
 import com.evan.remindme.taskdetail.TaskDetailActivity;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.util.DateUtils;
@@ -251,11 +252,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showTaskMarkedTurnOn() {
+        Intent intent = new Intent(getActivity(),NextTimeListener.class);
+        getActivity().startService(intent);
         showMessage(getString(R.string.task_marked_turn_on));
     }
 
     @Override
     public void showTaskMarkedTurnOff() {
+        Intent intent = new Intent(getActivity(),NextTimeListener.class);
+        getActivity().startService(intent);
         showMessage(getString(R.string.task_marked_turn_off));
     }
 

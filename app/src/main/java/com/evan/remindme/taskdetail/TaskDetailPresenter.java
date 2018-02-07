@@ -63,11 +63,12 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
     }
     @Override
     public void start() {
-        openTask();
+        loadTask();
     }
 
     private List<Map<String,String>> details = new ArrayList<>();
-    private void openTask() {
+    public void loadTask() {
+        mTaskDetailView.setLoadingIndicator(true);
         getTask(new UseCase.UseCaseCallback<GetTask.ResponseValue>(){
             @Override
             public void onSuccess(GetTask.ResponseValue value) {
@@ -83,8 +84,9 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
                     public void onSuccess(GetClassify.ResponseValue response) {
                         details.clear();
                         Classify classify = response.getClassify();
-                        String[]titles = new String[]{"时间:","分类:","循环:","重复:","铃声:"};
-                        String[]values = new String[]{new DateUtils().Date2String(task.getTime()),classify.getName(),
+                        String[]titles = new String[]{"下次:","时间:","分类:","循环:","重复:","铃声:"};
+                        String[]values = new String[]{new DateUtils().Date2String(task.getNextTime()),
+                                new DateUtils().Date2String(task.getTime()),classify.getName(),
                                 TASKS_CIRCLE_TYPE_LIST[task.getCircle()+1],TASKS_REPEAT_TYPE_LIST[task.getRepeat()+1],
                                 task.getBell()};
                         for (int i = 0; i < titles.length; i++) {
@@ -94,6 +96,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
                             details.add(detail);
                         }
                         mTaskDetailView.showDetails(details);
+                        mTaskDetailView.setLoadingIndicator(false);
                     }
                     public void onError() {
                         // The view may not be able to handle UI updates anymore
@@ -105,6 +108,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
                         detail.put("value","加载分类出错");
                         details.add(detail);
                         mTaskDetailView.showMissingTask(details);
+                        mTaskDetailView.setLoadingIndicator(false);
                     }
                 });
             }
@@ -120,6 +124,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
                 detail.put("value","加载提醒出错");
                 details.add(detail);
                 mTaskDetailView.showMissingTask(details);
+                mTaskDetailView.setLoadingIndicator(false);
             }
         });
     }
@@ -201,7 +206,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
                         new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
                             @Override
                             public void onSuccess(SaveTask.ResponseValue response) {
-                                openTask();
+                                loadTask();
                                 mTaskDetailView.showMoveOk();
                             }
 
