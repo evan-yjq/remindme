@@ -90,7 +90,9 @@ public class NextTimeListener extends Service {
         }
         for (Task task : mTasks) {
             Date createTime = task.getTime();
+            Date nextTime = task.getNextTime();
             int circle = task.getCircle();
+            if (checkHourMin(createTime,nextTime)) continue;
             switch (circle){
                 case TasksCircleType.CIRCLE_:
                     task.setNextTime(createTime);
@@ -107,16 +109,16 @@ public class NextTimeListener extends Service {
                 case TasksCircleType.CIRCLE_Y:
                     task.setNextTime(getNextTimeYear(createTime));
             }
+            updateDB(task);
         }
         Collections.sort(mTasks);
         for (Task task : mTasks) {
-            if (task.getNextTime().after(new Date())) {
+            if (task.isTurnOn() && task.getNextTime().after(new Date())) {
                 mNextTime = task.getNextTime();
                 break;
             }
         }
         forceUpdate = false;
-        updateDB();
     }
 
     private void listener(){
@@ -129,7 +131,7 @@ public class NextTimeListener extends Service {
                     Date now = new Date();
                     if (mNextTime!=null && equal(mNextTime,now)) {
                         for (int i = 0, j = 0; i < 1 && j < mTasks.size(); j++, i++) {
-                            if ((j + 1) < mTasks.size() && mTasks.get(j+1).isTurnOn() && mTasks.get(j + 1).getNextTime() == mNextTime) i--;
+                            if ((j + 1) < mTasks.size() && mTasks.get(j + 1).getNextTime() == mNextTime) i--;
                             if (mTasks.get(j).isTurnOn()) {
                                 show(mTasks.get(j).getTitle());
                                 getNextTime();
@@ -175,18 +177,16 @@ public class NextTimeListener extends Service {
         mNotificationManager.notify(NOTIFICATION_DOWNLOAD_PROGRESS_ID,notification);
     }
 
-    private void updateDB(){
-        if (mTasks==null)return;
-        for (Task task : mTasks) {
-            useCaseHandler.execute(saveTask, new SaveTask.RequestValues(task, false),
-                    new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-                        @Override
-                        public void onSuccess(SaveTask.ResponseValue response) {}
+    private void updateDB(Task task){
+        useCaseHandler.execute(saveTask, new SaveTask.RequestValues(task, false),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {}
 
-                        @Override
-                        public void onError() {}
-                    });
-        }
+                    @Override
+                    public void onError() {}
+                });
+
     }
 
     private Date getNextTimeYear(Date date){
@@ -241,6 +241,10 @@ public class NextTimeListener extends Service {
             date.setMonth(date.getMonth()+1);
         }
         return date;
+    }
+
+    private boolean checkHourMin(Date d1,Date d2){
+        return d1.getHours()==d2.getHours()&&d1.getMinutes()==d2.getMinutes();
     }
 
     //根据年 月 获取对应的月份 天数

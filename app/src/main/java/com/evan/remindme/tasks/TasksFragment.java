@@ -340,11 +340,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public void onTurnOnTaskClick(Task turnOnTask) {
             mPresenter.turnOnTask(turnOnTask);
+            Intent intent = new Intent(getActivity(),NextTimeListener.class);
+            getActivity().startService(intent);
         }
 
         @Override
         public void onTurnOffTaskClick(Task turnOffTask) {
             mPresenter.turnOffTask(turnOffTask);
+            Intent intent = new Intent(getActivity(),NextTimeListener.class);
+            getActivity().startService(intent);
         }
     };
 

@@ -27,10 +27,10 @@ public class TasksRemoteDataSource implements TasksDataSource{
         TASKS_SERVICE_DATA = new LinkedHashMap<>(1);
     }
 
-    private static void addTask(String title,Long id) {
-        Task newTask = new Task(title,id,new Date());
-        TASKS_SERVICE_DATA.put(newTask.getId(), newTask);
-    }
+//    private static void addTask(String title,Long id) {
+//        Task newTask = new Task(title,id,new Date());
+//        TASKS_SERVICE_DATA.put(newTask.getId(), newTask);
+//    }
 
     public static TasksRemoteDataSource getInstance() {
         if (INSTANCE == null) {

@@ -351,10 +351,11 @@ public class AddEditTaskFragment extends Fragment implements AddEditTasksContrac
         bells.add("震动");
         ArrayAdapter<String>adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_dropdown_item,bells);
         mBellSpinner.setAdapter(adapter);
-        mRepeatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mBellSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mPresenter.setBell(((ArrayAdapter<String>)adapterView.getAdapter()).getItem(i));
+                String s = ((ArrayAdapter<String>)adapterView.getAdapter()).getItem(i);
+                mPresenter.setBell(s);
             }
 
             @Override

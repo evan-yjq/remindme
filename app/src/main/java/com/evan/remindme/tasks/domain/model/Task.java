@@ -227,14 +227,14 @@ public class Task implements Comparable<Task>{
             if (this.time.equals(task.time)) {
                 return 0;
             }else if(this.time.before(task.time)){
-                return 1;
-            }else{
                 return -1;
+            }else{
+                return 1;
             }
         }else if (this.nextTime.before(task.nextTime)) {
-            return 1;
-        }else {
             return -1;
+        }else {
+            return 1;
         }
     }
 
