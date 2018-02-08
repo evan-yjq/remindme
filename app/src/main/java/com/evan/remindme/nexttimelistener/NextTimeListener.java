@@ -59,10 +59,12 @@ public class NextTimeListener extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle bundle = intent.getExtras();
-        if (bundle!=null){
-            String showId = bundle.getString("Id");
-            show(showId,"",false);
+        if (intent!=null){
+            Bundle bundle = intent.getExtras();
+            if (bundle!=null){
+                String showId = bundle.getString("Id");
+                show(showId,"",false);
+            }
         }
         forceUpdate = true;
         return START_STICKY;
