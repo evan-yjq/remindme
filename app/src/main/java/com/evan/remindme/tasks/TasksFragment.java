@@ -258,8 +258,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showTaskMarkedTurnOff() {
+    public void showTaskMarkedTurnOff(String id) {
         Intent intent = new Intent(getActivity(),NextTimeListener.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("Id",id);
+        intent.putExtras(bundle);
         getActivity().startService(intent);
         showMessage(getString(R.string.task_marked_turn_off));
     }

@@ -233,13 +233,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void turnOffTask(@NonNull Task turnOffTask) {
+    public void turnOffTask(@NonNull final Task turnOffTask) {
         checkNotNull(turnOffTask,"turnOnTask cannot be null!");
         mUseCaseHandler.execute(mTurnOffTask, new TurnOffTask.RequestValues(turnOffTask.getId()),
                 new UseCase.UseCaseCallback<TurnOffTask.ResponseValue>() {
                     @Override
                     public void onSuccess(TurnOffTask.ResponseValue response) {
-                        mTasksView.showTaskMarkedTurnOff();
+                        mTasksView.showTaskMarkedTurnOff(turnOffTask.getId());
                         loadTasks(false,false);
                     }
 

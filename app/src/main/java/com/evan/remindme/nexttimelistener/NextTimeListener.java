@@ -52,13 +52,18 @@ public class NextTimeListener extends Service {
     public void onCreate() {
         getTasks = Injection.provideGetTasks(getApplicationContext());
         saveTask = Injection.provideSaveTask(getApplicationContext());
+        showMap = new HashMap<>();
         startListener();
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        showId = new ArrayList<>();
+        Bundle bundle = intent.getExtras();
+        if (bundle!=null){
+            String showId = bundle.getString("Id");
+            show(showId,"",false);
+        }
         forceUpdate = true;
         return START_STICKY;
     }
@@ -94,6 +99,7 @@ public class NextTimeListener extends Service {
             int circle = task.getCircle();
             switch (circle){
                 case TasksCircleType.CIRCLE_:
+                    tmp = createTime;
                     if (nextTime.before(date))task.setTurnOn(false);
                     break;
                 case TasksCircleType.CIRCLE_D:
@@ -135,10 +141,8 @@ public class NextTimeListener extends Service {
                     if (mNextTime!=null && equal(mNextTime,now)) {
                         for (int i = 0, j = 0; i < 1 && j < mTasks.size(); j++, i++) {
                             if ((j + 1) < mTasks.size() && mTasks.get(j + 1).getNextTime() == mNextTime) i--;
-                            if (mTasks.get(j).isTurnOn()) {
-                                show(mTasks.get(j).getId(),mTasks.get(j).getTitle());
-                                getNextTime();
-                            }
+                            if (mTasks.get(j).isTurnOn())
+                                show(mTasks.get(j).getId(),mTasks.get(j).getTitle(),true);
                         }
                     }
                     try{Thread.sleep(1500);}
@@ -150,8 +154,8 @@ public class NextTimeListener extends Service {
         thread.start();
     }
 
-    private List<String>showId;
-    private void show(final String id, final String title){
+    private Map<String,MyRunnable>showMap;
+    private void show(final String id, final String title,boolean turnOn){
 //        MediaPlayer mediaPlayer = new MediaPlayer();
 //        AssetFileDescriptor file = this.getResources().openRawResourceFd(R.raw.haha);
 //        try {
@@ -164,13 +168,16 @@ public class NextTimeListener extends Service {
 //        if (mediaPlayer != null) {
 //            mediaPlayer.start();
 //        }
-        if (!showId.contains(id)){
-            showId.add(id);
-            Runnable runnable = new Runnable() {
+        if (showMap.containsKey(id)&&!turnOn){
+            showMap.get(id).stop();
+            return;
+        }
+        if (!showMap.containsKey(id)&&turnOn){
+            MyRunnable runnable = new MyRunnable() {
                 @Override
                 public void run() {
                     int spacing = 1500;
-                    int num = 60/(spacing/1000);
+                    num = 60/(spacing/1000);
                     for (int i = 0; i < num; i++) {
                         NotificationManager mNotificationManager;
                         NotificationCompat.Builder mBuilder;
@@ -192,11 +199,22 @@ public class NextTimeListener extends Service {
                         try{Thread.sleep(spacing);}
                         catch(Exception ignored){}
                     }
-                    showId.remove(id);
+                    getNextTime();
+                    showMap.remove(id);
                 }
             };
+            showMap.put(id,runnable);
             runnable.run();
         }
+    }
+
+    private static abstract class MyRunnable implements Runnable {
+        public int num;
+        public void stop() {
+            this.num = 0;
+        }
+        @Override
+        public abstract void run();
     }
 
     private void updateDB(Task task){

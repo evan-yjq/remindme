@@ -35,7 +35,7 @@ public interface TasksContract {
 
         void showTaskMarkedTurnOn();
 
-        void showTaskMarkedTurnOff();
+        void showTaskMarkedTurnOff(String id);
 
         void showSuccessfullySavedMessage();
 
