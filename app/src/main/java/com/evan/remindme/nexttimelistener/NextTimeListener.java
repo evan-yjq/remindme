@@ -138,13 +138,15 @@ public class NextTimeListener extends Service {
             public void run() {
                 //每隔一分钟监听获取当前时间比对
                 while (!forceUpdate){
-                    System.out.println("Next Time:"+new DateUtils().Date2String(mNextTime));
-                    Date now = new Date();
-                    if (mNextTime!=null && equal(mNextTime,now)) {
-                        for (int i = 0, j = 0; i < 1 && j < mTasks.size(); j++, i++) {
-                            if ((j + 1) < mTasks.size() && mTasks.get(j + 1).getNextTime() == mNextTime) i--;
-                            if (mTasks.get(j).isTurnOn())
-                                show(mTasks.get(j).getId(),mTasks.get(j).getTitle(),true);
+                    if (mNextTime!=null) {
+                        System.out.println("Next Time:" + new DateUtils().Date2String(mNextTime));
+                        Date now = new Date();
+                        if (mNextTime != null && equal(mNextTime, now)) {
+                            for (int i = 0, j = 0; i < 1 && j < mTasks.size(); j++, i++) {
+                                if ((j + 1) < mTasks.size() && mTasks.get(j + 1).getNextTime() == mNextTime) i--;
+                                if (mTasks.get(j).isTurnOn())
+                                    show(mTasks.get(j).getId(), mTasks.get(j).getTitle(), true);
+                            }
                         }
                     }
                     try{Thread.sleep(1500);}
