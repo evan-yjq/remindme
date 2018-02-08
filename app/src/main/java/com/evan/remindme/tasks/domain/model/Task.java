@@ -223,6 +223,9 @@ public class Task implements Comparable<Task>{
 
     @Override
     public int compareTo(Task task) {
+        Date date = new Date();
+        if (this.nextTime.before(date))return 1;
+        if (task.nextTime.before(date))return -1;
         if(this.nextTime.equals(task.nextTime)) {
             if (this.time.equals(task.time)) {
                 return 0;

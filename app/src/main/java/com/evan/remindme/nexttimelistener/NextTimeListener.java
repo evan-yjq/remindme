@@ -91,25 +91,27 @@ public class NextTimeListener extends Service {
         for (Task task : mTasks) {
             Date createTime = task.getTime();
             Date nextTime = task.getNextTime();
+            Date tmp;
             int circle = task.getCircle();
-            if (checkHourMin(createTime,nextTime)) continue;
             switch (circle){
-                case TasksCircleType.CIRCLE_:
-                    task.setNextTime(createTime);
-                    break;
                 case TasksCircleType.CIRCLE_D:
-                    task.setNextTime(getNetTimeDay(createTime));
+                    tmp = getNetTimeDay(createTime);
                     break;
                 case TasksCircleType.CIRCLE_W:
-                    task.setNextTime(getNextTimeWeek(createTime));
+                    tmp = getNextTimeWeek(createTime);
                     break;
                 case TasksCircleType.CIRCLE_M:
-                    task.setNextTime(getNextTimeMonth(createTime));
+                    tmp = getNextTimeMonth(createTime);
                     break;
                 case TasksCircleType.CIRCLE_Y:
-                    task.setNextTime(getNextTimeYear(createTime));
+                    tmp = getNextTimeYear(createTime);
+                    break;
+                default:tmp=null;
             }
-            updateDB(task);
+            if (tmp!=null&&!nextTime.equals(tmp)){
+                task.setNextTime(tmp);
+                updateDB(task);
+            }
         }
         Collections.sort(mTasks);
         for (Task task : mTasks) {
@@ -201,7 +203,7 @@ public class NextTimeListener extends Service {
         Date d = (Date) date.clone();
         while (d.before(new Date())){
             for (int i = 0; i < 7; i++) {
-                d = checkDay(d);
+                d = addDay(d);
             }
         }
         return d;
@@ -210,7 +212,7 @@ public class NextTimeListener extends Service {
     private Date getNextTimeMonth(Date date){
         Date d = (Date) date.clone();
         while (d.before(new Date())){
-            d = checkMonth(d);
+            d = addMonth(d);
         }
         return d;
     }
@@ -218,15 +220,15 @@ public class NextTimeListener extends Service {
     private Date getNetTimeDay(Date date){
         Date d = (Date) date.clone();
         while (d.before(new Date())) {
-            d = checkDay(d);
+            d = addDay(d);
         }
         return d;
     }
 
-    private Date checkDay(Date date){
+    private Date addDay(Date date){
         int day = getDaysByYearMonth(date.getYear()+1900,date.getMonth()+1);
         if (date.getDate()+1==day){
-            date = checkMonth(date);
+            date = addMonth(date);
             date.setDate(0);
         }else {
             date.setDate(date.getDate() + 1);
@@ -234,7 +236,7 @@ public class NextTimeListener extends Service {
         return date;
     }
 
-    private Date checkMonth(Date date){
+    private Date addMonth(Date date){
         if(date.getMonth()==11){
             date.setMonth(0);
         }else{
