@@ -3,6 +3,7 @@ package com.evan.remindme.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.data.source.TasksRepository;
+import com.evan.remindme.tasks.domain.model.Task;
 
 import static com.evan.remindme.util.Objects.checkNotNull;
 
@@ -22,19 +23,19 @@ public class TurnOnTask extends UseCase<TurnOnTask.RequestValues,TurnOnTask.Resp
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        String turnOnTask = values.getmTurnOnTask();
+        Task turnOnTask = values.getTurnOnTask();
         mTasksRepository.turnOnTask(turnOnTask);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final String mTurnOnTask;
+        private final Task mTurnOnTask;
 
-        public RequestValues(@NonNull String turnOnTask){
+        public RequestValues(@NonNull Task turnOnTask){
             mTurnOnTask = checkNotNull(turnOnTask,"turnOnTask cannot be null!");
         }
 
-        public String getmTurnOnTask() {
+        public Task getTurnOnTask() {
             return mTurnOnTask;
         }
     }

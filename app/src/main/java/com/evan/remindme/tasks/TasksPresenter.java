@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.evan.remindme.UseCase;
 import com.evan.remindme.UseCaseHandler;
 import com.evan.remindme.addedittask.AddEditTaskActivity;
+import com.evan.remindme.addedittask.TasksCircleType;
 import com.evan.remindme.data.source.TasksDataSource;
 import com.evan.remindme.settings.SettingKey;
 import com.evan.remindme.settings.domain.model.Setting;
@@ -15,9 +16,11 @@ import com.evan.remindme.tasks.domain.usecase.CloseClassify;
 import com.evan.remindme.tasks.domain.model.Task;
 import com.evan.remindme.addedittask.domain.usecase.SaveTask;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.evan.remindme.nexttimelistener.NextTimeListener.getNextTimeDay;
 import static com.evan.remindme.util.Objects.checkNotNull;
 
 /**
@@ -209,7 +212,12 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void turnOnTask(@NonNull Task turnOnTask) {
         checkNotNull(turnOnTask,"turnOnTask cannot be null!");
-        mUseCaseHandler.execute(mTurnOnTask, new TurnOnTask.RequestValues(turnOnTask.getId()),
+        if (turnOnTask.getCircle() == TasksCircleType.CIRCLE_) {
+            Date date = getNextTimeDay(turnOnTask.getTime());
+            turnOnTask.setTime(date);
+            turnOnTask.setNextTime(date);
+        }
+        mUseCaseHandler.execute(mTurnOnTask, new TurnOnTask.RequestValues(turnOnTask),
                 new UseCase.UseCaseCallback<TurnOnTask.ResponseValue>() {
                     @Override
                     public void onSuccess(TurnOnTask.ResponseValue response) {
